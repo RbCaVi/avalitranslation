@@ -562,15 +562,10 @@ def createNumbersWin():
     Nwin.configure(background=Theme[2])
     #End Window management
     
-    Inscriptions = []
-    LoadedInscriptions = []
-    B10NUM = str(0)
-    B12NUM = str(0)
     VERT = 0
     NEG = 0
     b10Cover = 0
     b12Cover = 0
-    #testimg = ImageTk.PhotoImage(Image.open("numChars/Anum1-6.png"))
     
     border_frame = Frame(Nwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
@@ -712,12 +707,12 @@ def createNumbersWin():
             #print(randomNum)
             #Add negitive sign if applicable
             if NEG == 1: #add -
-                randomNum = randomNum-(randomNum*2)
+                randomNum = -randomNum
                 #print(randomNum,'negitive:',randomNum)
             elif NEG == 2:
-                if random.randint(1,100) >= 46: #45/55 negitve/positive
+                if random.randint(1,100) >= 46: #45/55 negitve/positive # why not even 50/50?
                     #add -
-                    randomNum = randomNum-(randomNum*2)
+                    randomNum = -randomNum
                     #print(randomNum,'negitive:',randomNum)
             else:
                 pass
@@ -805,8 +800,8 @@ def createNumbersWin():
     userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
     base10Label = Label(util_frame,text='Base-10:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     base12Label = Label(util_frame,text='Base-12:',font=('arial',10),background=Theme[0],foreground=Theme[1])
-    b12EnglishDisp = Label(util_frame,text=B12NUM[0],font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
-    b10EnglishDisp = Label(util_frame,text=B10NUM,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
+    b12EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
+    b10EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
     b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase10Display(),bg=Theme[8],fg=Theme[9]) 
     b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase12Display(),bg=Theme[8],fg=Theme[9]) 
     HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:toggleDirection(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
