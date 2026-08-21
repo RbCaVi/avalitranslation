@@ -607,7 +607,7 @@ def createNumbersWin():
         #add vertical option
         panel.delete('all') # delete all previous images to avoid memory leak
         centerlineH = 92 #maxHeight of tallest img in set
-        centerlineV = 60 #maxWidth of widest img in set
+        centerlineW = 60 #maxWidth of widest img in set
         if vert == 0: #Horizontal
             # so these are arranged in a straight line somehow
             # i believe they are vertically centered, with a 10px gap in between adjacent images
@@ -649,7 +649,7 @@ def createNumbersWin():
                     else:
                         sep = digitimages['InbetweenVert']
                     sepw = sep.width()
-                    writeImg(x - w / 2 - sepw,y + h / 2,sep)
+                    writeImg(x + w / 2 - sepw,y + h / 2,sep) # i actually have no idea how to place it
                 y += h + 10 # shift for the next digit
     
     def newNumber(b10Num):
