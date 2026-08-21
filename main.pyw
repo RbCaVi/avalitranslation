@@ -691,12 +691,12 @@ def createNumbersWin():
         if negative:
             b10Num = -b10Num
         b12num = AN.base12numberConvert(b10Num)
-        b12num = ''.join(map(str, b12num))
+        b12numstr = ''.join(str(AN.toAB(d)) for d in b12num)
         if negative:
-            b12num = '-' + b12num
+            b12numstr = '-' + b12numstr
 
-        b12EnglishDisp.config(text=b12num)        
-        manifest = AN.base12ImageRef(b10Num,b12num,int(negative)) 
+        b12EnglishDisp.config(text=b12numstr)        
+        manifest = AN.base12ImageRef(b12num,negative) 
         #print('manifest:',manifest)
         
         writeNumber(2,2,manifest,VERT)   

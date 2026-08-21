@@ -20,61 +20,23 @@ def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  W
         iNum = int(num)
         dNum = 0
     result = itob12(iNum)
-    #resultAB = result
-    #print('resultAB:',resultAB)
     if dNum > 0:
         res = itob12(dNum)
     
         result.append(".")
         result += res
-    
-    resultAB = result.copy()
 
-    for i in range(len(resultAB)):
-        if resultAB[i] == 10:
-            resultAB[i] = 'A'
-        elif resultAB[i] == 11:
-            resultAB[i] = 'B'
-        
-    print('base12AB:',resultAB)
-    #print('base12ABdec:',resultAB)
     print('base12:',result)
-    return(resultAB)
+    return(result)
 
+def toAB(n):
+    return {10: 'A', 11: 'B'}.get(n, n) # key n / default n
 
 def subB12num(num):
-    #print('subB12:',num)
-    strung = 0
-    if num == 'A' or num == 'B' or num == 'C': 
-        if num == 'A':
-            strung = 10
-        if num == 'B':
-            strung = 11
-        if num == 'C':
-            strung = 12
-    else: 
-        if int(num) > 9:
-            return("Num>9")
-        strung = str(num)
-    result = "Anum"+str(strung)
-    return(result)
+    return("Anum"+str(num))
 
 def superB12num(num):
-    #print('superB12:',num)
-    strung = 0
-    if num == 'A' or num == 'B' or num == 'C': 
-        if num == 'A':
-            strung = 10
-        if num == 'B':
-            strung = 11
-        if num == 'C':
-            strung = 12
-    else: 
-        if int(num) > 9:
-            return("Num>9")
-        strung = int(num)
-    result = "Amod"+str(strung*12)
-    return(result)
+    return("Amod"+str(num*12))
 
 '''#print(base12numberConvert(1372521.13))
 #print(base12ImageRef(base12numberConvert(1372521)))
@@ -131,66 +93,31 @@ def superB12num(num):
 #[5, 6, 2, 3, 4, 9]
 #[12x5,12x6,12x2]'''
 
-def base12ImageRef(b10,b12,negitiveSign): #reworkedImageRef finisged 5/28/2025
+def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     #if less than 144
         #match with numbers until total is 0
         #at any time if total is =< 12 then add the final image as number image.
     #else
         #match base to
-    print('------',b10,b12,'------')
+    print('------',b12,'------')
     result = []
-    if negitiveSign == 1:
+    if negative:
         result.append('Negative')
-    if b10 <= 12:
-        print(b10,'<= 12')
-        result.append('Anum'+str(b10))
-    elif b10 <= 156:
-        print(b10,'<= 156')
-        remainder = b10 % 12 
-        maxdiv = int(b10/12)
-        #print('maxdiv',maxdiv)
-        #print('remainder',remainder)
-        if maxdiv > 1 and remainder == 0:
-            #print('maxdiv > 1 and remainder == 0')
-            modCall = (maxdiv-1)
-            if modCall == 10:
-                modCall = 'A'
-            if modCall == 11:
-                modCall = 'B'
-            if modCall == 12:
-                modCall = 'C'
-            '''numCall = 12
-            print('modCall',modCall)
-            print('numCall',numCall)'''
-            result.append(superB12num(modCall)) #Reduce by 12
-            result.append(subB12num("C")) #"add 12"
-        else: 
-            modCall = maxdiv
-            '''numCall = remainder
-            print('modCall',modCall)
-            print('numCall',numCall)'''
-            if modCall == 10:
-                modCall = 'A'
-            if modCall == 11:
-                modCall = 'B'
-            if modCall == 12:
-                modCall = 'C'
-            result.append(superB12num(modCall))
-            if remainder == 10:
-                remainder = 'A'
-            elif remainder == 11:
-                remainder = 'B'
-            elif remainder == 12:
-                remainder = 'C'
-            result.append(subB12num(remainder))
-    else:
-        print(b10,'> 156')
-        b12split = list(b12)
-        for i in range(len(b12split)):
-            if i+1 == len(b12split):
-                result.append(subB12num(b12split[i]))
-            else:
-                result.append(superB12num(b12split[i]))
+    if b12 == [0]:
+        return [subB12num(0)]
+    if len(b12) == 3 and b12[0] == 1: # special casing 144-156 # reduce the first two digits into one
+        if b12[1] == 0: # 144-155
+            b12[:2] = [12]
+        elif b12[1] == 1 and b12[2] == 0: # 156
+            b12[:2] = [13]
+    if len(b12) == 2 and b12[-1] == 0: # multiples of 12 up to 156
+        b12[0] -= 1
+        b12[1] = 12
+        if b12[0] == 0:
+            b12 = [b12[1]]
+    for d in b12[:-1]: # all but the last
+        result.append(superB12num(d))
+    result.append(subB12num(b12[-1]))
     print(result)
     return result
 
