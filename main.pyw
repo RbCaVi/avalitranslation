@@ -1036,7 +1036,7 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     if WinCode == False: #If denied
         return(False) #explode
     Mwin.configure(background=Theme[2])
-    Mwin.title("Avilian Translation Software")
+    Mwin.title("Avalian Translation Software")
     WindowToTop('M')
     #End Window management
 
