@@ -705,15 +705,15 @@ def createNumbersWin():
                     
             #randomNum = randomNum+decimalComponent
             #print(randomNum)
-            #Add negitive sign if applicable
+            #Add negative sign if applicable
             if NEG == 1: #add -
                 randomNum = -randomNum
-                #print(randomNum,'negitive:',randomNum)
+                #print(randomNum,'negative:',randomNum)
             elif NEG == 2:
-                if random.randint(1,100) >= 46: #45/55 negitve/positive # why not even 50/50?
+                if random.randint(1,100) >= 46: #45/55 negative/positive # why not even 50/50?
                     #add -
                     randomNum = -randomNum
-                    #print(randomNum,'negitive:',randomNum)
+                    #print(randomNum,'negative:',randomNum)
             else:
                 pass
             newNumber(randomNum)
@@ -729,20 +729,20 @@ def createNumbersWin():
         else: 
             setDirection(0)
         #print('VERT OUT:',VERT)
-        #GO.writeIni("Numbers","HV",VERT) #write prefrence back to ini file
+        #GO.writeIni("Numbers","HV",VERT) #write preference back to ini file
     
     def toggleSign():
         nonlocal NEG
-        #Random Number Negitive chance
-        if NEG == 2: #Negitive and positive
+        #Random Number Negative chance
+        if NEG == 2: #Negative and positive
             NEG = 0
-            NegitiveState.config(text='Positive')
+            NegativeState.config(text='Positive')
         elif NEG == 0:
             NEG = 1
-            NegitiveState.config(text='Negitive')
+            NegativeState.config(text='Negative')
         elif NEG == 1:
             NEG = 2
-            NegitiveState.config(text='Neg & Pos')
+            NegativeState.config(text='Neg & Pos')
     
     def toggleBase10Display():
         nonlocal b10Cover
@@ -788,7 +788,7 @@ def createNumbersWin():
     MaxSize.set(125)
     MinSize.set(20)
     DecimalLength.set(1)
-    NegitiveState = Button(random_frame,text='Positive',command=lambda:toggleSign(),bg=Theme[8],fg=Theme[9]) #wether to generate negitive numbers or not
+    NegativeState = Button(random_frame,text='Positive',command=lambda:toggleSign(),bg=Theme[8],fg=Theme[9]) #whether to generate negative numbers or not
     randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),bg=Theme[8],fg=Theme[9]) #submit random num
     def enterHandler():
         updateNumber()
@@ -805,7 +805,7 @@ def createNumbersWin():
     b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase10Display(),bg=Theme[8],fg=Theme[9]) 
     b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase12Display(),bg=Theme[8],fg=Theme[9]) 
     HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:toggleDirection(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
-    HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal dispaly.",background=Theme[0],foreground=Theme[1]) 
+    HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",background=Theme[0],foreground=Theme[1]) 
     ###
 
     
@@ -834,7 +834,7 @@ def createNumbersWin():
     MinSizeLabel.grid(column=0,row=3,columnspan=2)
     DecimalLengthLabel.grid(column=0,row=5,columnspan=2)
     DecimalLengthWarning.grid(column=0,row=6,columnspan=2)
-    NegitiveState.grid(column=0,row=7,columnspan=2)
+    NegativeState.grid(column=0,row=7,columnspan=2)
     randomNumGo.grid(column=2,row=7)
     
     Nwin.mainloop()
