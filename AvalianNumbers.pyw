@@ -1,6 +1,7 @@
 #This file's purpose is to provide support to the numbers tab in the application. It handles image fetching and base conversion.
 
-def itob12(n):
+def itob12(n): # convert an integer to a list of base 12 digits
+    n = int(n)
     if n == 0:
         return [0]
     digits = []
@@ -10,21 +11,38 @@ def itob12(n):
     digits.reverse()
     return digits
 
+def inc12(ds): # increment a list of base 12 digits # modifies ds
+    # basically walk backwards from the end
+    # if the digit is 11, change to 0 and iterate again
+    # if the "digit" is '.', skip
+    # otherwise increment the digit and return
+    i = len(ds) - 1
+    while ds[i] == 11 or ds[i] == '.':
+        if ds[i] == 11:
+            ds[i] = 0
+        i -= 1
+    ds[i] += 1
+
 def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  Working on support for decimal. v2! To support A B extra characters since I never did that originaly??
     print('base10:',num)
-    if "." in str(num):     #seperate decimal
-        numList = str(num).split(".")
-        iNum = int(numList[0])
-        dNum = int(numList[1])
-    else:
-        iNum = int(num)
-        dNum = 0
+    iNum,dNum = divmod(num, 1)
     result = itob12(iNum)
-    if dNum > 0:
-        res = itob12(dNum)
-    
+    if type(num) == float:
         result.append(".")
-        result += res
+        # idk uhhh like multiply by 12 and divmod
+        # what about trailing zeros?
+        # maybe limit digits
+        # and strip trailing zeros
+        # or hit an arbitrary precision math with repeating digit fractions
+        # for example, 0.2 [10] = 0.(2497...) [12]
+        for i in range(5): # 5 digits should be enough right ?
+            dNum *= 12
+            digit,dNum = divmod(dNum, 1)
+            result.append(int(digit))
+        if dNum >= 0.5: # round up # inc12 modifies result
+            inc12(result)
+        while result[-1] == 0 and result[-2] != '.': # remove trailing zeros # except for the last one for like 1.0 type beat
+            result.pop()
 
     print('base12:',result)
     return(result)
@@ -100,11 +118,16 @@ def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     #else
         #match base to
     print('------',b12,'------')
+    if '.' in b12: # twelvimal (dodecimal) point
+        print(b12, 'has a decimal :)')
+        i = b12.index('.')
+        b12,d12 = b12[:i], b12[i + 1:]
+        print('split into', b12, d12)
+    else:
+        d12 = None
     result = []
     if negative:
         result.append('Negative')
-    if b12 == [0]:
-        return [subB12num(0)]
     if len(b12) == 3 and b12[0] == 1: # special casing 144-156 # reduce the first two digits into one
         if b12[1] == 0: # 144-155
             b12[:2] = [12]
@@ -118,6 +141,11 @@ def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     for d in b12[:-1]: # all but the last
         result.append(superB12num(d))
     result.append(subB12num(b12[-1]))
+    print('d12 is', d12)
+    if d12 is not None:
+        result.append('Decimal')
+        for d in d12:
+            result.append(subB12num(d)) # i don't know how twelvimal display works
     print(result)
     return result
 

@@ -678,13 +678,18 @@ def createNumbersWin():
         userIn = userInput.get("1.0",END)
         #print(userIn)
         try:
-            userIn = int(userIn)
+            try:
+                userIn = int(userIn)
+            except ValueError: # not an integer, maybe a float?
+                userIn = round(float(userIn), 6)
+                # error here propagates to the outer try block
+                # because the number is not valid
             #print(type(userIn))
             #validate
             #print('VERT: ',VERT)
             newNumber(userIn)
         except ValueError:
-            pass # ignore bad integers - don't want to throw an error to enterHandler()
+            pass # ignore bad numbers - don't want to throw an error to enterHandler()
 
         #print('Done!')
     
