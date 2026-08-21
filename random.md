@@ -112,7 +112,7 @@ The lake is a long way from here.
 When I was little I had a car door slammed shut on my hand and I still remember it quite vividly.
 She finally understood that grief was her love with no place for it to go.
 Even though he thought the world was flat he didn't see the irony of wanting to travel around the world.
-I currently have 4 windows open up… and I don't know why.
+I currently have 4 windows open up... and I don't know why.
 I love eating toasted cheese and tuna sandwiches.
 He had accidentally hacked into his company's server.
 While all her friends were positive that Mary had a sixth sense, she knew she actually had a seventh sense.
