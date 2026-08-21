@@ -1,3 +1,9 @@
+# avali translation software by ralsdoge / renauli snow
+# (c) 2025 probably
+# modified by rbcavi - rewrite numbers window code and other small fixes
+# (c) 2026
+# this code is licensed under the gpl3
+
 import pyglet
 from tkinter import *
 from PIL import ImageTk, Image
