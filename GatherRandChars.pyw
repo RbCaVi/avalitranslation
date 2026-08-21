@@ -18,73 +18,39 @@ sixWord = []
 sentences = []
 paragraphs = []
 numbers = []
-SampleList0=[]
-SampleList1=[]
-SampleList2=[]
-SampleList3=[]
-SampleList4 =[]
-NewC = ''
-class event():
-    def __init__(self,iname,itype):
-        self.type = itype
-        self.name = iname
-        if self.type == '0':
-            fourWord.append(self)
-        if self.type == '1':
-            sixWord.append(self)
-        if self.type == '2':
-            sentences.append(self)
-        if self.type == '3':
-            paragraphs.append(self)
-        if self.type == '4':
-            numbers.append(self)
 
-    def read(self,select=5):
-        if select == 1:
-            return(self.type)
-        elif select == 2:
-            return(self.name)
-        else:
-            return(self.type,self.name)
+# shuffle a list and return its elements one at a time
+# when the list is exhausted, reshuffle
+# modifies the original list (shuffles it repeatedly)
+def bag(l):
+    while True:
+        random.shuffle(l)
+        yield from l
+
+def event(iname,itype):
+    item = (itype, iname)
+    if itype == '0':
+        fourWord.append(iname)
+    if itype == '1':
+        sixWord.append(iname)
+    if itype == '2':
+        sentences.append(iname)
+    if itype == '3':
+        paragraphs.append(iname)
+    if itype == '4':
+        numbers.append(iname)
         
 def ChallengeRandSample(type): #line 49
-    global SampleList0
-    global SampleList1
-    global SampleList2
-    global SampleList3
-    global SampleList4
-    global NewC
-    global all
     if type == 0:
-        if len(SampleList0) == 0:
-            SampleList0 = random.sample(fourWord,len(fourWord))
-        NewC = str(event.read(SampleList0[0],2))
-        SampleList0.pop(0)
-        return(NewC)
+        return(next(SampleList0))
     if type == 1:
-        if len(SampleList1) == 0:
-            SampleList1 = random.sample(sixWord,len(sixWord))
-        NewC = str(event.read(SampleList1[0],2))
-        SampleList1.pop(0)
-        return(NewC)
+        return(next(SampleList1))
     if type == 2:
-        if len(SampleList2) == 0:
-            SampleList2 = random.sample(sentences,len(sentences))
-        NewC = str(event.read(SampleList2[0],2))
-        SampleList2.pop(0)
-        return(NewC)
+        return(next(SampleList2))
     if type == 3:
-        if len(SampleList3) == 0:
-            SampleList3 = random.sample(paragraphs,len(paragraphs))
-        NewC = str(event.read(SampleList3[0],2))
-        SampleList3.pop(0)
-        return(NewC)
+        return(next(SampleList3))
     if type == 4:
-        if len(SampleList4) == 0:
-            SampleList4 = random.sample(numbers,len(numbers))
-        NewC = str(event.read(SampleList4[0],2))
-        SampleList4.pop(0)
-        return(NewC)
+        return(next(SampleList4))
     
     return('blank')
 
@@ -106,6 +72,11 @@ for line in rawData:
         pass
     else:
         event(line,curType)
+SampleList0 = bag(fourWord)
+SampleList1 = bag(sixWord)
+SampleList2 = bag(sentences)
+SampleList3 = bag(paragraphs)
+SampleList4 = bag(numbers)
 #events.sort(key=lambda x: x.order, reverse=False)
 #print(len(paragraphs),' items registered')
 #for item in all:
