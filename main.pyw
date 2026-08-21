@@ -575,19 +575,24 @@ def createNumbersWin():
     border_frame = Frame(Nwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     
+    panel = Canvas(content_frame, bg=Theme[0])
+
+    def setDirection(vert):
+        nonlocal VERT
+        VERT = vert
+        if VERT == 0: #Horizontal 
+            panel.config(width=800, height=100)
+            panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
+        if VERT == 1: #Vertical
+            panel.config(width=100, height=600)
+            panel.grid(column=0,row=0,columnspan=1,rowspan=5) #long mode
+    
     #Load settings
     HV = GO.readIni("Numbers","HV") #read the options
-    if HV == 0 or HV == 1: #if valid entry set the orientation of canvas
-        if HV == 0: #Horizontal 
-            panel = Canvas(content_frame, bg=Theme[0], width=800, height=100)
-            panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
-        if HV == 1: #Vertical
-            panel = Canvas(content_frame,bg=Theme[0], width=100, height=600)
-            panel.grid(column=0,row=0,columnspan=1,rowspan=5) #long mode
-            VERT = 1
-    else: #else defult horizontal;
-        panel = Canvas(content_frame,bg=Theme[0], width=800, height=100)
-        panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode 
+    if HV in [0, 1]:
+        setDirection(HV)
+    else:
+        setDirection(0)
 
     digitimages = {
         im: ImageTk.PhotoImage(Image.open('Images/numChars/' + im + '.png'))
@@ -725,13 +730,9 @@ def createNumbersWin():
         #vertical or horizontal
         #print('VERT IN:',VERT)
         if VERT == 0:
-            VERT = 1
-            panel.config(height=600,width=100) #long mode
-            panel.grid(column=0,row=0,columnspan=1,rowspan=5)
+            setDirection(1)
         else: 
-            VERT = 0
-            panel.config(height=100,width=800) #Wide mode
-            panel.grid(column=0,row=5,columnspan=5,rowspan=1)
+            setDirection(0)
         #print('VERT OUT:',VERT)
         #GO.writeIni("Numbers","HV",VERT) #write prefrence back to ini file
     
