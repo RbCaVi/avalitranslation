@@ -634,7 +634,7 @@ def createNumbersWin():
 
     def writeNumber(x,y,manifest,vert): #write full number to canvas
         #add vertical option
-        #panel.delete('all') # delete all previous images to avoid memory leak
+        panel.delete('all') # delete all previous images to avoid memory leak
         centerlineH = 92 #maxHeight of tallest img in set
         centerlineV = 60 #maxWidth of widest img in set
         if vert == 0: #Horizontal
