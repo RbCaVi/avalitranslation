@@ -142,24 +142,24 @@ def resetini():
     if debug == 1:
         print('DEBUG MODE ON resetini() line 134')
         return 'debug'
-    iniBackupOLD = '[Theme]\n//Dont be detured by the ammount of colors you need to choose, I just wanted to ensure full customizeability. Most should be quite similar to another\nsetTheme=1 //Themes are selected in the program by index numbers\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff] //2\n    customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n    customTheme2=[#333333,#333333,#333333,#333333,#333333,#333333,#333333,#333333] //Test all colors using theme\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly\n'
-    iniBackup = '[Theme]\n//Dont be detured by the ammount of colors you need to choose, I just wanted to ensure full customizeability. Most should be quite similar to another\nsetTheme=1\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2\ncustomTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] \n    TestTheme=[#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7]\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons, Button/Menu, Contrasting Button/Menu Text\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly'
+    iniBackupOLD = '[Theme]\n//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another\nsetTheme=1 //Themes are selected in the program by index numbers\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff] //2\n    customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n    customTheme2=[#333333,#333333,#333333,#333333,#333333,#333333,#333333,#333333] //Test all colors using theme\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly\n'
+    iniBackup = '[Theme]\n//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another\nsetTheme=1\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2\ncustomTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] \n    TestTheme=[#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7]\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons, Button/Menu, Contrasting Button/Menu Text\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly'
     exists=1
     eraseProtect=0
     status='Clear'
     try:
         file = open("settings.ini")#.read()#.splitlines()
     except:
-        status = '"settings.ini" file did not exist. A new one was created automaticly.'
+        status = '"settings.ini" file did not exist. A new one was created automatically.'
         exists = 0
     if exists == 0: 
         pass #if it does not exist skip renaming
     else: 
-        file.close() #close file so we can rename it. We cant get here without opening the file 
+        file.close() #close file so we can rename it. We can't get here without opening the file 
         try: #since it does exist rename current one
             os.rename("settings.ini","settingsOLD.ini") #if it does reaname
         except Exception as e: 
-            eraseProtect=1 #if we fail we dont want to destroy user data
+            eraseProtect=1 #if we fail we don't want to destroy user data
             status = e + 'Please empty settingsOLD.ini of wanted data before deleting.' #store error for reporting
             #print(status)
     if eraseProtect == 1:
@@ -186,7 +186,7 @@ def verifyiniIntegrity():
     try:
         rawData = open("settings.ini").read()#.splitlines()
     except:
-        status = '"settings.ini" file did not exist. A new one was created automaticly.'
+        status = '"settings.ini" file did not exist. A new one was created automatically.'
         skip = 1
     if skip == 0:
         #See if it has minimum amount of characters and linescontents
@@ -198,7 +198,7 @@ def verifyiniIntegrity():
         print('# of lines in "settings.ini":',len(rawData))
         if len(rawData) < 12:
             status = 'File missing info (line count check failed)'
-        #Checks go here any descrepicy will be identified and stored in status. Then shown in error message
+        #Checks go here any descrepancy will be identified and stored in status, then shown in error message
     if status != 'Correct':
         resetini()
         errorMsg('Error opening "settings.ini"',status)
@@ -217,7 +217,7 @@ def retrieveTheme(Theme,line,checkValidity=0): #returns the currently selected t
         #print('Theme:',Theme)
         #print('Line:',line)
         if (Theme+line > int(bottom[1])-1):
-            print("Error: Invalid selection") #silent Error message Dont need to warn explicitly
+            print("Error: Invalid selection") #silent Error message Don't need to warn explicitly
             writeIni("Theme","setTheme",0)#set back to lowest value
             return(False)
         rawData = open("settings.ini").read().splitlines()
@@ -240,7 +240,7 @@ def retrieveTheme(Theme,line,checkValidity=0): #returns the currently selected t
                 return False
             for character in themeLine[i]:
                 if character not in char_list:
-                    errorMsg("invalidCharacter","One or more hex codes in theme "+str(Theme)+" cotains an invalid character. Hex values should only include the characters 0-9 and A-F.")
+                    errorMsg("invalidCharacter","One or more hex codes in theme "+str(Theme)+" contains an invalid character. Hex values should only include the characters 0-9 and A-F.")
                     return False
         print("Selected Theme",str(Theme),"is valid.")
         return True

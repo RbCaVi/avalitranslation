@@ -22,12 +22,12 @@ def pronounciationDisp(ntext,npron,clampingchars):
         word = list(digest[i])
         wWord = word #split current word into letters
         for k in range(len(wWord)): #for each leter
-            for t in range(int((len(specialpronchars)))):#check if match a special character 
+            for t in range(int((len(specialpronchars)))):#check if it matches a special character 
                 if t+1 % 3 != 0:
                     #print(specialpronchars[t])
                     if wWord[k] == specialpronchars[t]:
                         #print('Detected Illegal:',word[k],'   Flagged as:',specialpronchars[t])
-                        if t+1 % 2 == 0: #if odd index (even adjuseted)  
+                        if t+1 % 2 == 0: #if odd index (even adjusted)  
                             #print("SpecPro:",specialpronchars[t],"Replace:",replacements[(t/2)-2])
                             
                             word[k] = ClampingCharL+replacements[(t/2)-1]+ClampingCharR

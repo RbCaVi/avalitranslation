@@ -26,7 +26,7 @@ Theme = GO.readIni("Theme","setTheme") #Get theme from ini
 try: 
     int(Theme[0])
 except:
-    GO.errorMsg('Illegal Character in setTheme','The setTheme option has been set to an invalid character. Please dont do this. \n\nIm tired of writing exceptions.')
+    GO.errorMsg('Illegal Character in setTheme','The setTheme option has been set to an invalid character. Please don\'t do this. \n\nIm tired of writing exceptions.')
     GO.writeIni("Theme","setTheme",'1')
     Theme = (1,Theme[1])
 if int(Theme[0]) < 1:
@@ -38,12 +38,12 @@ if not GO.retrieveTheme(Theme[0],Theme[1],1): #Validate
     #print('not true Validation')
     if GO.retrieveTheme(1,Theme[1],1):
         Theme = GO.retrieveTheme(Theme[0],1) #Run theme through seperate function to populate global theme list
-        GO.errorMsg("Error: Selected Theme Corupted","Selected Theme (Theme starting with: "+str(Theme[0])+") is corrupt(see previous errors). Launching program with defualt theme(Theme 1) and setting to default in .ini file.") 
+        GO.errorMsg("Error: Selected Theme Corupted","Selected Theme (Theme starting with: "+str(Theme[0])+") is corrupt (see previous errors). Launching program with defualt theme (Theme 1) and setting to default in .ini file.") 
         #print('1LL:',Theme)
         GO.writeIni("Theme","setTheme",'1')#set back to lowest value
     else:
         #print("Defaulting to hardcoded theme, file fallback corupt(see errors)")
-        GO.errorMsg('Error: Defaulting Theme','Defaulting to hardcoded theme, ini file themes are corupt(see previous errors)')
+        GO.errorMsg('Error: Defaulting Theme','Defaulting to hardcoded theme, ini file themes are corrupt (see previous errors)')
         #print('2LL:',Theme)
         Theme = ['#f0f0f0','#000000','#fc850f','#000000','#ff3419','#fffafa','#d3d3d3','#ffffff','#f0f0f0','#000000']
 
@@ -70,7 +70,7 @@ def RemoveWindowFromRegister(win,date,type): #Remove a specific window from the 
                     print(WindowRegister,'-RWfR line 62')## DEBUG
                     return(True)
     win.destroy()
-    GO.errorMsg('Error: Failed to remove closed window from Register','Dont worry nothing bad. If you have trouble opening a window please restart the application.')
+    GO.errorMsg('Error: Failed to remove closed window from Register','Don\'t worry nothing bad. If you have trouble opening a window please restart the application.')
     return(False)
 
 def CheckWindowRegister(type='X'): #Check if a type of window exists in the Register
@@ -89,7 +89,7 @@ def CheckWindowRegister(type='X'): #Check if a type of window exists in the Regi
 
 def WindowToTop(type='X'): #Move a type of window to the top
     #if type == 'P' or type == 'O' or type == 'C' or type == 'N':
-    #if not CheckWindowRegister(type): #I cant tell you why this works #You find it was never nececary to begin with
+    #if not CheckWindowRegister(type): #I can't tell you why this works #You find it was never necessary to begin with # one collar, two sleeves
     for i in range(len(WindowRegister)):
         #Find stupid window object
         if WindowRegister[i][1] == type:
@@ -177,12 +177,12 @@ class SidebarMenu(): #Class to create the menubar
         menuImg3 = PhotoImage(file='Images/sidebar/Pronunciation Placeholder.png')
         menuImg4 = PhotoImage(file='Images/sidebar/Settings.png')
         menuImg5 = PhotoImage(file='Images/sidebar/Credits.png')'''
-        menuImg0 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Menu.png',str(Theme[7])))
-        menuImg1 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Translation.png',str(Theme[7])))
-        menuImg2 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Numbers.png',str(Theme[7])))
-        menuImg3 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Pronunciation.png',str(Theme[7]))) #Pronunciation Placeholder.png or Icon Pronunciation.png also avaliable
-        menuImg4 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Settings.png',str(Theme[7])))
-        menuImg5 = ImageTk.PhotoImage(iT.preformTint('Images/sidebar/Credits.png',str(Theme[7])))
+        menuImg0 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Menu.png',str(Theme[7])))
+        menuImg1 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Translation.png',str(Theme[7])))
+        menuImg2 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Numbers.png',str(Theme[7])))
+        menuImg3 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Pronunciation.png',str(Theme[7]))) #Pronunciation Placeholder.png or Icon Pronunciation.png also avaliable
+        menuImg4 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Settings.png',str(Theme[7])))
+        menuImg5 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Credits.png',str(Theme[7])))
 
         #MenuImgs.clear()
         SidebarMenu.MenuImgs.append(menuImg0)
@@ -192,7 +192,7 @@ class SidebarMenu(): #Class to create the menubar
         SidebarMenu.MenuImgs.append(menuImg4)
         SidebarMenu.MenuImgs.append(menuImg5)
 
-def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions nececary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
+def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
     #Window Register Management
     if CheckWindowRegister('T') == False: #Clear creating the window with the register, True means its allowed
         return(False) #killbind
@@ -208,7 +208,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     EcoverStatus = True
     TcoverStatus = True
     StringVar1 = ''
-    RefranceImg = ImageTk.PhotoImage(iT.preformTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
+    ReferenceImg = ImageTk.PhotoImage(iT.performTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
     def switchCover(inp): # Swiches the visibility of the centeral elements of this page to allow for practice of translation with or without the key or the direct translation. Does this by switching the background of the transparent image key and English text display respectivly to the same color as their foreground color.
         nonlocal EcoverStatus    
         nonlocal TcoverStatus    
@@ -251,7 +251,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
         changeText(cInput.get("1.0", "end-1c"))
-    def changeText(Ntext): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking ig the user inputs a word greater that 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
+    def changeText(Ntext): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking if the user inputs a word greater than 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
         global StringVar1
         maxsize = 40
         Ftext = ''
@@ -303,8 +303,8 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
     Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
     cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
-    refimg = Label(content_frame,image=RefranceImg,width=895,height=61,background=Theme[2])
     cInput.bind("<Return>",lambda event: setUserWord())
+    refimg = Label(content_frame,image=ReferenceImg,width=895,height=61,background=Theme[2])
     #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all")))
     #drawing
 
@@ -329,7 +329,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     #cover.grid(column=0,row=0)
     Twin.mainloop()
     
-def createCreditsWin(): #This function contains all of the tkinter widgets and functions nececary to be defined before them in order to create the credits window. Relevent support files: None
+def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
     #Window Register Management
     if CheckWindowRegister('C') == False: #Clear creating the window with the register, True means its allowed
         return(False) #killbind
@@ -350,12 +350,12 @@ Telegram @RenauliSnow.\n\nA deep thanks goes to everyone in this community for\n
 perpetuating this amazing species. For their specific\n\
 contributions to this project thank you to the following:\n",justify='left',font=('arial',16),background=Theme[0],foreground=Theme[1]) 
     #insert line break
-    Credit = Label(content_frame,text="Programed by Renauli Snow(Ralsdoge) for the community.\nVersion 1 in development from 11/23/2024 to 7/13/2025.",font=('arial',16),background=Theme[0],foreground=Theme[1])
+    Credit = Label(content_frame,text="Programed by Renauli Snow (Ralsdoge) for the community.\nVersion 1 in development from 11/23/2024 to 7/13/2025.",font=('arial',16),background=Theme[0],foreground=Theme[1])
     Credits = Label(content_frame,text=" • Cutesune (RyuujinZero) for creating the Avali Species\n \
 • Avali A Comprehensive Guide: Todd Avali\n \
 • Scratch Font: Icebelly and Someguynameddavid\n \
 • Avali Number System: Ceital Tesai\n \
-• Avali hd icon: tikitree2\n\n\
+• Avali HD Icon: tikitree2\n\n\
 For presenting me the joys of this community:\n \
 • FelisRandomis\n \
 • RitualNeo\n \
@@ -381,7 +381,7 @@ For presenting me the joys of this community:\n \
     #.grid(column=0,row=4)
     Cwin.mainloop()
 
-def createOptionsWin(): #This function contains all of the tkinter widgets and functions nececary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
+def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
     #Window Register Management
     if CheckWindowRegister('O') == False: #Clear creating the window with the register, True means its allowed
         return(False) #killbind
@@ -406,7 +406,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
                     try:
                         input = int(input)
                     except:
-                        GO.errorMsg("Error: Non Integer Input","Theme input is restricted to integer values. To create a custom theme open settings.ini and input hex color codes acordingly observing the presets. Note the position of your them and input it in options.")
+                        GO.errorMsg("Error: Non Integer Input","Theme input is restricted to integer values. To create a custom theme open settings.ini and input hex color codes acordingly observing the presets. Note the position of your theme and input it in options.")
                         return(False)
                 curTheme = GO.readIni("Theme","setTheme")
                 Bottom = GO.readIni("Pronunciation","Hpron")
@@ -416,7 +416,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
                     GO.writeIni("Theme","setTheme",str(input))
                     GO.infoMsg('Success','Your theme has been updated, please restart the aplication!')
                 else: 
-                    GO.infoMsg('Failure','Your theme has NOT been updated, your input is out of the possible selctions for themes.')
+                    GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.')
                     #print("Not")
                 #if GO.retrieveTheme(Theme[0],Theme[1],1):
 
@@ -444,7 +444,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     border_frame = Frame(Owin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     
-    SidebarMenu(Owin,border_frame) #Wow this worked in its first aplication imedietly with no bug fixing whatsoeverthisisdefinitlyatrap.
+    SidebarMenu(Owin,border_frame) #Wow this worked in its first application immediately with no bug fixing whatsoeverthisisdefinitlyatrap.
  
     Title = Label(content_frame,text="Options",font=('arial',20),background=Theme[0],foreground=Theme[1]) 
     
@@ -485,7 +485,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     LSButton4 = Button(toggleSwitch4,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(3,0))#Activebackground=Theme[2]
     RSButton4 = Button(toggleSwitch4,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(3,1))
     
-    #Griding Objects
+    #Gridding Objects # hit that griddy
     border_frame.pack()
     content_frame.grid(column=1,row=0)
     Title.grid(column=0,row=0)
@@ -911,7 +911,7 @@ def createPronunciationWin():
 
     ###Labels
     PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), background=Theme[0], foreground=Theme[1])
-    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todds Avali Lore Guide)',font=('arial',14), background=Theme[0], foreground=Theme[1])
+    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), background=Theme[0], foreground=Theme[1])
     SpecialCharsStr = ''
     SpecialReplaceStr = ''
     for i in range(int(len(AP.specialpronchars)/2)):
@@ -936,7 +936,7 @@ def createPronunciationWin():
     #Ndropbutton.config(bg=Theme[0])
     Hdropclicked.set(str(HpronOptions[0]))
     #ClampingChars
-    ClampingCharsOptions = ['"{-}"(Curvy Brackets)','"[-]"(Brakets)','"|-|"(Line)','"\-"(Backslash)','" - "(Spaces)','"-"(Direct Insert)']
+    ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brakets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
     ClampingCharsSelected = StringVar()
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
     ClampingCharsButton.config(bg=Theme[8],fg=Theme[9]) 
@@ -1005,7 +1005,7 @@ def createPronunciationWin():
     #cover.grid(column=0,row=0)
     Pwin.mainloop()
 
-def createMainMenuWin(): #This function contains all of the tkinter widgets and functions nececary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
+def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
     global MenuImgs
     global Mwin
     #Window Register Management

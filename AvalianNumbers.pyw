@@ -95,7 +95,7 @@ def superB12num(num):
 # 12*5*5+12*6*4+12*2*3+12*3*2+12*4+9 = 1080345
 
 # 12*11  >  12 added in sequence == 144 b10
-# Maybe instead of trying to decode to base10 try converting to basee 12 sounds obvious.
+# Maybe instead of trying to decode to base10 try converting to base 12 sounds obvious.
 
 # ----------------- Images Test Group -----------------
 #print(base12ImageRef(base12numberConvert(1372521)))
@@ -104,7 +104,7 @@ def superB12num(num):
 #print(base12ImageRef(base12numberConvert(36))) #['Amod36', 'Anum0']
 #print(base12ImageRef(base12numberConvert(13))) #['Amod12', 'Anum1']
 #Rules to implement:
-#if evenly divisiable dont use only modx should use mod(x-1),Anum12
+#if evenly divisible dont use only modx should use mod(x-1),Anum12
 #if 
 # Drop leading zeros 
 #I understand now. The number system is directly analagous to B12 reprentation, why did i not see it before
