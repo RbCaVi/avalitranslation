@@ -668,18 +668,21 @@ def createNumbersWin():
         
         writeNumber(2,2,manifest,VERT)
     
-    def buttonDecode0():
+    def updateNumber():
         userIn = userInput.get("1.0",END)
         #print(userIn)
-        userIn = int(userIn)
-        #print(type(userIn))
-        #validate
-        #print('VERT: ',VERT)
-        newNumber(userIn)
+        try:
+            userIn = int(userIn)
+            #print(type(userIn))
+            #validate
+            #print('VERT: ',VERT)
+            newNumber(userIn)
+        except ValueError:
+            pass # ignore bad integers - don't want to throw an error to enterHandler()
 
         #print('Done!')
     
-    def buttonDecode1():
+    def randomizeNumber():
         #do random
         #print('Do random!')
         randomNum = random.randint(int(MinSize.get()),int(MaxSize.get()))
@@ -717,7 +720,7 @@ def createNumbersWin():
         else:
             pass
     
-    def buttonDecode2():
+    def toggleDirection():
         nonlocal VERT
         #vertical or horizontal
         #print('VERT IN:',VERT)
@@ -732,7 +735,7 @@ def createNumbersWin():
         #print('VERT OUT:',VERT)
         #GO.writeIni("Numbers","HV",VERT) #write prefrence back to ini file
     
-    def buttonDecode3():
+    def toggleSign():
         nonlocal NEG
         #Random Number Negitive chance
         if NEG == 2: #Negitive and positive
@@ -745,7 +748,7 @@ def createNumbersWin():
             NEG = 2
             NegitiveState.config(text='Neg & Pos')
     
-    def buttonDecode4():
+    def toggleBase10Display():
         nonlocal b10Cover
         #Hide unhide base 10 display
         if b10Cover == 0:
@@ -757,7 +760,7 @@ def createNumbersWin():
             b10EnglishDisp.config(background=Theme[0])
             b10EnglishDispButton.config(text='Hide')
     
-    def buttonDecode5():
+    def toggleBase12Display():
         nonlocal b12Cover
         #Hide unhide base 12 displays
         if b12Cover == 0:
@@ -789,23 +792,23 @@ def createNumbersWin():
     MaxSize.set(125)
     MinSize.set(20)
     DecimalLength.set(1)
-    NegitiveState = Button(random_frame,text='Positive',command=lambda:buttonDecode3(),bg=Theme[8],fg=Theme[9]) #wether to generate negitive numbers or not
-    randomNumGo = Button(random_frame,text='Submit',command=lambda:buttonDecode1(),bg=Theme[8],fg=Theme[9]) #submit random num
+    NegitiveState = Button(random_frame,text='Positive',command=lambda:toggleSign(),bg=Theme[8],fg=Theme[9]) #wether to generate negitive numbers or not
+    randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),bg=Theme[8],fg=Theme[9]) #submit random num
     def enterHandler():
-        buttonDecode0()
+        updateNumber()
         return "break"
     ###Options###
     userInput = Text(util_frame,width=30,height=1,bg=Theme[6]) #User in Textbox
     userInput.bind("<Return>",lambda event: enterHandler())
 
-    userInGo = Button(util_frame,text='Submit',command=lambda:buttonDecode0(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
+    userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
     base10Label = Label(util_frame,text='Base-10:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     base12Label = Label(util_frame,text='Base-12:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     b12EnglishDisp = Label(util_frame,text=B12NUM[0],font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
     b10EnglishDisp = Label(util_frame,text=B10NUM,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
-    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode4(),bg=Theme[8],fg=Theme[9]) 
-    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode5(),bg=Theme[8],fg=Theme[9]) 
-    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:buttonDecode2(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
+    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase10Display(),bg=Theme[8],fg=Theme[9]) 
+    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase12Display(),bg=Theme[8],fg=Theme[9]) 
+    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:toggleDirection(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
     HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal dispaly.",background=Theme[0],foreground=Theme[1]) 
     ###
 
