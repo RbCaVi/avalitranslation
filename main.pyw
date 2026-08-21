@@ -589,47 +589,18 @@ def createNumbersWin():
         panel = Canvas(content_frame,bg=Theme[0], width=800, height=100)
         panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode 
 
-    class spawnImg():
-        def __init__(self,filepath):
-            self.name = filepath
-            self.image = Image.open(filepath)
-            self.photo = ImageTk.PhotoImage(self.image)
-            LoadedInscriptions.append(self)
+    digitimages = {
+        im: ImageTk.PhotoImage(Image.open('Images/numChars/' + im + '.png'))
+        for im in
+        ['Amod' + str(i * 12) for i in range(0, 12 + 1)] +
+        ['Anum' + str(i) for i in range(0, 12 + 1)] +
+        ['DecimalHori', 'DecimalVert'] +
+        ['InbetweenHori', 'InbetweenVert'] +
+        ['Negative']
+    }
 
-        def read(self):
-            return self.name
-        
-        def present(self):
-            return self.photo
-        
-        def getDimensions(self):
-            height = self.photo.height()
-            width = self.photo.width()
-            return (width,height)
-
-    def checkLoad(filepath): #check if image has already been loaded
-        for i in range(len(LoadedInscriptions)-1):
-            if filepath == LoadedInscriptions[i].read():
-                print('Already loaded!','-cNW->cL line 533')
-                return i
-        #print('Loading '+str(filepath)+'...',end='  ')
-        spawnImg(filepath)
-        #print('Loaded!')
-        #print(len(LoadedInscriptions)-1,'===',LoadedInscriptions[len(LoadedInscriptions)-1])
-        return len(LoadedInscriptions)-1
-
-    def writeImg(x,y,filepath): #put image on canvas
-        loadedIndex = checkLoad(filepath)
-        panel.create_image(x, y, image=LoadedInscriptions[loadedIndex].present(),anchor="nw")
-        return loadedIndex
-    
-    def get_image_dimensions(patht):
-        try:
-            with Image.open(str(patht)) as img:
-                return img.width, img.height
-        except Exception as e:
-            print(f"Error: {e}")
-            return None
+    def writeImg(x,y,image): #put image on canvas
+        panel.create_image(x, y, image=image,anchor="nw")
 
 
     def writeNumber(x,y,manifest,vert): #write full number to canvas
@@ -650,17 +621,17 @@ def createNumbersWin():
             for i,im in enumerate(manifest):
                 if im == 'Decimal':
                     continue # should have been drawn by the previous iteration
-                imf = 'Images/numChars/'+im+'.png'
-                w,h = get_image_dimensions(imf)
+                im = digitimages[im]
+                w,h = im.width(), im.height()
                 y = centerlineH / 2 - h / 2
-                Index = writeImg(x,y,imf) # index is ignored ???
+                writeImg(x,y,im)
                 if i != len(manifest) - 1:
                     if manifest[i + 1] == 'Decimal': 
-                        sepf = 'Images/numChars/DecimalHori.png'
+                        sep = digitimages['DecimalHori']
                     else:
-                        sepf = 'Images/numChars/InbetweenHori.png'
-                    Index = writeImg(x + w / 2,centerlineH / 2,sepf)
-                x = x + w + 10 # shift for the next digit
+                        sep = digitimages['InbetweenHori']
+                    writeImg(x + w / 2,centerlineH / 2,sep)
+                x += w + 10 # shift for the next digit
         else: # vertical
             # i'll do something similar for the vertical layout
             # horizontally centered, 10px vertical gap
@@ -668,18 +639,18 @@ def createNumbersWin():
             for i,im in enumerate(manifest):
                 if im == 'Decimal':
                     continue # should have been drawn by the previous iteration
-                imf = 'Images/numChars/'+im+'.png'
-                w,h = get_image_dimensions(imf)
+                im = digitimages[im]
+                w,h = im.width(), im.height()
                 x = centerlineW / 2 - w / 2
-                Index = writeImg(x,y,imf) # index is ignored ???
+                writeImg(x,y,im)
                 if i != len(manifest) - 1:
                     if manifest[i + 1] == 'Decimal': 
-                        sepf = 'Images/numChars/DecimalVert.png'
+                        sep = digitimages['DecimalVert']
                     else:
-                        sepf = 'Images/numChars/InbetweenVert.png'
-                    sepw,seph = get_image_dimensions(sepf)
-                    Index = writeImg(x - w / 2 - sepw,y + h / 2,sepf)
-                y = y + h + 10 # shift for the next digit
+                        sep = digitimages['InbetweenVert']
+                    sepw = sep.width()
+                    writeImg(x - w / 2 - sepw,y + h / 2,sep)
+                y += h + 10 # shift for the next digit
     
     def newNumber(b10Num):
         b10EnglishDisp.config(text=b10Num)
