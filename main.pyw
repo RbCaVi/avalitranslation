@@ -303,8 +303,8 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
     Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
     cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
-    cInput.bind("<Return>",lambda event: changeText(22))
     refimg = Label(content_frame,image=RefranceImg,width=895,height=61,background=Theme[2])
+    cInput.bind("<Return>",lambda event: setUserWord())
     #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all")))
     #drawing
 
@@ -980,7 +980,7 @@ def createPronunciationWin():
     Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
     Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
     cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
-    cInput.bind("<Return>",lambda event: changeText(22))#enterHandler())
+    cInput.bind("<Return>",lambda event: setUserWord())#enterHandler())
     ##Griding
     PronunciationTableHead.grid(column=0,row=0,columnspan=6)
     PronunciationDesc.grid(column=0,row = 1,columnspan=6)
