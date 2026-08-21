@@ -668,128 +668,106 @@ def createNumbersWin():
         
         writeNumber(2,2,manifest,VERT)
     
-    def buttonDecode0(i):
-        nonlocal VERT
-        nonlocal NEG
-        nonlocal b10Cover
-        nonlocal b12Cover
-        if i == 0:
-            userIn = userInput.get("1.0",END)
-            #print(userIn)
-            userIn = int(userIn)
-            #print(type(userIn))
-            #validate
-            #print('VERT: ',VERT)
-            newNumber(userIn)
+    def buttonDecode0():
+        userIn = userInput.get("1.0",END)
+        #print(userIn)
+        userIn = int(userIn)
+        #print(type(userIn))
+        #validate
+        #print('VERT: ',VERT)
+        newNumber(userIn)
 
-            #print('Done!')
+        #print('Done!')
     
-    def buttonDecode1(i):
-        nonlocal VERT
-        nonlocal NEG
-        nonlocal b10Cover
-        nonlocal b12Cover
-        if i == 1:
-            #do random
-            #print('Do random!')
-            randomNum = random.randint(int(MinSize.get()),int(MaxSize.get()))
-            decLength = int(DecimalLength.get())-1
-            #print(int(DecimalLength.get()),'-->',int(DecimalLength.get())-1)
-            if decLength != -1:
-                decimalInt = random.randint(10**decLength,(10**(decLength+1))-1)
-                #print('Decimal:',decimalInt)
-                decimalComponent = str(decimalInt*0.1**(decLength+1))
-                #print('Decimal:',decimalComponent)
-                decimalComponent = decimalComponent.split()
-                #print('Decimal:',decimalComponent)
-                for i in range(len(decimalComponent)):
-                    total = len(str(decLength))+2
-                    if i+1 < total:
-                        pass
-                    else:
-                        pass
-                        #print(decimalComponent)
-                        
-                #randomNum = randomNum+decimalComponent
-                #print(randomNum)
-                #Add negitive sign if applicable
-                if NEG == 1: #add -
-                    randomNum = randomNum-(randomNum*2)
-                    #print(randomNum,'negitive:',randomNum)
-                elif NEG == 2:
-                    if random.randint(1,100) >= 46: #45/55 negitve/positive
-                        #add -
-                        randomNum = randomNum-(randomNum*2)
-                        #print(randomNum,'negitive:',randomNum)
+    def buttonDecode1():
+        #do random
+        #print('Do random!')
+        randomNum = random.randint(int(MinSize.get()),int(MaxSize.get()))
+        decLength = int(DecimalLength.get())-1
+        #print(int(DecimalLength.get()),'-->',int(DecimalLength.get())-1)
+        if decLength != -1:
+            decimalInt = random.randint(10**decLength,(10**(decLength+1))-1)
+            #print('Decimal:',decimalInt)
+            decimalComponent = str(decimalInt*0.1**(decLength+1))
+            #print('Decimal:',decimalComponent)
+            decimalComponent = decimalComponent.split()
+            #print('Decimal:',decimalComponent)
+            for i in range(len(decimalComponent)):
+                total = len(str(decLength))+2
+                if i+1 < total:
+                    pass
                 else:
                     pass
-                newNumber(randomNum)
+                    #print(decimalComponent)
+                    
+            #randomNum = randomNum+decimalComponent
+            #print(randomNum)
+            #Add negitive sign if applicable
+            if NEG == 1: #add -
+                randomNum = randomNum-(randomNum*2)
+                #print(randomNum,'negitive:',randomNum)
+            elif NEG == 2:
+                if random.randint(1,100) >= 46: #45/55 negitve/positive
+                    #add -
+                    randomNum = randomNum-(randomNum*2)
+                    #print(randomNum,'negitive:',randomNum)
             else:
                 pass
+            newNumber(randomNum)
+        else:
+            pass
     
-    def buttonDecode2(i):
+    def buttonDecode2():
         nonlocal VERT
-        nonlocal NEG
-        nonlocal b10Cover
-        nonlocal b12Cover
-        if i == 2: #vertical or horizontal
-            #print('VERT IN:',VERT)
-            if VERT == 0:
-                VERT = 1
-                panel.config(height=600,width=100) #long mode
-                panel.grid(column=0,row=0,columnspan=1,rowspan=5)
-            else: 
-                VERT = 0
-                panel.config(height=100,width=800) #Wide mode
-                panel.grid(column=0,row=5,columnspan=5,rowspan=1)
-            #print('VERT OUT:',VERT)
-            #GO.writeIni("Numbers","HV",VERT) #write prefrence back to ini file
+        #vertical or horizontal
+        #print('VERT IN:',VERT)
+        if VERT == 0:
+            VERT = 1
+            panel.config(height=600,width=100) #long mode
+            panel.grid(column=0,row=0,columnspan=1,rowspan=5)
+        else: 
+            VERT = 0
+            panel.config(height=100,width=800) #Wide mode
+            panel.grid(column=0,row=5,columnspan=5,rowspan=1)
+        #print('VERT OUT:',VERT)
+        #GO.writeIni("Numbers","HV",VERT) #write prefrence back to ini file
     
-    def buttonDecode3(i):
-        nonlocal VERT
+    def buttonDecode3():
         nonlocal NEG
-        nonlocal b10Cover
-        nonlocal b12Cover
-        if i == 3: #Random Number Negitive chance
-            if NEG == 2: #Negitive and positive
-                NEG = 0
-                NegitiveState.config(text='Positive')
-            elif NEG == 0:
-                NEG = 1
-                NegitiveState.config(text='Negitive')
-            elif NEG == 1:
-                NEG = 2
-                NegitiveState.config(text='Neg & Pos')
+        #Random Number Negitive chance
+        if NEG == 2: #Negitive and positive
+            NEG = 0
+            NegitiveState.config(text='Positive')
+        elif NEG == 0:
+            NEG = 1
+            NegitiveState.config(text='Negitive')
+        elif NEG == 1:
+            NEG = 2
+            NegitiveState.config(text='Neg & Pos')
     
-    def buttonDecode4(i):
-        nonlocal VERT
-        nonlocal NEG
+    def buttonDecode4():
         nonlocal b10Cover
-        nonlocal b12Cover
-        if i == 4: #Hide unhide displays
-            if b10Cover == 0:
-                b10Cover = 1
-                b10EnglishDisp.config(background=Theme[1])
-                b10EnglishDispButton.config(text='Unhide')
-            else:
-                b10Cover = 0
-                b10EnglishDisp.config(background=Theme[0])
-                b10EnglishDispButton.config(text='Hide')
+        #Hide unhide base 10 display
+        if b10Cover == 0:
+            b10Cover = 1
+            b10EnglishDisp.config(background=Theme[1])
+            b10EnglishDispButton.config(text='Unhide')
+        else:
+            b10Cover = 0
+            b10EnglishDisp.config(background=Theme[0])
+            b10EnglishDispButton.config(text='Hide')
     
-    def buttonDecode5(i):
-        nonlocal VERT
-        nonlocal NEG
-        nonlocal b10Cover
+    def buttonDecode5():
         nonlocal b12Cover
-        if i == 5: #Hide unhide displays
-            if b12Cover == 0:
-                b12Cover = 1
-                b12EnglishDisp.config(background=Theme[1])
-                b12EnglishDispButton.config(text='Unhide')
-            else:
-                b12Cover = 0
-                b12EnglishDisp.config(background=Theme[0])
-                b12EnglishDispButton.config(text='Hide')
+        #Hide unhide base 12 displays
+        if b12Cover == 0:
+            b12Cover = 1
+            b12EnglishDisp.config(background=Theme[1])
+            b12EnglishDispButton.config(text='Unhide')
+        else:
+            b12Cover = 0
+            b12EnglishDisp.config(background=Theme[0])
+            b12EnglishDispButton.config(text='Hide')
     
     #Create Menu Sidebar    
     SidebarMenu(Nwin,border_frame)
@@ -811,23 +789,23 @@ def createNumbersWin():
     MaxSize.set(125)
     MinSize.set(20)
     DecimalLength.set(1)
-    NegitiveState = Button(random_frame,text='Positive',command=lambda:buttonDecode3(3),bg=Theme[8],fg=Theme[9]) #wether to generate negitive numbers or not
-    randomNumGo = Button(random_frame,text='Submit',command=lambda:buttonDecode1(1),bg=Theme[8],fg=Theme[9]) #submit random num
+    NegitiveState = Button(random_frame,text='Positive',command=lambda:buttonDecode3(),bg=Theme[8],fg=Theme[9]) #wether to generate negitive numbers or not
+    randomNumGo = Button(random_frame,text='Submit',command=lambda:buttonDecode1(),bg=Theme[8],fg=Theme[9]) #submit random num
     def enterHandler():
-        buttonDecode0(0)
+        buttonDecode0()
         return "break"
     ###Options###
     userInput = Text(util_frame,width=30,height=1,bg=Theme[6]) #User in Textbox
     userInput.bind("<Return>",lambda event: enterHandler())
 
-    userInGo = Button(util_frame,text='Submit',command=lambda:buttonDecode0(0),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
+    userInGo = Button(util_frame,text='Submit',command=lambda:buttonDecode0(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
     base10Label = Label(util_frame,text='Base-10:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     base12Label = Label(util_frame,text='Base-12:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     b12EnglishDisp = Label(util_frame,text=B12NUM[0],font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
     b10EnglishDisp = Label(util_frame,text=B10NUM,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
-    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode4(4),bg=Theme[8],fg=Theme[9]) 
-    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode5(5),bg=Theme[8],fg=Theme[9]) 
-    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:buttonDecode2(2),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
+    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode4(),bg=Theme[8],fg=Theme[9]) 
+    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:buttonDecode5(),bg=Theme[8],fg=Theme[9]) 
+    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:buttonDecode2(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
     HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal dispaly.",background=Theme[0],foreground=Theme[1]) 
     ###
 
