@@ -1,30 +1,14 @@
 #This file's purpose is to provide support to the numbers tab in the application. It handles image fetching and base conversion.
-import test 
-def base12decimalConverter(decimal): #Designed by myself to aproximate the proper decimal values from base 10 to base12. I am hopeful that its been done correctly but I have no refrences to compare to.
-    #decimal divided by base(10) * new base(12)
-    #assuming decimal is the input 
-    b12process = (decimal/10)*12
-    #print("---------------------")
-    #print("b12processVar:",b12process)
-    if len(str(b12process)) == 18:
-        round(b12process,len(str(decimal))+2)
-        #print("b12cut:",b12process)
-        '''print("lenB10+2:",len(str(decimal))+2)
-        print("lenB12:",len(str(b12process)))
-        endsubtract=len(str(b12process))-(len(str(decimal))+2)
-        endsubtract=len(str(decimal))+2-len(str(b12process)) 
-        print("endsubtract =",endsubtract)
-        b12process = str(b12process)[:endsubtract]
-        print("B12Cut:",b12process)'''
-'''base12decimalConverter(.15)
-base12decimalConverter(.25)
-base12decimalConverter(.35)
-base12decimalConverter(.45)
-base12decimalConverter(.55)
-base12decimalConverter(.65)
-base12decimalConverter(.75)
-base12decimalConverter(.85)
-base12decimalConverter(.95)'''
+
+def itob12(n):
+    if n == 0:
+        return [0]
+    digits = []
+    while n > 0:
+        digits.append(n % 12)
+        n //= 12
+    digits.reverse()
+    return digits
 
 def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  Working on support for decimal. v2! To support A B extra characters since I never did that originaly??
     print('base10:',num)
@@ -35,14 +19,15 @@ def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  W
     else:
         iNum = int(num)
         dNum = 0
-    digits = []
-    while iNum:
-        #print(iNum % 12)
-        iNum % 12
-        digits.append(iNum % 12)
-        iNum //= 12 
-    result = list(reversed(digits))
+    result = itob12(iNum)
     #resultAB = result
+    #print('resultAB:',resultAB)
+    if dNum > 0:
+        res = itob12(dNum)
+    
+        result.append(".")
+        result += res
+    
     resultAB = result.copy()
 
     for i in range(len(resultAB)):
@@ -50,28 +35,7 @@ def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  W
             resultAB[i] = 'A'
         elif resultAB[i] == 11:
             resultAB[i] = 'B'
-    #print('resultAB:',resultAB)
-    if dNum > 0:
-        digits = []
-        while dNum:
-            digits.append(dNum % 12)
-            dNum //= 12
-        res = list(reversed(digits))
-        resAB = res.copy()
-        for i in range(len(resAB)):
-            if resAB[i] == 10 or resAB[i] ==1:
-                resAB[i] = 'A'
-            elif resAB[i] == 11:
-                resAB[i] = 'B'
-    
-        result.append(".")
-        resultAB.append(".")
-        for i in range(len(res)):
-            result.append(res[i])
-        for i in range(len(resAB)):
-            resultAB.append(resAB[i])
         
-    result = "".join(map(str, result))
     print('base12AB:',resultAB)
     #print('base12ABdec:',resultAB)
     print('base12:',result)
@@ -111,107 +75,6 @@ def superB12num(num):
         strung = int(num)
     result = "Amod"+str(strung*12)
     return(result)
-
-def base12ImageRefLegacy(b12):# have to flip to check the right most digit first and left last #I dont know how this works right now. I cant work it out mathmaticaly because the bases are different. I think I just need to pin down the rulesets of the images I have and then implement it like that. I get the right images according to the small number of examples I have but I cannot figure out how to decode them to b10.
-    #print('Enter: type;',type(b12),'vals:',b12)
-    #b12.append(".") #DEBUG
-    #b12.append("A") #DEBUG
-    imgManifest = []
-    if "." in str(b12):
-        decimal = b12.index('.')
-        numList = [b12[:decimal], b12[decimal+1:]]
-        iNum = numList[0]
-        dNum = numList[1]
-    else:
-        iNum = b12
-        dNum = 0
-    #print("Norm:",iNum,'.',dNum)
-    #print("Str():",str(iNum))
-    #iNum = list(iNum)
-    #print(iNum)
-    if len(iNum) < 2:
-        imgManifest.append(subB12num(iNum))
-    else:
-        '''for i in range(len(iNum)):
-            print(iNum[i])
-                superB12num(iNum[i])
-            else:
-                subB12num(iNum[i])'''
-        k=0 #offset
-        skip=False
-        digitSkip = 0
-        isplit = iNum.copy()
-        #print('isplit:',isplit)
-        max = len(isplit)
-        for i in range(max):
-            #print('-------------',i,'-------------') ##DEBUG
-            if skip == True:
-                skip = False
-                continue
-            #print(isplit)
-            #print('Cur:'+str(isplit[len(isplit)-1-i+k]),end='   ')
-            #print('CURMATH:'+str(len(isplit))+'-1-'+str(i)+'+'+str(k))
-            
-            #print('Nxt:'+str(isplit[len(isplit)-2-i+k]),end='   ')
-            #print('NXTMATH:'+str(len(isplit))+'-2-'+str(i)+'+'+str(k))
-            
-            intrestNum = str(isplit[len(isplit)-2-i+k])+str(isplit[len(isplit)-1-i+k])
-            #print(intrestNum) ##DEBUG
-            #print(digitSkip)
-            if i == 0:
-                cur = isplit[len(isplit)-1-i+k]
-                
-                if intrestNum == '12' or intrestNum == 11 or intrestNum == 10:
-                    #remove the numbers
-                    nex = isplit[len(isplit)-2-i+k]
-                    isplit.pop(len(isplit)-1-i+k) #cur
-                    isplit.pop(len(isplit)-2-i+k) #next
-                    k+=2
-                    skip = True
-                    digitSkip = 2 
-                    imgManifest.append(subB12num(cur))
-                    imgManifest.append(superB12num(nex))
-                else:
-                    imgManifest.append(subB12num(cur))
-                    isplit.pop(len(isplit)-1-i+k) #cur
-                    k+=1
-            elif digitSkip == 0:
-                if intrestNum == 10:
-                    imgManifest.append("Amod120")
-                    isplit.pop(len(isplit)-1-i+k) #cur
-                    isplit.pop(len(isplit)-2-i+k) #next
-                    k+=2
-                    skip = True
-                    digitSkip = 2 
-                elif intrestNum == 11:
-                    imgManifest.append("Amod132")
-                    isplit.pop(len(isplit)-1-i+k) #cur
-                    k+=1
-                    isplit.pop(len(isplit)-2-i+k) #next
-                    k+=1
-                    skip = True
-                    digitSkip = 2       
-                
-                else:
-                    imgManifest.append(superB12num(isplit[len(isplit)-1-i+k])) 
-                    isplit.pop(len(isplit)-1-i+k)
-                    k+=1
-                    
-            else:
-                imgManifest.append(superB12num(isplit[len(isplit)-1-i+k]))
-                isplit.pop(len(isplit)-1-i+k)
-                k+=1
-                digitSkip -= 1
-        #print(imgManifest)
-        flippedImgManifest = []
-        for i in range(len(imgManifest)):
-            flippedImgManifest.append(imgManifest[len(imgManifest)-1-i])
-        #print(flippedImgManifest)
-        return(flippedImgManifest)
-        #split string into individual nums 
-        #index each for modifers then remainder to subB12num
-
-    #1372521 -> 562349
 
 '''#print(base12numberConvert(1372521.13))
 #print(base12ImageRef(base12numberConvert(1372521)))

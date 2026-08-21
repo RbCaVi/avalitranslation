@@ -686,29 +686,17 @@ def createNumbersWin():
                 #print(lastWidth,lastHeight)
     
     def newNumber(b10Num):
-        nonlocal VERT
-        nonlocal B10NUM
-        nonlocal B12NUM
-        Negitivenum = 0
-        if b10Num < 0:
-            Negitivenum = 1
-            B10NUM = -b10Num #+ (-b10Num*2)
-        else:
-            B10NUM = b10Num
         b10EnglishDisp.config(text=b10Num)
-        #print('b10Num:',b10Num)
-        #print('B10NUM:',B10NUM)
-        B12NUM = AN.base12numberConvert(B10NUM)
-        b12num = B12NUM
-        if Negitivenum == 1:
-            B12NUM.insert(0,'Negitive')
-        #print('B12NUM:',B12NUM,'-cNW->nN line 604')
-        b12num = str(b12num).replace(" ","").replace("'","").replace("Negitive",'-').replace(",","").replace("[","").replace("]","")
-        #b12num = str(b12num).replace("'Negitive', ","").replace(", ","").replace("]","") #Does not always work in cases of A B or other uniqe
-        #print('b12num:',b12num,'-cNW->nN line 604')
+        negative = b10Num < 0
+        if negative:
+            b10Num = -b10Num
+        b12num = AN.base12numberConvert(b10Num)
+        b12num = ''.join(map(str, b12num))
+        if negative:
+            b12num = '-' + b12num
 
         b12EnglishDisp.config(text=b12num)        
-        manifest = AN.base12ImageRef(B10NUM,B12NUM,Negitivenum) 
+        manifest = AN.base12ImageRef(b10Num,b12num,int(negative)) 
         #print('manifest:',manifest)
         
         writeNumber(2,2,manifest,VERT)   
