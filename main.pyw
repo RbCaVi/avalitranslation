@@ -363,6 +363,7 @@ For presenting me the joys of this community:\n \
 • And many, many others. \
 ",font=('arial',16),justify='left',background=Theme[0],foreground=Theme[1]) 
     License = Label(content_frame,text="\nThis project is licensed under the GNU General Public License v3 (GPLv3).",font=('arial',14),background=Theme[0],foreground=Theme[1])
+    Credit2 = Label(content_frame,text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",font=('arial',14),background=Theme[0],foreground=Theme[1])
     
     #Scratch = Label(content_frame,text="test",font=('avali scratch',30), background="white", borderwidth="10px", foreground="#fc850f")
     #English = Label(content_frame,text="test",font=('arial',20),bg='black') #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
@@ -373,6 +374,7 @@ For presenting me the joys of this community:\n \
     Preamble.grid(column=0,row=1)
     Credits.grid(column=0,row=2)
     License.grid(column=0,row=3)
+    Credit2.grid(column=0,row=4)
     '''Credit1.grid(column=0,row=3)
     Credit2.grid(column=3,row=4)
     Credit3.grid(column=0,row=5)
@@ -1016,7 +1018,7 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     if WinCode == False: #If denied
         return(False) #explode
     Mwin.configure(background=Theme[2])
-    Mwin.title("Avalian Translation Software")
+    Mwin.title("Avalian Translation Software (RbCaVi Fork)")
     WindowToTop('M')
     #End Window management
 

@@ -1,6 +1,9 @@
+# avalitranslation (rbcavi fork)
+hi i'm rbcavi i added decimal base12 support and refactored some of the code. also fixed a few spelling errors.
+
 # avalitranslation
 Software to translate the avali language. 
-This software is made 100% by me, every line- except for maybe a couple dozen- was understood and written at some point. There is like one short function somewhere that was beyond me that I had to outsource. With that being said I am very afraid of someone stealing ownership of it somehow as this is my first large project (taking over 6 months). So the software is licenced under the GNU General Public License v3 (GPLv3). See the licence file.
+This software is made 100% by me, every line- except for maybe a couple dozen- was understood and written at some point. There is like one short function somewhere that was beyond me that I had to outsource. With that being said I am very afraid of someone stealing ownership of it somehow as this is my first large project (taking over 6 months). So the software is licenced under the GNU General Public License v3 (GPLv3). See the license file.
 
 This project was started in roughly 9/20/2024 although it could have been a bit longer than that. Version 1 (Workable inital release) was finsihed as of 7/13/2025. I had my full attention on college and other matters so my projects had to be put on hold, including the one that was supposed to accompany this one. I have expansions and additonal content and features I will be adding to this as time goes on but I wanted to get it out sooner than later because due to my perfectionism "later" is basicaly never. 
 
