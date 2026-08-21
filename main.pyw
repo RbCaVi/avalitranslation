@@ -247,27 +247,14 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
             else:
                 StringVar1 += string[i]
                 k-=1
-    def changeText(inp): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking ig the user inputs a word greater that 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
+    def setRandWord(category):
+        changeText(GRC.ChallengeRandSample(category))
+    def setUserWord():
+        changeText(cInput.get("1.0", "end-1c"))
+    def changeText(Ntext): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking ig the user inputs a word greater that 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
         global StringVar1
-        global Ftext
         maxsize = 40
         Ftext = ''
-        if inp == 0:
-            Ntext = GRC.ChallengeRandSample(0)
-            #pronounciationDisp(Ntext)
-        elif inp == 1:
-            Ntext = GRC.ChallengeRandSample(1)
-            #pronounciationDisp(Ntext)
-        elif inp == 2:
-            Ntext = GRC.ChallengeRandSample(2)
-            #pronounciationDisp(Ntext)
-        elif inp == 3:
-            Ntext = GRC.ChallengeRandSample(3)
-        elif inp == 4:
-            Ntext = GRC.ChallengeRandSample(4)
-        elif inp == 22:
-            Ntext = cInput.get("1.0", "end-1c")
-        
         if len(Ntext) > 40:
             #StringVar1 = chunk_string(Ntext, maxsize)
             Ftext = ""
@@ -309,12 +296,12 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     swichFrame = Frame(content_frame)
     switch1 = Button(swichFrame,text="Hide English",command=lambda: switchCover(1),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
     switch2 = Button(swichFrame,text="Hide Table",command=lambda: switchCover(2),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
-    Option0 = Button(buttonFrame,text="4 letter word",command=lambda: changeText(0),bg=Theme[8],fg=Theme[9])
-    Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: changeText(1),bg=Theme[8],fg=Theme[9])
-    Option2 = Button(buttonFrame,text="Sentence",command=lambda: changeText(2),bg=Theme[8],fg=Theme[9])
-    Option3 = Button(buttonFrame,text="Paragraph",command=lambda: changeText(3),bg=Theme[8],fg=Theme[9])
-    Option4 = Button(buttonFrame,text="Number",command=lambda: changeText(4),bg=Theme[8],fg=Theme[9])
-    Option22 = Button(buttonFrame,text="Custom Input",command=lambda: changeText(22),bg=Theme[8],fg=Theme[9])
+    Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
+    Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
+    Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
+    Option3 = Button(buttonFrame,text="Paragraph",command=lambda: setRandWord(3),bg=Theme[8],fg=Theme[9])
+    Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
+    Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
     cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
     cInput.bind("<Return>",lambda event: changeText(22))
     refimg = Label(content_frame,image=RefranceImg,width=895,height=61,background=Theme[2])
@@ -866,23 +853,16 @@ def createPronunciationWin():
     StringVar2 = ''
     Ntext = ''
     ###Functions
-    def changeText(inp):
+    def setRandWord(category):
+        changeText(GRC.ChallengeRandSample(category))
+    def setUserWord():
+        changeText(cInput.get("1.0", "end-1c"))
+    def changeText(Ntext):
         global StringVar1
         global StringVar2
         maxsize = 70
         Ftext = ''
-        if inp == 0:
-            Ntext = GRC.ChallengeRandSample(0)
-        elif inp == 1:
-            Ntext = GRC.ChallengeRandSample(1)
-        elif inp == 2:
-            Ntext = GRC.ChallengeRandSample(2)
-        elif inp == 3:
-            Ntext = GRC.ChallengeRandSample(3)
-        elif inp == 4:
-            Ntext = GRC.ChallengeRandSample(4)
-        elif inp == 22:
-            Ntext = cInput.get("1.0", "end-1c")
+
         StringVar1 = Ntext
         StringVar2 = str(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()))
         
@@ -993,12 +973,12 @@ def createPronunciationWin():
     English = Label(content_frame,text=StringVar1,font=('arial',10),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     EnglishO = Label(content_frame,text=StringVar2,font=('arial',20),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     #switch = Button(content_frame,text="minimize")#,command=lambda: )
-    Option0 = Button(content_frame,text="4Word",command=lambda: changeText(0),bg=Theme[8],fg=Theme[9])
-    Option1 = Button(content_frame,text="6Word",command=lambda: changeText(1),bg=Theme[8],fg=Theme[9])
-    Option2 = Button(content_frame,text="sent.",command=lambda: changeText(2),bg=Theme[8],fg=Theme[9])
-    Option3 = Button(content_frame,text="para.",command=lambda: changeText(3),bg=Theme[8],fg=Theme[9])
-    Option4 = Button(content_frame,text="numb.",command=lambda: changeText(4),bg=Theme[8],fg=Theme[9])
-    Option22 = Button(content_frame,text="Custom",command=lambda: changeText(22),bg=Theme[8],fg=Theme[9])
+    Option0 = Button(content_frame,text="4Word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
+    Option1 = Button(content_frame,text="6Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
+    Option2 = Button(content_frame,text="sent.",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
+    Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),bg=Theme[8],fg=Theme[9])
+    Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
+    Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
     cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
     cInput.bind("<Return>",lambda event: changeText(22))#enterHandler())
     ##Griding
@@ -1040,29 +1020,15 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     WindowToTop('M')
     #End Window management
 
-    def selection(inp): #takes button inputs and opens windows coresponding to button indexs
-        if inp == 0: #Credits
-            createCreditsWin()
-        elif inp == 1: #Options
-            createOptionsWin()
-        elif inp == 2: #text translation Window
-            createFontTranslationWin()
-        elif inp == 3: #numbers window
-            createNumbersWin()
-        elif inp == 4: #pronunciation window
-            createPronunciationWin()
-        else:
-            pass
-
     border_frame = Frame(Mwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     Title = Label(content_frame,font=('Helvetica 30 italic'),text="Avalian Translation Software",background=Theme[0],foreground=Theme[3])
     Preface = Label(content_frame,font=('Helvetica 18 italic'),text="By: Renauli Snow",background=Theme[0],foreground=Theme[3]) #Aw du Bub du day. Bah.. Blep.
-    Option0 = Button(content_frame,font=('Helvetica 18 italic'),text="  Credits  ",command=lambda: selection(0),background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option1 = Button(content_frame,font=('Helvetica 18 italic'),text="  Options  ",command=lambda: selection(1),background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option2 = Button(content_frame,font=('Helvetica 18 normal'),text="Font Translation",command=lambda: selection(2),background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=lambda: selection(3),background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=lambda: selection(4),background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    Option0 = Button(content_frame,font=('Helvetica 18 italic'),text="  Credits  ",command=createCreditsWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    Option1 = Button(content_frame,font=('Helvetica 18 italic'),text="  Options  ",command=createOptionsWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    Option2 = Button(content_frame,font=('Helvetica 18 normal'),text="Font Translation",command=createFontTranslationWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
     ##db349c
     border_frame.pack()
     content_frame.pack()
