@@ -634,56 +634,52 @@ def createNumbersWin():
 
     def writeNumber(x,y,manifest,vert): #write full number to canvas
         #add vertical option
-        panel.delete('all') #avoid memory leak
-        #Horizintal
-        lastWidth = 0
-        lastHeight = 0
-        lastX = 0
-        lastY = 0
+        #panel.delete('all') # delete all previous images to avoid memory leak
         centerlineH = 92 #maxHeight of tallest img in set
         centerlineV = 60 #maxWidth of widest img in set
         if vert == 0: #Horizontal
-            for i in range(len(manifest)):
-                if i == 0:
-                    lastWidth,lastHeight = get_image_dimensions('Images/numChars/'+str(manifest[0])+'.png')
-                    y = centerlineH/2 -lastHeight/2
-                    lastX,lastY = x,y
-                    Index = writeImg(x,y,'Images/numChars/'+str(manifest[0])+'.png')
-                    #print(x,y,end=',')
-                    #print(lastWidth,lastHeight)
-                    
-                else:
-                    newX = lastX+lastWidth+10
-                    lastWidth,lastHeight = get_image_dimensions('Images/numChars/'+str(manifest[i])+'.png')
-                    newY = centerlineH/2 - lastHeight/2
-                    lastX,lastY = newX,newY
-                    Index = writeImg(newX,newY,'Images/numChars/'+str(manifest[i])+'.png')
-                    #print(newX,newY,end=',')
-                    #print(lastWidth,lastHeight)
-                #insert Inbetween Characters
-                if manifest[i] == 'Decimal' or i == len(manifest)-1: #if last character was a decimal dont put an in-between glyph OR if last glyph in the nnumber
-                    pass
-                else:
-                    newX = lastX+lastWidth/2
-                    newY = centerlineH/2
-                    Index = writeImg(newX,newY,'Images/numChars/InbetweenHori.png')
-                    #print('Inbetween:',newX,newY,end=',')
-                    #print(LoadedInscriptions[Index].getDimensions())
-        else:
-            if i == 0:
-                Index = writeImg(x,y,'Images/numChars/'+str(manifest[0])+'.png')
-                lastWidth,lastHeight = LoadedInscriptions[Index].getDimensions()
-                lastX,lastY = x,y
-                #print(lastWidth,lastHeight)
-                
-            else:
-                newX = lastX
-                newY = lastY+lastHeight+10
-                Index = writeImg(newX,newY,'Images/numChars/'+str(manifest[i])+'.png')
-                lastWidth,lastHeight = LoadedInscriptions[Index].getDimensions()
-                lastX,lastY = newX,newY
-                #print(newX,newY)
-                #print(lastWidth,lastHeight)
+            # so these are arranged in a straight line somehow
+            # i believe they are vertically centered, with a 10px gap in between adjacent images
+            # the digit separator appears to be centered on the right edge of the digit before it
+            # no that's not right it's left aligned to the center of the preceding digit and top aligned to the center line
+            # i assume the decimal point would do the same
+            # so for each digit:
+            #   draw
+            #   add separator
+            #   shift origin for next
+            for i,im in enumerate(manifest):
+                if im == 'Decimal':
+                    continue # should have been drawn by the previous iteration
+                imf = 'Images/numChars/'+im+'.png'
+                w,h = get_image_dimensions(imf)
+                y = centerlineH / 2 - h / 2
+                Index = writeImg(x,y,imf) # index is ignored ???
+                if i != len(manifest) - 1:
+                    if manifest[i + 1] == 'Decimal': 
+                        sepf = 'Images/numChars/DecimalHori.png'
+                    else:
+                        sepf = 'Images/numChars/InbetweenHori.png'
+                    Index = writeImg(x + w / 2,centerlineH / 2,sepf)
+                x = x + w + 10 # shift for the next digit
+        else: # vertical
+            # i'll do something similar for the vertical layout
+            # horizontally centered, 10px vertical gap
+            # i don't know why, but i feel like the separator should go to the left
+            for i,im in enumerate(manifest):
+                if im == 'Decimal':
+                    continue # should have been drawn by the previous iteration
+                imf = 'Images/numChars/'+im+'.png'
+                w,h = get_image_dimensions(imf)
+                x = centerlineW / 2 - w / 2
+                Index = writeImg(x,y,imf) # index is ignored ???
+                if i != len(manifest) - 1:
+                    if manifest[i + 1] == 'Decimal': 
+                        sepf = 'Images/numChars/DecimalVert.png'
+                    else:
+                        sepf = 'Images/numChars/InbetweenVert.png'
+                    sepw,seph = get_image_dimensions(sepf)
+                    Index = writeImg(x - w / 2 - sepw,y + h / 2,sepf)
+                y = y + h + 10 # shift for the next digit
     
     def newNumber(b10Num):
         b10EnglishDisp.config(text=b10Num)
@@ -699,7 +695,7 @@ def createNumbersWin():
         manifest = AN.base12ImageRef(b12num,negative) 
         #print('manifest:',manifest)
         
-        writeNumber(2,2,manifest,VERT)   
+        writeNumber(2,2,manifest,VERT)
     
     def buttonDecode(i):
         nonlocal VERT
