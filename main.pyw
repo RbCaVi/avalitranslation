@@ -758,12 +758,12 @@ def createNumbersWin():
     DecimalLength.set(1)
     NegativeState = Button(random_frame,text='Positive',command=lambda:toggleSign(),bg=Theme[8],fg=Theme[9]) #whether to generate negative numbers or not
     randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),bg=Theme[8],fg=Theme[9]) #submit random num
-    def enterHandler():
+    def enterHandler(event):
         updateNumber()
         return "break"
     ###Options###
     userInput = Text(util_frame,width=30,height=1,bg=Theme[6]) #User in Textbox
-    userInput.bind("<Return>",lambda event: enterHandler())
+    userInput.bind("<Return>",enterHandler)
 
     userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
     base10Label = Label(util_frame,text='Base-10:',font=('arial',10),background=Theme[0],foreground=Theme[1])
@@ -903,8 +903,11 @@ def createPronunciationWin():
     Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),bg=Theme[8],fg=Theme[9])
     Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
     Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
+    def enterHandler(event):
+        updateNumber()
+        return "break"
     cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
-    cInput.bind("<Return>",lambda event: setUserWord())#enterHandler())
+    cInput.bind("<Return>",enterHandler)
     ##Griding
     PronunciationTableHead.grid(column=0,row=0,columnspan=6)
     PronunciationDesc.grid(column=0,row = 1,columnspan=6)
