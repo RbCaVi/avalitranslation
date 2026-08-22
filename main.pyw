@@ -857,39 +857,40 @@ def createPronunciationWin():
     Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions)
     Ndropbutton.config(bg=Theme[8],fg=Theme[9]) 
     #Ndropbutton.config(bg=Theme[0])
-    Hdropclicked.set(str(HpronOptions[0]))
     #ClampingChars
-    ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brakets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
+    ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brackets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
     ClampingCharsSelected = StringVar()
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
     ClampingCharsButton.config(bg=Theme[8],fg=Theme[9]) 
     #Load settings
     CC = str(GO.readIni("Pronunciation","Cchars")) #read the options
-    if CC == '0' or CC == '1' or CC == '2' or CC == '3' or CC == '4' or CC == '5' or CC == '6': #if valid entry
-        if int(CC) == 0: #Last used 
+    if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
+        if CC == '0': #Last used 
             #print('Read CC = 0')
-            LCC = str(GO.readIni("Pronunciation","LastH")) #read the options
-            if LCC == '0' or LCC == '1' or LCC == '2' or LCC == '3' or LCC == '4' or LCC == '5': #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
-                ClampingCharsSelected.set(str(ClampingCharsOptions[int(LCC)]))
-        elif int(CC) <= 6 and int(CC) >= 1: #Default set, set it.
+            LCC = str(GO.readIni("Pronunciation","LastC")) #read the options
+            if LCC in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
+                clampingcharsindex = int(LCC)
+        else: #Default set, set it.
             #print('Read CC =',str(CC-1))
-            ClampingCharsSelected.set(str(ClampingCharsOptions[int(CC)-1]))
-    else: #else defult horizonta;
+            clampingcharsindex = int(CC)-1
+    else: # invalid value
         #print('Program Default')
-        ClampingCharsSelected.set(str(ClampingCharsOptions[1]))
-    HP = str(GO.readIni("Pronunciation","Hpronhars")) #read the options
-    if HP == '0' or HP == '1' or HP == '2' or HP == '3' or HP == '4' or HP == '5': #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
-        if int(HP) == 0: #
+        clampingcharsindex = 1 # the second option - short pause (-)
+    ClampingCharsSelected.set(ClampingCharsOptions[clampingcharsindex])
+    HP = str(GO.readIni("Pronunciation","Hpronchars")) #read the options
+    if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
+        if HP == '0': #
             #print('Read HP = 0')
             LHP = str(GO.readIni("Pronunciation","LastH")) #read the options
-            if LHP == '0' or LHP == '1' or LHP == '2' or LHP == '3' or LHP == '4': # if valid
-                Hdropclicked.set(str(HpronOptions[int(LHP)]))
-        elif int(HP) >= 1 and int(HP) <= 5: #
+            if LHP in ['0', '1', '2', '3', '4']: # if valid
+                hpronindex = int(LHP)
+        else: #
             #print('Read HP =',str(HP-1))
-            Hdropclicked.set(str(HpronOptions[int(HP)-1]))
-    else: #else defult horizonta;
+            hpronindex = int(HP)-1
+    else: # invalid value
         #print('HP = Program Default')
-        Hdropclicked.set(str(HpronOptions[1]))
+        hpronindex = 1 # the second option - [] brackets
+    Hdropclicked.set(HpronOptions[hpronindex])
     #End Load settings
 
     ##
