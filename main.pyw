@@ -842,11 +842,8 @@ def createPronunciationWin():
     SpecialReplaceStr = ''
     for c in AP.specialpronchars:
         SpecialCharsStr += '  '+c.upper()+' =\n'
-    for i in range(len(AP.replacements)):
-        if i == 0:
-            SpecialReplaceStr += str(AP.replacements[len(AP.replacements)-1])+'\n'
-        else:
-            SpecialReplaceStr += str(AP.replacements[i-1])+'\n'
+    for r in AP.replacements:
+        SpecialReplaceStr += r+'\n'
     ##Objects
     
     NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),background=Theme[0],foreground=Theme[1])

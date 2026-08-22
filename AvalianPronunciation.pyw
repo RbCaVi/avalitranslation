@@ -1,7 +1,7 @@
 import re
 
-specialpronchars = ['f','j','n','v']
-replacements = ['y-ah','bu','short pause or "ha" sound','hthk'] #
+specialpronchars = ['v','f','j','n']
+replacements = ['hthk','y-ah','bu','short pause or "ha" sound'] #
 #abcde ghi klm opqrstu wxyz  Present
 #    f    j   n       v      Missing
 
