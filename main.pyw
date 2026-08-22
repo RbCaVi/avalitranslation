@@ -840,8 +840,8 @@ def createPronunciationWin():
     PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), background=Theme[0], foreground=Theme[1])
     SpecialCharsStr = ''
     SpecialReplaceStr = ''
-    for i in range(int(len(AP.specialpronchars)/2)):
-        SpecialCharsStr += '  '+str(AP.specialpronchars[i*2-1])+' =\n'
+    for c in AP.specialpronchars:
+        SpecialCharsStr += '  '+c.upper()+' =\n'
     for i in range(len(AP.replacements)):
         if i == 0:
             SpecialReplaceStr += str(AP.replacements[len(AP.replacements)-1])+'\n'
