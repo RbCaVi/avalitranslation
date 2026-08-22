@@ -192,6 +192,18 @@ class SidebarMenu(): #Class to create the menubar
         SidebarMenu.MenuImgs.append(menuImg4)
         SidebarMenu.MenuImgs.append(menuImg5)
 
+def chunkText(text, maxsize): # splits every line at the first space after maxsize characters # used in font translation and pronounciation
+    chunked = ""
+    k = 0
+    for c in text:
+        if k >= maxsize and c == " ":
+            chunked += "\n"
+            k = 0
+            continue
+        k += 1
+        chunked += c
+    return chunked
+
 def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
     #Window Register Management
     if CheckWindowRegister('T') == False: #Clear creating the window with the register, True means its allowed
@@ -207,81 +219,37 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
 
     EcoverStatus = True
     TcoverStatus = True
-    StringVar1 = ''
     ReferenceImg = ImageTk.PhotoImage(iT.performTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
-    def switchCover(inp): # Swiches the visibility of the centeral elements of this page to allow for practice of translation with or without the key or the direct translation. Does this by switching the background of the transparent image key and English text display respectivly to the same color as their foreground color.
+    def switchCoverEnglish(): # Switches the visibility of the central elements of this page to allow for practice of translation with or without direct translation. Does this by switching the background of the English text display to the same color as its foreground color.
         nonlocal EcoverStatus    
+        if EcoverStatus == True:
+            English.config(fg=Theme[1])
+            switch1.config(relief=RAISED)
+            EcoverStatus = False
+        else:
+            English.config(fg=Theme[0])
+            switch1.config(relief=SUNKEN)
+            EcoverStatus = True
+    def switchCoverTable(): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
         nonlocal TcoverStatus    
-        if inp == 1:
-            if EcoverStatus == True:
-                English.config(fg=Theme[1])
-                switch1.config(relief=RAISED)
-                EcoverStatus = False
-            else:
-                English.config(fg=Theme[0])
-                switch1.config(relief=SUNKEN)
-                EcoverStatus = True
-        elif inp == 2:
-            if TcoverStatus == True:
-                refimg.config(bg=Theme[0])
-                switch2.config(relief=RAISED)
-                TcoverStatus = False
-            else:
-                refimg.config(bg=Theme[2])
-                switch2.config(relief=SUNKEN)
-                TcoverStatus = True
-    def chunk_string(string, maxsize):
-            #return [string[i:i + maxsize] for i in range(0, len(string), maxsize)]
-        global StringVar1
-        car = int(len(string))
-        k = maxsize
-        for i in range(car):
-            #print("k: ",k," = ",string[i])
-            #for k in range(maxsize):
-            if k == 0:
-                if string[i] == " ":
-                    StringVar1 += "/n"
-                    k = maxsize
-                else:
-                    StringVar1 += string[i]
-            else:
-                StringVar1 += string[i]
-                k-=1
+        if TcoverStatus == True:
+            refimg.config(bg=Theme[0])
+            switch2.config(relief=RAISED)
+            TcoverStatus = False
+        else:
+            refimg.config(bg=Theme[2])
+            switch2.config(relief=SUNKEN)
+            TcoverStatus = True
     def setRandWord(category):
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
         changeText(cInput.get("1.0", "end-1c"))
     def changeText(Ntext): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking if the user inputs a word greater than 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
-        global StringVar1
         maxsize = 40
-        Ftext = ''
-        if len(Ntext) > 40:
-            #StringVar1 = chunk_string(Ntext, maxsize)
-            Ftext = ""
-            car = int(len(Ntext))
-            k = maxsize
-            for i in range(car):
-                #print("k: ",k," = ",Ntext[i]) #DEBUG
-                #for k in range(maxsize):
-                if k == 0:
-                    if Ntext[i] == " ":
-                        Ftext += "\n"
-                        k = maxsize
-                    else:
-                        Ftext += Ntext[i]
-                else:
-                    Ftext += Ntext[i]
-                    k-=1
-            
-            Scratch.config(text=Ftext)
-            English.config(text=Ftext)     
-        else:
-            Ftext +=str(Ntext)
-            #print('Ftex',Ftext) #DEBUG
-            #StringVar1 = Ftext
-            #print('Str1',StringVar1) #DEBUG w
-            Scratch.config(text=Ftext)
-            English.config(text=Ftext)
+        Ftext = chunkText(Ntext, maxsize)
+
+        Scratch.config(text=Ftext)
+        English.config(text=Ftext)
     
     border_frame = Frame(Twin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
@@ -290,12 +258,12 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
 
     #scrollbar = Scrollbar(content_frame, orient="vertical", command=content_frame.yview)
     #https://www.tutorialspoint.com/implementing-a-scrollbar-using-grid-manager-on-a-tkinter-window
-    Scratch = Label(content_frame,text=StringVar1,font=('avali scratch',30), background="white", borderwidth="10px", foreground=Theme[2])
-    English = Label(content_frame,text=StringVar1,font=('arial',20),bg=Theme[0],fg=Theme[0]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+    Scratch = Label(content_frame,text='',font=('avali scratch',30), background="white", borderwidth="10px", foreground=Theme[2])
+    English = Label(content_frame,text='',font=('arial',20),bg=Theme[0],fg=Theme[0]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     buttonFrame = Frame(content_frame,background=Theme[0])
     swichFrame = Frame(content_frame)
-    switch1 = Button(swichFrame,text="Hide English",command=lambda: switchCover(1),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
-    switch2 = Button(swichFrame,text="Hide Table",command=lambda: switchCover(2),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
+    switch1 = Button(swichFrame,text="Hide English",command=lambda: switchCoverEnglish(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
+    switch2 = Button(swichFrame,text="Hide Table",command=lambda: switchCoverTable(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
     Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
     Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
     Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
@@ -851,8 +819,6 @@ def createPronunciationWin():
     Pwin.title("Avalian Pronunciation")    
     Pwin.configure(background=Theme[2])
     #End Window management
-    StringVar1 = ''
-    StringVar2 = ''
     Ntext = ''
     ###Functions
     def setRandWord(category):
@@ -860,51 +826,9 @@ def createPronunciationWin():
     def setUserWord():
         changeText(cInput.get("1.0", "end-1c"))
     def changeText(Ntext):
-        global StringVar1
-        global StringVar2
         maxsize = 70
-        Ftext = ''
-
-        StringVar1 = Ntext
-        StringVar2 = str(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()))
-        
-        #print('strvar2:',StringVar2)
-        #print('str(strvar2):',str(StringVar2))
-        if len(Ntext) > maxsize:
-            Ftext = ""
-            car = int(len(Ntext))
-            k = maxsize
-            for i in range(car):
-                if k == 0:
-                    if Ntext[i] == " ":
-                        Ftext += "\n"
-                        k = maxsize
-                    else:
-                        Ftext += Ntext[i]
-                else:
-                    Ftext += Ntext[i]
-                    k-=1
-            English.config(text=Ftext)
-            StringVar1=Ftext     
-
-            Ftext = ""
-            car = int(len(StringVar2))
-            k = maxsize
-            for i in range(car):
-                if k == 0:
-                    if StringVar2[i] == " ":
-                        Ftext += "\n"
-                        k = maxsize
-                    else:
-                        Ftext += StringVar2[i]
-                else:
-                    Ftext += StringVar2[i]
-                    k-=1
-            EnglishO.config(text=Ftext)
-            StringVar2=Ftext     
-        else:
-            English.config(text=Ntext)
-            EnglishO.config(text=StringVar2)
+        English.config(text=chunkText(Ntext, maxsize))
+        EnglishO.config(text=chunkText(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()), maxsize))
 
     border_frame = Frame(Pwin,borderwidth="4px",background=Theme[2])#background="#fc850f"
     content_frame = Frame(border_frame,borderwidth= "12px",background=Theme[0])
@@ -972,8 +896,8 @@ def createPronunciationWin():
     #End Load settings
 
     ##
-    English = Label(content_frame,text=StringVar1,font=('arial',10),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    EnglishO = Label(content_frame,text=StringVar2,font=('arial',20),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+    English = Label(content_frame,text='',font=('arial',10),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+    EnglishO = Label(content_frame,text='',font=('arial',20),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     #switch = Button(content_frame,text="minimize")#,command=lambda: )
     Option0 = Button(content_frame,text="4Word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
     Option1 = Button(content_frame,text="6Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
