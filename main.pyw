@@ -136,6 +136,24 @@ def WindowRegistration(type='X'):
     if type == 'X':
         print('Undocumented window type.')
 
+def createWin(type, title):
+    #Window Register Management
+    if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
+        return(None) #killbind
+    if type == 'M': # main window
+        win = Tk()
+    else:
+        win = Toplevel(Mwin) #Make window
+    WinCode = AddWindowToRegister(win,type) #Ask to register with the Register, Save Date as unique code.
+    if WinCode == False: #If denied
+        return(None) #explode
+    if type != 'M':
+        win.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(win,WinCode,type)) #Use saved code to remove from register
+    win.title("Avalian Font Translation")
+    win.configure(background=Theme[2])
+    #End Window management
+    return win
+
 class HoverButton(Button): #Used for the sidebar menu buttons
     def __init__(self, master, **kw):
         Button.__init__(self,master,**kw)
@@ -205,17 +223,9 @@ def chunkText(text, maxsize): # splits every line at the first space after maxsi
     return chunked
 
 def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
-    #Window Register Management
-    if CheckWindowRegister('T') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Twin = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(Twin,'T') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Twin.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(Twin,WinCode,'T')) #Use saved code to remove from register
-    Twin.title("Avalian Font Translation")
-    Twin.configure(background=Theme[2])
-    #End Window management
+    Twin = createWin('T', 'Avalian Font Translation')
+    if Twin is None:
+        return False # nope
 
     EcoverStatus = True
     TcoverStatus = True
@@ -298,18 +308,9 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Twin.mainloop()
     
 def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
-    #Window Register Management
-    if CheckWindowRegister('C') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Cwin = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(Cwin,'C') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Cwin.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(Cwin,WinCode,'C')) #Use saved code to remove from register
-    Cwin.title("Avalian Translation Credits")
-    Cwin.configure(background=Theme[2])
-
-    #End Window management
+    Cwin = createWin('C', 'Avalian Translation Credits')
+    if Cwin is None:
+        return False # nope
 
     border_frame = Frame(Cwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
@@ -352,18 +353,9 @@ For presenting me the joys of this community:\n \
     Cwin.mainloop()
 
 def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
-    #Window Register Management
-    if CheckWindowRegister('O') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Owin = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(Owin,'O') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Owin.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(Owin,WinCode,'O')) #Use saved code to remove from register
-    Owin.title("Avalian Translation Options")
-    Owin.configure(background=Theme[2])
-
-    #End Window management
+    Owin = createWin('O', 'Avalian Translation Options')
+    if Owin is None:
+        return False # nope
 
     def button(setting,state): #accepts button commands and textboxes for options
         print("runing",'-cOW->b line 369')
@@ -514,16 +506,9 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Owin.mainloop()
 
 def createNumbersWin():
-    #Window Register Management
-    if CheckWindowRegister('N') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Nwin = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(Nwin,'N') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Nwin.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(Nwin,WinCode,'N')) #Use saved code to remove from register
-    Nwin.configure(background=Theme[2])
-    #End Window management
+    Nwin = createWin('N', 'Avalian Number Translation')
+    if Nwin is None:
+        return False # nope
     
     VERT = 0
     NEG = 0
@@ -808,17 +793,10 @@ def createNumbersWin():
     Nwin.mainloop()
 
 def createPronunciationWin():
-    #Window Register Management
-    if CheckWindowRegister('P') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Pwin = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(Pwin,'P') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Pwin.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(Pwin,WinCode,'P')) #Use saved code to remove from register
-    Pwin.title("Avalian Pronunciation")    
-    Pwin.configure(background=Theme[2])
-    #End Window management
+    Pwin = createWin('P', 'Avalian Pronunciation')
+    if Pwin is None:
+        return False # nope
+
     Ntext = ''
     ###Functions
     def setRandWord(category):
@@ -935,17 +913,9 @@ def createPronunciationWin():
 def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
     global MenuImgs
     global Mwin
-    #Window Register Management
-    if CheckWindowRegister('M') == False: #Clear creating the window with the register, True means its allowed
-        return(False) #killbind
-    Mwin = Tk() #Make Main window
-    WinCode = AddWindowToRegister(Mwin,'M') #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return(False) #explode
-    Mwin.configure(background=Theme[2])
-    Mwin.title("Avalian Translation Software (RbCaVi Fork)")
-    WindowToTop('M')
-    #End Window management
+    Mwin = createWin('M', 'Avalian Translation Software (RbCaVi Fork)')
+    if Mwin is None:
+        return False # nope
 
     border_frame = Frame(Mwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
