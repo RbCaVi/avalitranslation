@@ -19,7 +19,6 @@ try:
 except:
     GO.errorMsg('avali-scratch.ttf missing','The file "avali-scratch.ttf" is missing, please replace avali-scratch.ttf or reinstall program.')
     GO.exitPrgrm()
-WindowRegister = []
 GO.verifyiniIntegrity() #check on ini file
 #Theme Loading
 Theme = GO.readIni("Theme","setTheme") #Get theme from ini
@@ -53,49 +52,49 @@ else:
     #print("Start Else statement")
     Theme = GO.retrieveTheme(Theme[0],Theme[1]) #Run theme through seperate function to populate global theme list
 #print('4LL:',Theme)
+
+windowregister = {type:{} for type in 'MPOCNT'} # type -> id (date) -> window
+
 def AddWindowToRegister(win,type): #Add a new window to the Register, Has adorable abreviation "AWTR"
     date = time.time()
-    Entry = [win,type,date]
-    WindowRegister.append(Entry)
+    windowregister[type][date] = win
     win.iconbitmap("Images/AppIcon.ico")
-    print(WindowRegister,'-AWtR line 53')## DEBUG
+    print(windowregister,'-AWtR line 53')## DEBUG
     return date
 
 def RemoveWindowFromRegister(win,date,type): #Remove a specific window from the directory
-    for i in range(len(WindowRegister)):
-        if date == WindowRegister[i][2]:
-            if type == WindowRegister[i][1]:
-                if WindowRegister.pop(i):
-                    win.destroy()
-                    print(WindowRegister,'-RWfR line 62')## DEBUG
-                    return(True)
+    if type in windowregister:
+        if date in windowregister:
+            win.destroy()
+            print(windowregister,'-RWfR line 62')## DEBUG
+            return(True)
     win.destroy()
     GO.errorMsg('Error: Failed to remove closed window from Register','Don\'t worry nothing bad. If you have trouble opening a window please restart the application.')
     return(False)
 
-def CheckWindowRegister(type='X'): #Check if a type of window exists in the Register
-    typeCount = 0
-    for i in range(len(WindowRegister)):
-        #print("Checking for,'"+str(type)+"':",WindowRegister[i],'---',WindowRegister[i][1]) #Debug found bug checking WindowRegister[i][2] (Datecode) instead of WindowRegister[i][1] (window type)
-        if type == WindowRegister[i][1]:
-            typeCount +=1
-    if type == 'P' or type == 'O' or type == 'C' or type == 'N':
-        if typeCount >= 1:
-            return(False)
-    if type == 'T' or type == 'X':
-        if typeCount >= 3:
+def CheckWindowRegister(type='X'): #Check if a type of window is allowed to be created in the Register
+    typeCount = len(windowregister[type])
+    maxTypeCount = {
+        'P': 1,
+        'O': 1,
+        'C': 1,
+        'N': 1,
+        'T': 3,
+        'X': 3,
+    }
+    if type in maxTypeCount:
+        if typeCount > maxTypeCount[type]:
             return(False)
     return(True)
 
 def WindowToTop(type='X'): #Move a type of window to the top
     #if type == 'P' or type == 'O' or type == 'C' or type == 'N':
     #if not CheckWindowRegister(type): #I can't tell you why this works #You find it was never necessary to begin with # one collar, two sleeves
-    for i in range(len(WindowRegister)):
-        #Find stupid window object
-        if WindowRegister[i][1] == type:
-            WindowRegister[i][0].lift() #does the same thing but I am told to use the other.. perhaps different across systems
-            #WindowRegister[i][0].attributes("-topmost",True)
-            #WindowRegister[i][0].attributes("-topmost",False)
+    for win in windowregister[type].values():
+        #Find stupid window object s
+            win.lift() #does the same thing but I am told to use the other.. perhaps different across systems
+            #win.attributes("-topmost",True)
+            #win.attributes("-topmost",False)
                     
     #else:
     #    print('AHHHh')
@@ -104,35 +103,19 @@ def WindowRegistration(type='X'):
     print("Window Request Landed: Type("+str(type)+")",end='  Response: ')
     if type == 'M':
         WindowToTop('M')
-    if type == 'P':
-        print(CheckWindowRegister('P'))
-        if CheckWindowRegister('P'):
-            createPronunciationWin()
-        
-    if type == 'O':
-        print(CheckWindowRegister('O'))
-        if CheckWindowRegister('O'):
-            createOptionsWin()
+    createWinType = {
+        'P': createPronunciationWin,
+        'O': createOptionsWin,
+        'C': createCreditsWin,
+        'N': createNumbersWin,
+        'T': createFontTranslationWin,
+    }
+    if type in windowtypes:
+        print(CheckWindowRegister(type))
+        if CheckWindowRegister(type):
+            createWinType[type]()
         else:
-            WindowToTop('O')
-    if type == 'C':
-        print(CheckWindowRegister('C'))
-        if CheckWindowRegister('C'):
-            createCreditsWin()
-        else:
-            WindowToTop('C')
-    if type == 'N':
-        print(CheckWindowRegister('N'))
-        if CheckWindowRegister('N'):
-            createNumbersWin()
-        else:
-            WindowToTop('P')
-    if type == 'T':
-        print(CheckWindowRegister('T'))
-        if CheckWindowRegister('T'):
-            createFontTranslationWin()
-        else:
-            WindowToTop('T') #caused other to front actions things to break
+            WindowToTop(type)
     if type == 'X':
         print('Undocumented window type.')
 
