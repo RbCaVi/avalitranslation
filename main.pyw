@@ -75,7 +75,7 @@ def CheckWindowRegister(type='X'): #Check if a type of window is allowed to be c
         'X': 3,
     }
     if type in maxTypeCount:
-        if typeCount > maxTypeCount[type]:
+        if typeCount >= maxTypeCount[type]:
             return(False)
     return(True)
 
