@@ -65,7 +65,8 @@ def AddWindowToRegister(win,type): #Add a new window to the Register, Has adorab
 
 def RemoveWindowFromRegister(win,date,type): #Remove a specific window from the directory
     if type in windowregister:
-        if date in windowregister:
+        if date in windowregister[type]:
+            del windowregister[type][date] # remove the entry from the register
             win.destroy()
             print(windowregister,'-RWfR line 62')## DEBUG
             return(True)
