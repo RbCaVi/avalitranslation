@@ -22,9 +22,9 @@ except:
     GO.exitPrgrm()
 GO.verifyiniIntegrity() #check on ini file
 #Theme Loading
-Theme = GO.readIni("Theme","setTheme") #Get theme from ini
-#print('Theme: ',Theme)
-if not GO.retrieveTheme(Theme,1): #Validate 
+ThemeName = GO.readIni("Theme","setTheme") #Get theme from ini
+#print('Theme: ',ThemeName)
+if not GO.retrieveTheme(ThemeName,1): #Validate 
     #print('not true Validation')
     if GO.retrieveTheme('Light',1):
         Theme = GO.retrieveTheme('Light') #Run theme through seperate function to populate global theme list
@@ -41,7 +41,7 @@ if not GO.retrieveTheme(Theme,1): #Validate
         GO.resetini() #Trigger .ini Reset
 else: 
     #print("Start Else statement")
-    Theme = GO.retrieveTheme(Theme) #Run theme through seperate function to populate global theme list
+    Theme = GO.retrieveTheme(ThemeName) #Run theme through seperate function to populate global theme list
 #print('4LL:',Theme)
 
 windowregister = {type:{} for type in 'MPOCNT'} # type -> id (date) -> window
