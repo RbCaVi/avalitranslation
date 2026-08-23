@@ -23,24 +23,14 @@ except:
 GO.verifyiniIntegrity() #check on ini file
 #Theme Loading
 Theme = GO.readIni("Theme","setTheme") #Get theme from ini
-try: 
-    int(Theme[0])
-except:
-    GO.errorMsg('Illegal Character in setTheme','The setTheme option has been set to an invalid character. Please don\'t do this. \n\nIm tired of writing exceptions.')
-    GO.writeIni("Theme","setTheme",'1')
-    Theme = (1,Theme[1])
-if int(Theme[0]) < 1:
-    GO.writeIni("Theme","setTheme",'1')
-    Theme = (1,Theme[1])
-
 #print('Theme: ',Theme)
-if not GO.retrieveTheme(Theme[0],Theme[1],1): #Validate 
+if not GO.retrieveTheme(Theme,1): #Validate 
     #print('not true Validation')
-    if GO.retrieveTheme(1,Theme[1],1):
-        Theme = GO.retrieveTheme(Theme[0],1) #Run theme through seperate function to populate global theme list
-        GO.errorMsg("Error: Selected Theme Corupted","Selected Theme (Theme starting with: "+str(Theme[0])+") is corrupt (see previous errors). Launching program with defualt theme (Theme 1) and setting to default in .ini file.") 
+    if GO.retrieveTheme('Light',1):
+        Theme = GO.retrieveTheme('Light') #Run theme through seperate function to populate global theme list
+        GO.errorMsg("Error: Selected Theme Corupted","Selected Theme (Theme starting with: "+Theme+") is corrupt (see previous errors). Launching program with default theme (Light) and setting to default in .ini file.") 
         #print('1LL:',Theme)
-        GO.writeIni("Theme","setTheme",'1')#set back to lowest value
+        GO.writeIni("Theme","setTheme",'Light')#set back to default value
     else:
         #print("Defaulting to hardcoded theme, file fallback corupt(see errors)")
         GO.errorMsg('Error: Defaulting Theme','Defaulting to hardcoded theme, ini file themes are corrupt (see previous errors)')
@@ -51,7 +41,7 @@ if not GO.retrieveTheme(Theme[0],Theme[1],1): #Validate
         GO.resetini() #Trigger .ini Reset
 else: 
     #print("Start Else statement")
-    Theme = GO.retrieveTheme(Theme[0],Theme[1]) #Run theme through seperate function to populate global theme list
+    Theme = GO.retrieveTheme(Theme) #Run theme through seperate function to populate global theme list
 #print('4LL:',Theme)
 
 windowregister = {type:{} for type in 'MPOCNT'} # type -> id (date) -> window
@@ -834,11 +824,11 @@ def createPronunciationWin():
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
     ClampingCharsButton.config(bg=Theme[8],fg=Theme[9]) 
     #Load settings
-    CC = str(GO.readIni("Pronunciation","Cchars")) #read the options
+    CC = GO.readIni("Pronunciation","Cchars") #read the options
     if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
         if CC == '0': #Last used 
             #print('Read CC = 0')
-            LCC = str(GO.readIni("Pronunciation","LastC")) #read the options
+            LCC = GO.readIni("Pronunciation","LastC") #read the options
             if LCC in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
                 clampingcharsindex = int(LCC)
         else: #Default set, set it.
@@ -848,11 +838,11 @@ def createPronunciationWin():
         #print('Program Default')
         clampingcharsindex = 1 # the second option - short pause (-)
     ClampingCharsSelected.set(ClampingCharsOptions[clampingcharsindex])
-    HP = str(GO.readIni("Pronunciation","Hpronchars")) #read the options
+    HP = GO.readIni("Pronunciation","Hpronchars") #read the options
     if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
         if HP == '0': #
             #print('Read HP = 0')
-            LHP = str(GO.readIni("Pronunciation","LastH")) #read the options
+            LHP = GO.readIni("Pronunciation","LastH") #read the options
             if LHP in ['0', '1', '2', '3', '4']: # if valid
                 hpronindex = int(LHP)
         else: #

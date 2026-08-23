@@ -107,7 +107,7 @@ def resetini():
         return 'debug'
     iniBackup = '''[Theme]
 //Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
-setTheme=1
+setTheme=Light
     Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1
     Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2
 customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] 
@@ -117,12 +117,12 @@ customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,]
 TableView = 0 //0-1 Visible by default
 EnglishView = 1 //0-1 Visible by default
 [Pronunciation]
-Hpron=0 //0-5
+Hpronchars=0 //0-5
 Cchars=0 //0-6
 LastH=0 //0-4
 LastC=0 //0-5
 [Numbers]
-HV=0 //Horizontal&Vertical 0&1 respectively'''
+HV=0 //Horizontal&Vertical 0&1 respectivly'''
     eraseProtect=0
     status='Clear'
     try:
@@ -168,57 +168,38 @@ def verifyiniIntegrity():
         errorMsg('Error opening "settings.ini"',status)
 verifyiniIntegrity()
 
-def retrieveTheme(Theme,line,checkValidity=0): #returns the currently selected theme as a list of hex values by default or validates that a theme is properly formated and alerts the user if not.
-    if checkValidity == True: #with check validity set to 1: 
-        char_list = ['#','0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','A','B','C','D','E','F']
-        Theme = Theme #Value for set theme
-        Theme = int(Theme)
-        line = int(line) #Index for set theme
-        #print('ENTER: retrieveTheme -',Theme,line,checkValidity)
-        bottom = readIni("Translation","TableView") #I check where the bottom of the theme list is 
-        #Debug
-        #print("bottom:",bottom)
-        #print('Theme:',Theme)
-        #print('Line:',line)
-        if (Theme+line > int(bottom[1])-1):
-            print("Error: Invalid selection") #silent Error message Don't need to warn explicitly
-            writeIni("Theme","setTheme",0)#set back to lowest value
-            return(False)
-        rawData = open("settings.ini").read().splitlines()
+def validateHexCode(index, hexcode):
+    hexdigits = '0123456789abcdefABCDEF'
+    if len(hexcode) != 7:
+        errorMsg("invalidLength","Hex code " + str(index + 1) + " in theme "+str(Theme)+" is an invalid length. There should be a # followed by 6 characters.")
+        return False
+    if hexcode[0] != '#':
+        errorMsg("missingHash","Hex code " + str(index + 1) + " in theme "+str(Theme)+" is missing its hash symbol.")
+        return False
+    for c in hexcode[1:]:
+        if c not in hexdigits: # any but the first character are not hex digits
+            errorMsg("invalidCharacter","Hex code " + str(index + 1) + " in theme "+str(Theme)+" contains the invalid character " + repr(c) + ". Hex values should only include the characters 0-9 and A-F.")
+            return False
+    m = re.fullmatch('#[0-9a-fA-F]{6}', hexcode) # a hash followed by six hexadecimal digits (uppercase or lowercase)
+    if m is None:
+        errorMsg("invalidHex","Hex code " + str(index + 1) + " in theme "+str(Theme)+" is not valid.") # catch all
+    return m is not None
 
-        themeLine = rawData[line+Theme-1]
-        #print("themeLine:",themeLine)
-        themeLine = themeLine.split("[")
-        themeLine = themeLine[1].split("]")
-        themeLine.pop(1)
-        themeLine = themeLine[0].split(",")
+def retrieveTheme(Theme,checkValidity=0): #returns the currently selected theme as a list of hex values by default or validates that a theme is properly formated and alerts the user if not.
+    themeLine = readIni('Theme', Theme)
+    themeLine = themeLine.split("[")
+    themeLine = themeLine[1].split("]")
+    themeLine.pop(1)
+    themeLine = themeLine[0].split(",")
+    if checkValidity == True: #with check validity set to 1: 
         if len(themeLine) < 10:
             errorMsg("invalidCodeAmount","One or more hex codes in theme "+str(Theme)+" are not present. There should be 10 html color codes.")
             return False
-        for i in range(0,10,1):
-            if len(themeLine[i]) != 7:
-                errorMsg("invalidLength","One or more hex codes in theme "+str(Theme)+" is an invalid length. There should be a # followed by 6 characters.")
-                return False
-            elif '#' not in themeLine[i]:
-                errorMsg("missingHash","One or more hex codes in theme "+str(Theme)+" are missing their hash symbol.")
-                return False
-            for character in themeLine[i]:
-                if character not in char_list:
-                    errorMsg("invalidCharacter","One or more hex codes in theme "+str(Theme)+" contains an invalid character. Hex values should only include the characters 0-9 and A-F.")
-                    return False
+        if any(not validateHexCode(i,code) for i,code in enumerate(themeLine)):
+            return False
         print("Selected Theme",str(Theme),"is valid.")
         return True
     else:
-        Theme = int(Theme)
-        line = int(line)
-
-        rawData = open("settings.ini").read().splitlines()
-        themeLine = rawData[line+Theme-1]
-        themeLine = themeLine.split("[")
-
-        themeLine = themeLine[1].split("]")
-        themeLine.pop(1)        
-        themeLine = themeLine[0].split(",")
         print("Using Theme",str(Theme)+":",themeLine)
         return themeLine
 
