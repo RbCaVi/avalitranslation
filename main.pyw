@@ -132,7 +132,7 @@ def createWin(type, title):
         return(None) #explode
     if type != 'M':
         win.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(win,WinCode,type)) #Use saved code to remove from register
-    win.title("Avalian Font Translation")
+    win.title(title)
     win.configure(background=Theme[2])
     #End Window management
     return win
