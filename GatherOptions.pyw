@@ -1,5 +1,6 @@
 from tkinter import messagebox
 import os, sys
+import re
 def absolute_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller .exe"""
     if getattr(sys, 'frozen', False):  # running as .exe
@@ -8,133 +9,95 @@ def absolute_path(relative_path):
     else:  # running as .py
         return relative_path
 
-'''def writeIni(Rsection,Ratribute,Rvalue): #write saved settings to ini file #cannot write a single digit
-    with open("settings.ini", "w") as file:
-        rawData = file.read()
-        #print(rawData,"\n------------------------")
-        rawData = rawData.splitlines()
-        curSection = ""
-        count = 0
-        for i in range(len(rawData)):
-            #print(rawData[i])
-            count += len(rawData[i])+1 #+1 is for newline character
-            if "[" in rawData[i]:
-                Section = rawData[i].replace("[","").replace("]","")
-                curSection = Section
-                if curSection == Rsection:
-                    count -= len(rawData[i])
-                    for k in range(len(rawData)-i+1):
-                        #print(rawData[i+k],"  -  ",count," + ",len(rawData[i+k]))
-                        #print(rawData[i+k].split("="))
-                        count += len(rawData[i+k])+1 #+1 is for newline character
-
-                        line = rawData[i+k].split("=")
-                        if line[0] == str(Ratribute):
-                            #print("FOUND: ",line[0],"   VALUE: ",line[1])
-                            inLineCount = len(line[0])
-                            file.seek(count-len(rawData[i+k]))
-                            loi = file.read(len(rawData[i+k]))
-                            print(loi)
-                            file.seek(inLineCount)
-                            file.write("1") ###FIGURE THIS OUT #r+b
-                            print(loi)
-                            file.close()
-                            break
-        print('exit')
-
-    '''
-
 def errorMsg(Title,Desc):  #Error: 
     messagebox.showerror(Title,Desc)
 def infoMsg(Title,Desc): #Info
     messagebox.showinfo(Title, Desc)
 
-    
+# match a section of at least one character surrounded by brackets # spaces are probably ignored
+sectionregex = '\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*'
+
+# match an initial part consisting of an attribute name and an equals sign (with optional spaces)
+# then any text
+# then an optional comment starting with //
+lineregex = '(?P<initial>\\s*(?P<attribute>\\w+)\\s*=\\s*)(?P<value>.*?)(?P<final>\\s*(//.*)?)'
 
 def writeIni(Rsection,Ratribute,Rvalue):
-    with open("settings.ini", "r+") as file:
+    with open("settings.ini", "r") as file:
         rawData = file.read()
-        #print(rawData,"\n------------------------")
-        rawDataS = rawData.splitlines()
-        #print(rawDataS)
-        curSection = ""
-        count = 0
-        for i in range(len(rawDataS)):
-            #print(rawDataS[i])
-            count += len(rawDataS[i])+1 #+1 is for newline character
-            if "[" in rawDataS[i]:
-                Section = rawDataS[i].replace("[","").replace("]","")
-                curSection = Section
-                if curSection == Rsection:
-                    #count -= len(rawDataS[i])
-                    for k in range(len(rawDataS)-i+1):
-                        #print(k)
-                        #print(rawDataS[i+k],"  -  ",count," + ",len(rawDataS[i+k]))
-                        #print(rawDataS[i+k].split("="))
-                        #count += len(rawDataS[i+k])+1 #+1 is for newline character
-                        line = rawDataS[i+k].split("=")
-                        if line[0] == str(Ratribute):
-                            #print("FOUND: ",line[0],"   VALUE: ",line[1])
-                            #inLineCount = len(line[0])
-                            loi = file.read(len(rawDataS[i+k]))
-                            #print(loi)
-                            #print(str(line[0])+"="+Rvalue)
-                            rawDataS[i+k] = str(str(line[0])+"="+Rvalue)
-                            #print(loi)
-                            joiner = '\n'
-                            
-                            result = joiner.join(rawDataS)
-                            #print(result)
-                            file.truncate(0) #clear file ##So fucking stupid
-                            file.seek(0) #prevents Null value leak
-                            file.write(result) #rewrite
-                            file.close() #Close file
-                            break
+    rawDataS = rawData.splitlines()
     curSection = ""
-    
-    '''for i in range(len(rawData)):
-        print(rawData[i])
-        if "[" in rawData[i]:
-            Section = rawData[i].replace("[","").replace("]","")
-            curSection = Section
-            if curSection == Rsection:
-                for k in range(len(rawData)-i+1):
-                    line = rawData[i].split("=")
-                    if line[0] == str(Ratribute):
-                        print("FOUND: ",line[0],"   VALUE: ",line[1])
-                        #print(line[1])
-        else:
-            pass
-    '''
+    count = 0
 
-def readIni(RSection,Option): #read the ini file and return value and line
-    rawData = open("settings.ini").read().splitlines()
-    curSection = ""
-    for i in range(len(rawData)):
-        stripedDataLine =rawData[i].strip()
-        if stripedDataLine == "":
-            pass
-        elif "[" in stripedDataLine:
-            Section = stripedDataLine.replace("[","").replace("]","")
-            curSection = Section
-            #print(curSection)
-        else:
-            if curSection == RSection:
-                line = stripedDataLine.split("=")
-                #print('VALID:',end=' ')
-                #print(line)
-                if line[0].strip() == str(Option.strip()):
-                    #print("FOUND: ",line[1])
-                    if "//" in line[1]:
-                        line = line[1].split("//")
-                        #print('line(split):',line)
-                        line[1] = line[0]
-                    #print('line[1]:',line[1])
-                    return line[1],i+1
-                #print(rawData[i],end=" -> ")
-                #print("(",curSection,") ",line)
-                #print(rawData[i])
-                #print(curSection,line)
+    lines = enumerate(rawDataS) # lines is an iterator instead of a plain list, so the position in the lines is saved between the loops
+    foundsection = False
+    for i,line in lines:
+        m = re.fullmatch(sectionregex, line)
+        if m is not None:
+            if m['section'] == Rsection:
+                foundsection = True
+                break # i could nest it, but i don't want 5 levels of indents
+    if foundsection:
+        # found a matching section
+        # lines starts at the first line in section now
+        # search for a matching attribute
+        foundattribute = False
+        for i,line in lines:
+            m = re.fullmatch(lineregex, line)
+            if m is not None and m['attribute'] == Ratribute:
+                # found it
+                rawDataS[i] = m['initial'] + str(Rvalue) + m['final']
+                foundattribute = True
+                break
+            if re.fullmatch('\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*', line) is not None: # oops we're in the next section
+                break
+        else: # the loop went to the end of lines # i is the last valid index # i want it to be one more to insert the new attribute after the end
+            i += 1
+        if not foundattribute:
+            # didn't find a matching attribute, add it
+            # i will either be the index of the line containing the next section marker
+            # or the index of the (non existent) line past the end of the file
+            infoMsg('Added Attribute', 'The missing attribute ' + Ratribute + ' in the section ' + Rsection + ' in settings.ini was created.')
+            rawDataS.insert(i, Ratribute + '=' + Rvalue)
+    else:
+        # there was no matching section, add it at the end
+        # this could happen if a user creates an empty settings.ini file
+        infoMsg('Added Section', 'The missing section ' + Rsection + ' in settings.ini was created.')
+        rawDataS.append('[' + Rsection + ']')
+        rawDataS.append(Ratribute + '=' + Rvalue)
+
+    # write the content back to settings.ini
+    with open("settings.ini", "w") as file:
+        file.write('\n'.join(rawDataS))
+
+def readIni(Rsection,Ratribute): #read the ini file and return value and line
+    with open("settings.ini", "r") as file:
+        rawData = file.read()
+    rawDataS = rawData.splitlines()
+    lines = iter(rawDataS) # lines is an iterator instead of a plain list, so the position in the lines is saved between the loops
+    foundsection = False
+    for line in lines:
+        m = re.fullmatch(sectionregex, line)
+        if m is not None:
+            if m['section'] == Rsection:
+                foundsection = True
+                break
+    if foundsection:
+        # found a matching section
+        # lines starts at the first line in section now
+        # search for a matching attribute
+        foundattribute = False
+        for line in lines:
+            m = re.fullmatch(lineregex, line)
+            if m is not None and m['attribute'] == Ratribute:
+                # found it
+                return m['value']
+                break
+            if re.fullmatch('\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*', line) is not None: # oops we're in the next section
+                break
+    # nothing was found - i could copy the code from writeIni()
+    # but maybe just show a message and set it to a default value?
+    # idk
 def exitPrgrm():
     sys.exit()
 def resetini():

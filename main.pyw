@@ -539,7 +539,7 @@ def createNumbersWin():
     
     #Load settings
     HV = GO.readIni("Numbers","HV") #read the options
-    if HV in [0, 1]:
+    if HV in ['0', '1']:
         setDirection(bool(HV))
     else:
         setDirection(False)
