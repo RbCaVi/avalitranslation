@@ -1,6 +1,5 @@
 from PIL import Image, ImageColor
-Images = [] #Tinted Images
-CreatedLookup = [] #Lookup table
+Images = {} #Tinted Images
 def hex_to_rgba(value): #Get a RGBA value from a hex code
     return ImageColor.getcolor(value, "RGBA") 
 def tint_image(image, color): #tints a given alpha matte to a different color
@@ -13,16 +12,14 @@ def performTint(path, color): #image = path to image as string, color = #fffff (
     image = Image.open(path)
     name = image.filename
     expt = name + ":" + color
-    for i in range(len(CreatedLookup)): #search if it's already created
-        if CreatedLookup[i] == expt:
-            print('Tinted Image already exists.')
-            return Images[i] #give image
+    if expt in Images: #search if it's already created
+        print('Tinted Image already exists.')
+        return Images[expt] #give image
     rgbtint = hex_to_rgba(color) #grab rgb value
     #print("rgbtint:",rgbtint)
     tinted = tint_image(image,rgbtint) #Tinting process
     print('New image tinted as:',expt)
-    Images.append(tinted) #Save Images here
-    CreatedLookup.append(expt) #Save name and tint color here
+    Images[expt] = tinted #Save Images here
     return tinted #give image
 # Example usage:
 '''
