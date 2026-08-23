@@ -186,7 +186,12 @@ def validateHexCode(index, hexcode):
     return m is not None
 
 def retrieveTheme(Theme,checkValidity=0): #returns the currently selected theme as a list of hex values by default or validates that a theme is properly formated and alerts the user if not.
+    print('retrieving theme ', repr(Theme))
     themeLine = readIni('Theme', Theme)
+    if themeLine is None: # there was no theme with that name
+        errorMsg("invalidTheme","Theme "+str(Theme)+" does not exist. Check settings.ini for valid theme names.")
+        return False
+    print('retrieved theme ', repr(themeLine))
     themeLine = themeLine.split("[")
     themeLine = themeLine[1].split("]")
     themeLine.pop(1)

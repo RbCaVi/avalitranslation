@@ -360,31 +360,18 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     if Owin is None:
         return False # nope
 
+    def setTheme():
+        ThemeName = TextBox.get("1.0",END).strip()
+        if ThemeName == '':
+            return False # put a real theme next time
+        if GO.retrieveTheme(ThemeName, 1):
+            GO.writeIni("Theme","setTheme",ThemeName)
+            GO.infoMsg('Success','Your theme has been updated, please restart the application!')
+        else: 
+            GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.')
+
     def button(setting,state): #accepts button commands and textboxes for options
         print("runing",'-cOW->b line 369')
-        if setting == 0:
-            if state == 1:
-                input = TextBox.get("1.0",END)
-                if input == '' or input == ' ':
-                    return(False)
-                else:
-                    try:
-                        input = int(input)
-                    except:
-                        GO.errorMsg("Error: Non Integer Input","Theme input is restricted to integer values. To create a custom theme open settings.ini and input hex color codes acordingly observing the presets. Note the position of your theme and input it in options.")
-                        return(False)
-                curTheme = GO.readIni("Theme","setTheme")
-                Bottom = GO.readIni("Pronunciation","Hpron")
-                #print("Theme:",int(curTheme[1])+input,"versus, Bottom:",Bottom[1]-1)
-                if (int(curTheme[1])+input) < (Bottom[1]-1):
-                    #print("valid")
-                    GO.writeIni("Theme","setTheme",str(input))
-                    GO.infoMsg('Success','Your theme has been updated, please restart the aplication!')
-                else: 
-                    GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.')
-                    #print("Not")
-                #if GO.retrieveTheme(Theme[0],Theme[1],1):
-
         if setting == 1:
             #if LSButton2.cget('relief') == FLAT:
             if state == 1:
@@ -418,8 +405,8 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Desc1 = Label(Setting1,text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
     toggleSwitch1 = Frame(Setting1,highlightbackground=Theme[1],highlightthickness=3)
     TextBox = Text(toggleSwitch1,bg=Theme[6],font=("Arial",16),width=1,height=1)#Activebackground=Theme[2]
-    TextBox.bind("<Return>",lambda event: button(0,1))
-    RSButton1 = Button(toggleSwitch1,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='Submit',command=lambda: button(0,1))
+    TextBox.bind("<Return>",lambda event: setTheme())
+    RSButton1 = Button(toggleSwitch1,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='Submit',command=lambda: setTheme())
     
 
     Setting5 = Frame(content_frame,background=Theme[0])
