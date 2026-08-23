@@ -57,12 +57,12 @@ def writeIni(Rsection,Ratribute,Rvalue):
             # didn't find a matching attribute, add it
             # i will either be the index of the line containing the next section marker
             # or the index of the (non existent) line past the end of the file
-            infoMsg('Added Attribute', 'The missing attribute ' + Ratribute + ' in the section ' + Rsection + ' in settings.ini was created.')
+            infoMsg('settings.ini Attribute Created', 'The missing attribute ' + Ratribute + ' in the section ' + Rsection + ' in settings.ini was created.')
             rawDataS.insert(i, Ratribute + '=' + Rvalue)
     else:
         # there was no matching section, add it at the end
         # this could happen if a user creates an empty settings.ini file
-        infoMsg('Added Section', 'The missing section ' + Rsection + ' in settings.ini was created.')
+        infoMsg('settings.ini Section Created', 'The missing section ' + Rsection + ' in settings.ini was created.')
         rawDataS.append('[' + Rsection + ']')
         rawDataS.append(Ratribute + '=' + Rvalue)
 
@@ -105,25 +105,6 @@ def resetini():
     if debug == 1:
         print('DEBUG MODE ON resetini() line 134')
         return 'debug'
-    iniBackupOLD = '''[Theme]
-//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
-setTheme=1 //Themes are selected in the program by index numbers
-    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff] //1
-    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff] //2
-    customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons
-    customTheme2=[#333333,#333333,#333333,#333333,#333333,#333333,#333333,#333333] //Test all colors using theme
-    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons
-[Translation]
-TableView = 0 //0-1 Visible by default
-EnglishView = 1 //0-1 Visible by default
-[Pronunciation]
-Hpron=0 //0-5
-Cchars=0 //0-6
-LastH=0 //0-4
-LastC=0 //0-5
-[Numbers]
-HV=0 //Horizontal&Vertical 0&1 respectivly
-'''
     iniBackup = '''[Theme]
 //Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
 setTheme=1
@@ -141,35 +122,20 @@ Cchars=0 //0-6
 LastH=0 //0-4
 LastC=0 //0-5
 [Numbers]
-HV=0 //Horizontal&Vertical 0&1 respectivly'''
-    exists=1
+HV=0 //Horizontal&Vertical 0&1 respectively'''
     eraseProtect=0
     status='Clear'
     try:
-        file = open("settings.ini")#.read()#.splitlines()
+        os.rename("settings.ini","settingsOLD.ini") # try to rename the settings file
+    except FileNotFoundError:
+        # it did not exist # it will be created below this try/except block
+        infoMsg('settings.ini Created', '"settings.ini" file did not exist. A new one was created automatically.') # notify the user of this development
     except:
-        status = '"settings.ini" file did not exist. A new one was created automatically.'
-        exists = 0
-    if exists == 0: 
-        pass #if it does not exist skip renaming
-    else: 
-        file.close() #close file so we can rename it. We can't get here without opening the file 
-        try: #since it does exist rename current one
-            os.rename("settings.ini","settingsOLD.ini") #if it does reaname
-        except Exception as e: 
-            eraseProtect=1 #if we fail we don't want to destroy user data
-            status = e + 'Please empty settingsOLD.ini of wanted data before deleting.' #store error for reporting
-            #print(status)
-    if eraseProtect == 1:
-        pass #dont overwrite user's old file get to error reporting
-    else:
-        file = open("settings.ini", "w") #if successful in renaming, create a new settings.ini file
-        file.write(str(iniBackup)) #and populate it
-        file.close()
-    if status == 'Clear':
-        pass
-    else: 
-        errorMsg('Error',status)
+        # something else went wrong # probably settingsOLD.ini already existed
+        errorMsg('Errpr', e + 'Please empty settingsOLD.ini of wanted data before deleting.') #store error for reporting
+        return # do not write the file
+    with open("settings.ini", "w") as file: #if successful in renaming or settings.ini did not exist, create a new settings.ini file
+        file.write(iniBackup) #and populate it
     #save old file as settingsOLD.ini  #check availibility of .old
     #Restore original .ini with hardcoded backup in this function
 
