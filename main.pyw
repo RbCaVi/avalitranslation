@@ -14,6 +14,7 @@ import AvalianNumbers as AN
 import random
 import imageTinter as iT
 import time
+import functools
 try:
     pyglet.font.add_file('avali-scratch.ttf')
 except:
@@ -205,6 +206,34 @@ def chunkText(text, maxsize): # splits every line at the first space after maxsi
         chunked += c
     return chunked
 
+def toggleable(initialstate = None, values = (True, False)): # add persistent state and a .toggle attribute to a function
+    # the function is assumed to take one argument with a value in values
+    # toggle cycles through all of them # i did this to cover togglenegative in the numbers window
+    def toggleable(f):
+        @functools.wraps(f) # keep the name of f for debugging purposes
+        def newf(state): # version of f that sets the value as well as whatever it did originally
+            newf.state = state
+            f(state)
+
+        # initialize the state
+        if initialstate is not None: # if an initial state is given
+            assert initialstate in values
+            newf(initialstate) # set the state to it
+
+        def toggle(): # cycle through the values
+            idx = values.index(newf.state) # find the index the state is currently at
+            newf(values[(idx + 1) % len(values)]) # choose the next index # remember */% bind tighter than +-
+        newf.toggle = toggle
+
+        return newf # the original function will be replaced with this
+
+    if callable(initialstate): # trickery to allow you to use this decorator as @toggleable instead of @toggleable()
+        f = initialstate
+        initialstate = None
+        return toggleable(f)
+
+    return toggleable # if proper arguments were given
+
 def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
     Twin = createWin('T', 'Avalian Font Translation')
     if Twin is None:
@@ -213,26 +242,22 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     EcoverStatus = True
     TcoverStatus = True
     ReferenceImg = ImageTk.PhotoImage(iT.performTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
-    def switchCoverEnglish(): # Switches the visibility of the central elements of this page to allow for practice of translation with or without direct translation. Does this by switching the background of the English text display to the same color as its foreground color.
-        nonlocal EcoverStatus    
-        if EcoverStatus == True:
-            English.config(fg=Theme[1])
-            switch1.config(relief=RAISED)
-            EcoverStatus = False
-        else:
+    @toggleable
+    def setCoverEnglish(EcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without direct translation. Does this by switching the background of the English text display to the same color as its foreground color.
+        if EcoverStatus:
             English.config(fg=Theme[0])
             switch1.config(relief=SUNKEN)
-            EcoverStatus = True
-    def switchCoverTable(): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
-        nonlocal TcoverStatus    
-        if TcoverStatus == True:
-            refimg.config(bg=Theme[0])
-            switch2.config(relief=RAISED)
-            TcoverStatus = False
         else:
+            English.config(fg=Theme[1])
+            switch1.config(relief=RAISED)
+    @toggleable
+    def setCoverTable(TcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
+        if TcoverStatus:
             refimg.config(bg=Theme[2])
             switch2.config(relief=SUNKEN)
-            TcoverStatus = True
+        else:
+            refimg.config(bg=Theme[0])
+            switch2.config(relief=RAISED)
     def setRandWord(category):
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
@@ -255,8 +280,8 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     English = Label(content_frame,text='',font=('arial',20),bg=Theme[0],fg=Theme[0]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     buttonFrame = Frame(content_frame,background=Theme[0])
     swichFrame = Frame(content_frame)
-    switch1 = Button(swichFrame,text="Hide English",command=lambda: switchCoverEnglish(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
-    switch2 = Button(swichFrame,text="Hide Table",command=lambda: switchCoverTable(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
+    switch1 = Button(swichFrame,text="Hide English",command=lambda: setCoverEnglish.toggle(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
+    switch2 = Button(swichFrame,text="Hide Table",command=lambda: setCoverTable.toggle(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
     Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
     Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
     Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
@@ -267,6 +292,10 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     cInput.bind("<Return>",lambda event: setUserWord())
     refimg = Label(content_frame,image=ReferenceImg,width=895,height=61,background=Theme[2])
     #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all")))
+
+    setCoverEnglish(True)
+    setCoverTable(True)
+
     #drawing
 
     border_frame.pack()
@@ -297,7 +326,7 @@ def createCreditsWin(): #This function contains all of the tkinter widgets and f
 
     border_frame = Frame(Cwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
-    Preamble = Label(content_frame,text="I hope some birbs can find some fun or use in this.\nYou can contact me reguarding this software via\n\
+    Preamble = Label(content_frame,text="I hope some birbs can find some fun or use in this.\nYou can contact me regarding this software via\n\
 Telegram @RenauliSnow.\n\nA deep thanks goes to everyone in this community for\n\
 perpetuating this amazing species. For their specific\n\
 contributions to this project thank you to the following:\n",justify='left',font=('arial',16),background=Theme[0],foreground=Theme[1]) 
