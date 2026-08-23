@@ -44,6 +44,9 @@ else:
     Theme = GO.retrieveTheme(ThemeName) #Run theme through seperate function to populate global theme list
 #print('4LL:',Theme)
 
+buttonstyle = {'bg': Theme[8],'fg': Theme[9]}
+textstyle = {'bg': Theme[0],'fg': Theme[1]}
+
 windowregister = {type:{} for type in 'MPOCNT'} # type -> id (date) -> window
 
 def AddWindowToRegister(win,type): #Add a new window to the Register, Has adorable abreviation "AWTR"
@@ -148,12 +151,21 @@ class SidebarMenu(): #Class to create the menubar
         #Create Menu Sidebar    
         Sidebar = Frame(border_frame,background="#f0f0f0",borderwidth= "0")
             ##IN
-        MB0 = HoverButton(Sidebar,text="Main Menu",image=SidebarMenu.MenuImgs[0], command=lambda: WindowRegistration('M'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0) #em W=0 H=2
-        MB1 = HoverButton(Sidebar,text="Font Trans.",image=SidebarMenu.MenuImgs[1], command=lambda: WindowRegistration('T'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0)
-        MB2 = HoverButton(Sidebar,text="Number Trans.",image=SidebarMenu.MenuImgs[2], command=lambda: WindowRegistration('N'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0)
-        MB3 = HoverButton(Sidebar,text="Pronunciation",image=SidebarMenu.MenuImgs[3], command=lambda: WindowRegistration('P'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0)
-        MB4 = HoverButton(Sidebar,text="Options",image=SidebarMenu.MenuImgs[4], command=lambda: WindowRegistration('O'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0)
-        MB5 = HoverButton(Sidebar,text="Credits",image=SidebarMenu.MenuImgs[5], command=lambda: WindowRegistration('C'),relief=FLAT,foreground=Theme[5],background=Theme[2],activebackground=Theme[4],height=60,width=0)
+        options = lambda type, index: {
+            'image':SidebarMenu.MenuImgs[index],
+            'command':lambda: WindowRegistration(type),
+            'relief':FLAT,
+            'foreground':Theme[5],'background':Theme[2],
+            'activebackground':Theme[4],
+            'height':60,
+            'width':0,
+        }
+        MB0 = HoverButton(Sidebar,text="Main Menu",**options(type = 'M', index = 0)) #em W=0 H=2
+        MB1 = HoverButton(Sidebar,text="Font Trans.",**options(type = 'T', index = 1))
+        MB2 = HoverButton(Sidebar,text="Number Trans.",**options(type = 'N', index = 2))
+        MB3 = HoverButton(Sidebar,text="Pronunciation",**options(type = 'P', index = 3))
+        MB4 = HoverButton(Sidebar,text="Options",**options(type = 'O', index = 4))
+        MB5 = HoverButton(Sidebar,text="Credits",**options(type = 'C', index = 5))
         #SideBorder = Canvas(background=Theme[3]) #Maybe not
         MB0.grid(column=0,row=1,sticky='nesw')
         MB1.grid(column=0,row=2,sticky='nesw')
@@ -164,26 +176,11 @@ class SidebarMenu(): #Class to create the menubar
         Sidebar.grid(column=0,row=0)
     def start(win): #Runs at end of Mwin startup, initializes all menu imgs under menu window.
         #print('Loading images ','-cSM line 108')
-        '''menuImg0 = PhotoImage(file='Images/sidebar/Menu.png')
-        menuImg1 = PhotoImage(file='Images/sidebar/Translation.png')
-        menuImg2 = PhotoImage(file='Images/sidebar/Numbers.png')
-        menuImg3 = PhotoImage(file='Images/sidebar/Pronunciation Placeholder.png')
-        menuImg4 = PhotoImage(file='Images/sidebar/Settings.png')
-        menuImg5 = PhotoImage(file='Images/sidebar/Credits.png')'''
-        menuImg0 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Menu.png',str(Theme[7])))
-        menuImg1 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Translation.png',str(Theme[7])))
-        menuImg2 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Numbers.png',str(Theme[7])))
-        menuImg3 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Pronunciation.png',str(Theme[7]))) #Pronunciation Placeholder.png or Icon Pronunciation.png also avaliable
-        menuImg4 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Settings.png',str(Theme[7])))
-        menuImg5 = ImageTk.PhotoImage(iT.performTint('Images/sidebar/Credits.png',str(Theme[7])))
-
-        #MenuImgs.clear()
-        SidebarMenu.MenuImgs.append(menuImg0)
-        SidebarMenu.MenuImgs.append(menuImg1)
-        SidebarMenu.MenuImgs.append(menuImg2)
-        SidebarMenu.MenuImgs.append(menuImg3)
-        SidebarMenu.MenuImgs.append(menuImg4)
-        SidebarMenu.MenuImgs.append(menuImg5)
+        SidebarMenu.MenuImgs = [
+            ImageTk.PhotoImage(iT.performTint('Images/sidebar/' + icon + '.png',Theme[7]))
+            for icon in
+            ['Menu', 'Translation', 'Numbers', 'Pronunciation', 'Settings', 'Credits']
+        ]
 
 def chunkText(text, maxsize): # splits every line at the first space after maxsize characters # used in font translation and pronounciation
     chunked = ""
@@ -271,14 +268,14 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     English = Label(content_frame,text='',font=('arial',20),bg=Theme[0],fg=Theme[0]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     buttonFrame = Frame(content_frame,background=Theme[0])
     swichFrame = Frame(content_frame)
-    switch1 = Button(swichFrame,text="Hide English",command=lambda: setCoverEnglish.toggle(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
-    switch2 = Button(swichFrame,text="Hide Table",command=lambda: setCoverTable.toggle(),relief=SUNKEN,bg=Theme[8],fg=Theme[9])
-    Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
-    Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
-    Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
-    Option3 = Button(buttonFrame,text="Paragraph",command=lambda: setRandWord(3),bg=Theme[8],fg=Theme[9])
-    Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
-    Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
+    switch1 = Button(swichFrame,text="Hide English",command=lambda: setCoverEnglish.toggle(),relief=SUNKEN,**buttonstyle)
+    switch2 = Button(swichFrame,text="Hide Table",command=lambda: setCoverTable.toggle(),relief=SUNKEN,**buttonstyle)
+    Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),**buttonstyle)
+    Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),**buttonstyle)
+    Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),**buttonstyle)
+    Option3 = Button(buttonFrame,text="Paragraph",command=lambda: setRandWord(3),**buttonstyle)
+    Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),**buttonstyle)
+    Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),**buttonstyle)
     cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
     cInput.bind("<Return>",lambda event: setUserWord())
     refimg = Label(content_frame,image=ReferenceImg,width=895,height=61,background=Theme[2])
@@ -320,9 +317,9 @@ def createCreditsWin(): #This function contains all of the tkinter widgets and f
     Preamble = Label(content_frame,text="I hope some birbs can find some fun or use in this.\nYou can contact me regarding this software via\n\
 Telegram @RenauliSnow.\n\nA deep thanks goes to everyone in this community for\n\
 perpetuating this amazing species. For their specific\n\
-contributions to this project thank you to the following:\n",justify='left',font=('arial',16),background=Theme[0],foreground=Theme[1]) 
+contributions to this project thank you to the following:\n",justify='left',font=('arial',16),**textstyle) 
     #insert line break
-    Credit = Label(content_frame,text="Programed by Renauli Snow (Ralsdoge) for the community.\nVersion 1 in development from 11/23/2024 to 7/13/2025.",font=('arial',16),background=Theme[0],foreground=Theme[1])
+    Credit = Label(content_frame,text="Programed by Renauli Snow (Ralsdoge) for the community.\nVersion 1 in development from 11/23/2024 to 7/13/2025.",font=('arial',16),**textstyle)
     Credits = Label(content_frame,text=" • Cutesune (RyuujinZero) for creating the Avali Species\n \
 • Avali A Comprehensive Guide: Todd Avali\n \
 • Scratch Font: Icebelly and Someguynameddavid\n \
@@ -333,9 +330,9 @@ For presenting me the joys of this community:\n \
 • RitualNeo\n \
 • Randomking1423\n \
 • And many, many others. \
-",font=('arial',16),justify='left',background=Theme[0],foreground=Theme[1]) 
-    License = Label(content_frame,text="\nThis project is licensed under the GNU General Public License v3 (GPLv3).",font=('arial',14),background=Theme[0],foreground=Theme[1])
-    Credit2 = Label(content_frame,text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",font=('arial',14),background=Theme[0],foreground=Theme[1])
+",font=('arial',16),justify='left',**textstyle) 
+    License = Label(content_frame,text="\nThis project is licensed under the GNU General Public License v3 (GPLv3).",font=('arial',14),**textstyle)
+    Credit2 = Label(content_frame,text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",font=('arial',14),**textstyle)
     
     #Scratch = Label(content_frame,text="test",font=('avali scratch',30), background="white", borderwidth="10px", foreground="#fc850f")
     #English = Label(content_frame,text="test",font=('arial',20),bg='black') #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
@@ -398,11 +395,14 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     
     SidebarMenu(Owin,border_frame) #Wow this worked in its first application immediately with no bug fixing whatsoeverthisisdefinitlyatrap.
  
-    Title = Label(content_frame,text="Options",font=('arial',20),background=Theme[0],foreground=Theme[1]) 
+    Title = Label(content_frame,text="Options",font=('arial',20),**textstyle) 
+
+    offoptions = {'relief':FLAT,'bg':Theme[6],'activebackground':Theme[6],'text':'   '}
+    onoptions = {'relief':RAISED,'bg':Theme[2],'activebackground':Theme[2],'text':'   '}
     
     Setting1 = Frame(content_frame,background=Theme[0])
-    Title1 = Label(Setting1,text="Dark, Light, & Custom Themes",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc1 = Label(Setting1,text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Title1 = Label(Setting1,text="Dark, Light, & Custom Themes",font=('arial',16),**textstyle) 
+    Desc1 = Label(Setting1,text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),**textstyle) 
     toggleSwitch1 = Frame(Setting1,highlightbackground=Theme[1],highlightthickness=3)
     TextBox = Text(toggleSwitch1,bg=Theme[6],font=("Arial",16),width=1,height=1)#Activebackground=Theme[2]
     TextBox.bind("<Return>",lambda event: setTheme())
@@ -410,32 +410,32 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     
 
     Setting5 = Frame(content_frame,background=Theme[0])
-    Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc5 = Label(Setting5,text="Sets if new windows are managed (only one of each type\nopen at a time) or unmanaged (Open as many as you\nwould like at once).",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),**textstyle) 
+    Desc5 = Label(Setting5,text="Sets if new windows are managed (only one of each type\nopen at a time) or unmanaged (Open as many as you\nwould like at once).",font=('arial',10),**textstyle) 
     toggleSwitch5 = Frame(Setting5,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton5 = Button(toggleSwitch5,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(4,0))#Activebackground=Theme[2]
-    RSButton5 = Button(toggleSwitch5,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(4,1))
+    LSButton5 = Button(toggleSwitch5,command=lambda: button(4,0), **offoptions)
+    RSButton5 = Button(toggleSwitch5,command=lambda: button(4,1), **onoptions)
 
     Setting2 = Frame(content_frame,background=Theme[0])
-    Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),**textstyle) 
+    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),**textstyle) 
     toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton2 = Button(toggleSwitch2,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(1,0))#Activebackground=Theme[2]
-    RSButton2 = Button(toggleSwitch2,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(1,1))
+    LSButton2 = Button(toggleSwitch2,command=lambda: button(1,0), **offoptions)
+    RSButton2 = Button(toggleSwitch2,command=lambda: button(1,1), **onoptions)
     
     Setting3 = Frame(content_frame,background=Theme[0])
-    Title3 = Label(Setting3,text="Pronunciation Clamping Chars. ",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc3 = Label(Setting3,text="Sets your default selction for the Pronuciation\nclamping characters. i.e. [] or ()",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Title3 = Label(Setting3,text="Pronunciation Clamping Chars. ",font=('arial',16),**textstyle) 
+    Desc3 = Label(Setting3,text="Sets your default selction for the Pronuciation\nclamping characters. i.e. [] or ()",font=('arial',10),**textstyle) 
     toggleSwitch3 = Frame(Setting3,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton3 = Button(toggleSwitch3,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(2,0))#Activebackground=Theme[2]
-    RSButton3 = Button(toggleSwitch3,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(2,1))
+    LSButton3 = Button(toggleSwitch3,command=lambda: button(2,0), **offoptions)
+    RSButton3 = Button(toggleSwitch3,command=lambda: button(2,1), **onoptions)
     
     Setting4 = Frame(content_frame,background=Theme[0])
-    Title4 = Label(Setting4,text="N Pronuciation Replacement Chars.",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc4 = Label(Setting4,text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Title4 = Label(Setting4,text="N Pronuciation Replacement Chars.",font=('arial',16),**textstyle) 
+    Desc4 = Label(Setting4,text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),**textstyle) 
     toggleSwitch4 = Frame(Setting4,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton4 = Button(toggleSwitch4,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(3,0))#Activebackground=Theme[2]
-    RSButton4 = Button(toggleSwitch4,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(3,1))
+    LSButton4 = Button(toggleSwitch4,command=lambda: button(3,0), **offoptions)
+    RSButton4 = Button(toggleSwitch4,command=lambda: button(3,1), **onoptions)
     
     #Gridding Objects # hit that griddy
     border_frame.pack()
@@ -483,10 +483,10 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Setting3.grid(column=0,row=4)
     Setting4.grid(column=0,row=5)
 
-    NotComplete1 = Label(content_frame,text="Coming Soon",font=('arial',25),background=Theme[0],foreground=Theme[1]) 
-    NotComplete2 = Label(content_frame,text="Coming Soon",font=('arial',25),background=Theme[0],foreground=Theme[1]) 
-    NotComplete3 = Label(content_frame,text="Coming Soon",font=('arial',25),background=Theme[0],foreground=Theme[1]) 
-    NotComplete4 = Label(content_frame,text="Coming Soon",font=('arial',25),background=Theme[0],foreground=Theme[1]) 
+    NotComplete1 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
+    NotComplete2 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
+    NotComplete3 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
+    NotComplete4 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
 
     NotComplete1.grid(column=0,row=2)
     NotComplete2.grid(column=0,row=3)
@@ -693,22 +693,22 @@ def createNumbersWin():
     util_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
     random_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
     ###Title + Support
-    Title = Label(content_frame,text='Avalian Base 12 System',font=('arial',18),background=Theme[0],foreground=Theme[1])
+    Title = Label(content_frame,text='Avalian Base 12 System',font=('arial',18),**textstyle)
     
     ###Random Interface
-    RandLabel = Label(random_frame,text='Random Num. Gen.',font=('arial',14),background=Theme[0],foreground=Theme[1])
-    MaxSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",fg=Theme[1],bg=Theme[0]) #Slider 
-    MinSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",fg=Theme[1],bg=Theme[0]) #Slider
-    DecimalLength = Scale(random_frame, from_=0, to=10,orient = "horizontal",fg=Theme[1],bg=Theme[0]) #Slider
-    DecimalLengthLabel = Label(random_frame,text="Decimal Length",font=('arial',10),background=Theme[0],foreground=Theme[1])
-    DecimalLengthWarning = Label(random_frame,text="(Not added yet, confused\non how it'd work)",font=('arial',10),background=Theme[0],foreground=Theme[1])
-    MaxSizeLabel = Label(random_frame,text='Max Size',font=('arial',10),background=Theme[0],foreground=Theme[1])
-    MinSizeLabel = Label(random_frame,text='Min Size',font=('arial',10),background=Theme[0],foreground=Theme[1])
+    RandLabel = Label(random_frame,text='Random Num. Gen.',font=('arial',14),**textstyle)
+    MaxSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",**textstyle) #Slider 
+    MinSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",**textstyle) #Slider
+    DecimalLength = Scale(random_frame, from_=0, to=10,orient = "horizontal",**textstyle) #Slider
+    DecimalLengthLabel = Label(random_frame,text="Decimal Length",font=('arial',10),**textstyle)
+    DecimalLengthWarning = Label(random_frame,text="(Not added yet, confused\non how it'd work)",font=('arial',10),**textstyle)
+    MaxSizeLabel = Label(random_frame,text='Max Size',font=('arial',10),**textstyle)
+    MinSizeLabel = Label(random_frame,text='Min Size',font=('arial',10),**textstyle)
     MaxSize.set(125)
     MinSize.set(20)
     DecimalLength.set(1)
-    NegativeState = Button(random_frame,text='Positive',command=lambda:setSign.toggle(),bg=Theme[8],fg=Theme[9]) #whether to generate negative numbers or not
-    randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),bg=Theme[8],fg=Theme[9]) #submit random num
+    NegativeState = Button(random_frame,text='Positive',command=lambda:setSign.toggle(),**buttonstyle) #whether to generate negative numbers or not
+    randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),**buttonstyle) #submit random num
     def enterHandler(event):
         updateNumber()
         return "break"
@@ -716,15 +716,15 @@ def createNumbersWin():
     userInput = Text(util_frame,width=30,height=1,bg=Theme[6]) #User in Textbox
     userInput.bind("<Return>",enterHandler)
 
-    userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),bg=Theme[8],fg=Theme[9]) #submit user input from Userinput (Valideate)
-    base10Label = Label(util_frame,text='Base-10:',font=('arial',10),background=Theme[0],foreground=Theme[1])
-    base12Label = Label(util_frame,text='Base-12:',font=('arial',10),background=Theme[0],foreground=Theme[1])
-    b12EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
-    b10EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
-    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase10Display.toggle(),bg=Theme[8],fg=Theme[9]) 
-    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase12Display.toggle(),bg=Theme[8],fg=Theme[9]) 
-    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:setDirection.toggle(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
-    HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",background=Theme[0],foreground=Theme[1]) 
+    userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),**buttonstyle) #submit user input from Userinput (Valideate)
+    base10Label = Label(util_frame,text='Base-10:',font=('arial',10),**textstyle)
+    base12Label = Label(util_frame,text='Base-12:',font=('arial',10),**textstyle)
+    b12EnglishDisp = Label(util_frame,text=0,font=('arial',12), **textstyle) #Base12 number display in english
+    b10EnglishDisp = Label(util_frame,text=0,font=('arial',12), **textstyle) #Base10 number display in english
+    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase10Display.toggle(),**buttonstyle) 
+    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase12Display.toggle(),**buttonstyle) 
+    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:setDirection.toggle(),**buttonstyle)#Horizontal Vertical numbering toggle
+    HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",**textstyle) 
     ###
 
     setSign(0)
@@ -784,8 +784,8 @@ def createPronunciationWin():
     SidebarMenu(Pwin,border_frame)
 
     ###Labels
-    PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), background=Theme[0], foreground=Theme[1])
-    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), background=Theme[0], foreground=Theme[1])
+    PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
+    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), **textstyle)
     SpecialCharsStr = ''
     SpecialReplaceStr = ''
     for c in AP.specialpronchars:
@@ -794,22 +794,22 @@ def createPronunciationWin():
         SpecialReplaceStr += r+'\n'
     ##Objects
     
-    NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),background=Theme[0],foreground=Theme[1])
-    ClampingLabel = Label(content_frame,text="Clamping Characters:",font=('arial',14),background=Theme[0],foreground=Theme[1])
-    UPronounceChars = Label(content_frame,text=SpecialCharsStr,font=('arial',16),background=Theme[0],foreground=Theme[1])
-    RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),background=Theme[0],foreground=Theme[1])
+    NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),**textstyle)
+    ClampingLabel = Label(content_frame,text="Clamping Characters:",font=('arial',14),**textstyle)
+    UPronounceChars = Label(content_frame,text=SpecialCharsStr,font=('arial',16),**textstyle)
+    RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),**textstyle)
     ##Dropdowns
     #HPron
     HpronOptions = ["ha (ha)","Short pause (-)","Short pause (')","Short Pause ( )","Short Pause (,)"] 
     Hdropclicked = StringVar()
     Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions)
-    Ndropbutton.config(bg=Theme[8],fg=Theme[9]) 
+    Ndropbutton.config(**buttonstyle) 
     #Ndropbutton.config(bg=Theme[0])
     #ClampingChars
     ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brackets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
     ClampingCharsSelected = StringVar()
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
-    ClampingCharsButton.config(bg=Theme[8],fg=Theme[9]) 
+    ClampingCharsButton.config(**buttonstyle) 
     #Load settings
     CC = GO.readIni("Pronunciation","Cchars") #read the options
     if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
@@ -842,15 +842,15 @@ def createPronunciationWin():
     #End Load settings
 
     ##
-    English = Label(content_frame,text='',font=('arial',10),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    EnglishO = Label(content_frame,text='',font=('arial',20),background=Theme[0],foreground=Theme[1]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+    English = Label(content_frame,text='',font=('arial',10),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+    EnglishO = Label(content_frame,text='',font=('arial',20),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     #switch = Button(content_frame,text="minimize")#,command=lambda: )
-    Option0 = Button(content_frame,text="4Word",command=lambda: setRandWord(0),bg=Theme[8],fg=Theme[9])
-    Option1 = Button(content_frame,text="6Word",command=lambda: setRandWord(1),bg=Theme[8],fg=Theme[9])
-    Option2 = Button(content_frame,text="sent.",command=lambda: setRandWord(2),bg=Theme[8],fg=Theme[9])
-    Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),bg=Theme[8],fg=Theme[9])
-    Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),bg=Theme[8],fg=Theme[9])
-    Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),bg=Theme[8],fg=Theme[9])
+    Option0 = Button(content_frame,text="4Word",command=lambda: setRandWord(0),**buttonstyle)
+    Option1 = Button(content_frame,text="6Word",command=lambda: setRandWord(1),**buttonstyle)
+    Option2 = Button(content_frame,text="sent.",command=lambda: setRandWord(2),**buttonstyle)
+    Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),**buttonstyle)
+    Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),**buttonstyle)
+    Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),**buttonstyle)
     def enterHandler(event):
         updateNumber()
         return "break"
@@ -891,11 +891,12 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     Title = Label(content_frame,font=('Helvetica 30 italic'),text="Avalian Translation Software",background=Theme[0],foreground=Theme[3])
     Preface = Label(content_frame,font=('Helvetica 18 italic'),text="By: Renauli Snow",background=Theme[0],foreground=Theme[3]) #Aw du Bub du day. Bah.. Blep.
-    Option0 = Button(content_frame,font=('Helvetica 18 italic'),text="  Credits  ",command=createCreditsWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option1 = Button(content_frame,font=('Helvetica 18 italic'),text="  Options  ",command=createOptionsWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option2 = Button(content_frame,font=('Helvetica 18 normal'),text="Font Translation",command=createFontTranslationWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
-    Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,background=Theme[2],foreground=Theme[1],activeforeground=Theme[5],activebackground=Theme[4])
+    mainbuttonstyle = {'background':Theme[2], 'foreground':Theme[1], 'activebackground':Theme[4], 'activeforeground':Theme[5]}
+    Option0 = Button(content_frame,font=('Helvetica 18 italic'),text="  Credits  ",command=createCreditsWin,**mainbuttonstyle)
+    Option1 = Button(content_frame,font=('Helvetica 18 italic'),text="  Options  ",command=createOptionsWin,**mainbuttonstyle)
+    Option2 = Button(content_frame,font=('Helvetica 18 normal'),text="Font Translation",command=createFontTranslationWin,**mainbuttonstyle)
+    Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,**mainbuttonstyle)
+    Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,**mainbuttonstyle)
     ##db349c
     border_frame.pack()
     content_frame.pack()
