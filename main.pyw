@@ -441,7 +441,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
 
     Setting2 = Frame(content_frame,background=Theme[0])
     Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),background=Theme[0],foreground=Theme[1]) 
-    Desc2 = Label(Setting2,text="Sets if Number Camvas is set horizontaly or verticaly\nby default on opening.",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
+    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),background=Theme[0],foreground=Theme[1]) 
     toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
     LSButton2 = Button(toggleSwitch2,relief=FLAT,bg=Theme[6],activebackground=Theme[6],text='   ',command=lambda: button(1,0))#Activebackground=Theme[2]
     RSButton2 = Button(toggleSwitch2,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='   ',command=lambda: button(1,1))
@@ -523,32 +523,26 @@ def createNumbersWin():
     if Nwin is None:
         return False # nope
     
-    VERT = 0
-    NEG = 0
-    b10Cover = 0
-    b12Cover = 0
-    
     border_frame = Frame(Nwin,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     
     panel = Canvas(content_frame, bg=Theme[0])
 
+    @toggleable
     def setDirection(vert):
-        nonlocal VERT
-        VERT = vert
-        if VERT == 0: #Horizontal 
-            panel.config(width=800, height=100)
-            panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
-        if VERT == 1: #Vertical
+        if vert: #Vertical
             panel.config(width=100, height=600)
             panel.grid(column=0,row=0,columnspan=1,rowspan=5) #long mode
+        else: #Horizontal 
+            panel.config(width=800, height=100)
+            panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
     
     #Load settings
     HV = GO.readIni("Numbers","HV") #read the options
     if HV in [0, 1]:
-        setDirection(HV)
+        setDirection(bool(HV))
     else:
-        setDirection(0)
+        setDirection(False)
 
     digitimages = {
         im: ImageTk.PhotoImage(Image.open('Images/numChars/' + im + '.png'))
@@ -569,7 +563,7 @@ def createNumbersWin():
         panel.delete('all') # delete all previous images to avoid memory leak
         centerlineH = 92 #maxHeight of tallest img in set
         centerlineW = 60 #maxWidth of widest img in set
-        if vert == 0: #Horizontal
+        if not vert: #Horizontal
             # so these are arranged in a straight line somehow
             # i believe they are vertically centered, with a 10px gap in between adjacent images
             # the digit separator appears to be centered on the right edge of the digit before it
@@ -627,11 +621,11 @@ def createNumbersWin():
         manifest = AN.base12ImageRef(b12num,negative) 
         #print('manifest:',manifest)
         
-        writeNumber(2,2,manifest,VERT)
+        writeNumber(2,2,manifest,setDirection.state)
     
     def updateNumber():
         userIn = userInput.get("1.0",END)
-        #print(userIn)
+        print('user input:', userIn)
         try:
             try:
                 userIn = int(userIn)
@@ -641,7 +635,7 @@ def createNumbersWin():
                 # because the number is not valid
             #print(type(userIn))
             #validate
-            #print('VERT: ',VERT)
+            #print('VERT: ',setDirection.state)
             newNumber(userIn)
         except ValueError:
             pass # ignore bad numbers - don't want to throw an error to enterHandler()
@@ -672,10 +666,10 @@ def createNumbersWin():
             #randomNum = randomNum+decimalComponent
             #print(randomNum)
             #Add negative sign if applicable
-            if NEG == 1: #add -
+            if setSign.state == 1: #add -
                 randomNum = -randomNum
                 #print(randomNum,'negative:',randomNum)
-            elif NEG == 2:
+            elif setSign.state == 2:
                 if random.randint(1,100) >= 46: #45/55 negative/positive # why not even 50/50?
                     #add -
                     randomNum = -randomNum
@@ -686,51 +680,33 @@ def createNumbersWin():
         else:
             pass
     
-    def toggleDirection():
-        nonlocal VERT
-        #vertical or horizontal
-        #print('VERT IN:',VERT)
-        if VERT == 0:
-            setDirection(1)
-        else: 
-            setDirection(0)
-        #print('VERT OUT:',VERT)
-        #GO.writeIni("Numbers","HV",VERT) #write preference back to ini file
-    
-    def toggleSign():
-        nonlocal NEG
+    @toggleable(values = (0, 1, 2))
+    def setSign(neg):
         #Random Number Negative chance
-        if NEG == 2: #Negative and positive
-            NEG = 0
+        if neg == 0:
             NegativeState.config(text='Positive')
-        elif NEG == 0:
-            NEG = 1
+        elif neg == 1:
             NegativeState.config(text='Negative')
-        elif NEG == 1:
-            NEG = 2
+        elif neg == 2:
             NegativeState.config(text='Neg & Pos')
     
-    def toggleBase10Display():
-        nonlocal b10Cover
+    @toggleable
+    def setBase10Display(b10Cover):
         #Hide unhide base 10 display
-        if b10Cover == 0:
-            b10Cover = 1
+        if b10Cover:
             b10EnglishDisp.config(background=Theme[1])
             b10EnglishDispButton.config(text='Unhide')
         else:
-            b10Cover = 0
             b10EnglishDisp.config(background=Theme[0])
             b10EnglishDispButton.config(text='Hide')
     
-    def toggleBase12Display():
-        nonlocal b12Cover
+    @toggleable
+    def setBase12Display(b12Cover):
         #Hide unhide base 12 displays
-        if b12Cover == 0:
-            b12Cover = 1
+        if b12Cover:
             b12EnglishDisp.config(background=Theme[1])
             b12EnglishDispButton.config(text='Unhide')
         else:
-            b12Cover = 0
             b12EnglishDisp.config(background=Theme[0])
             b12EnglishDispButton.config(text='Hide')
     
@@ -754,7 +730,7 @@ def createNumbersWin():
     MaxSize.set(125)
     MinSize.set(20)
     DecimalLength.set(1)
-    NegativeState = Button(random_frame,text='Positive',command=lambda:toggleSign(),bg=Theme[8],fg=Theme[9]) #whether to generate negative numbers or not
+    NegativeState = Button(random_frame,text='Positive',command=lambda:setSign.toggle(),bg=Theme[8],fg=Theme[9]) #whether to generate negative numbers or not
     randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),bg=Theme[8],fg=Theme[9]) #submit random num
     def enterHandler(event):
         updateNumber()
@@ -768,11 +744,15 @@ def createNumbersWin():
     base12Label = Label(util_frame,text='Base-12:',font=('arial',10),background=Theme[0],foreground=Theme[1])
     b12EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base12 number display in english
     b10EnglishDisp = Label(util_frame,text=0,font=('arial',12), background=Theme[0], foreground=Theme[1]) #Base10 number display in english
-    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase10Display(),bg=Theme[8],fg=Theme[9]) 
-    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:toggleBase12Display(),bg=Theme[8],fg=Theme[9]) 
-    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:toggleDirection(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
+    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase10Display.toggle(),bg=Theme[8],fg=Theme[9]) 
+    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase12Display.toggle(),bg=Theme[8],fg=Theme[9]) 
+    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:setDirection.toggle(),bg=Theme[8],fg=Theme[9])#Horizontal Vertical numbering toggle
     HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",background=Theme[0],foreground=Theme[1]) 
     ###
+
+    setSign(0)
+    setBase10Display(False)
+    setBase12Display(False)
 
     
     border_frame.pack()
