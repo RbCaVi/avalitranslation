@@ -105,7 +105,7 @@ def WindowRegistration(type='X'):
         'N': createNumbersWin,
         'T': createFontTranslationWin,
     }
-    if type in windowtypes:
+    if type in createWinType:
         print(CheckWindowRegister(type))
         if CheckWindowRegister(type):
             createWinType[type]()
