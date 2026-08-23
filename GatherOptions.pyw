@@ -105,8 +105,43 @@ def resetini():
     if debug == 1:
         print('DEBUG MODE ON resetini() line 134')
         return 'debug'
-    iniBackupOLD = '[Theme]\n//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another\nsetTheme=1 //Themes are selected in the program by index numbers\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff] //2\n    customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n    customTheme2=[#333333,#333333,#333333,#333333,#333333,#333333,#333333,#333333] //Test all colors using theme\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly\n'
-    iniBackup = '[Theme]\n//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another\nsetTheme=1\n    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1\n    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2\ncustomTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] \n    TestTheme=[#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7]\n    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons, Button/Menu, Contrasting Button/Menu Text\n[Translation]\nTableView = 0 //0-1 Visible by default\nEnglishView = 1 //0-1 Visible by default\n[Pronunciation]\nHpron=0 //0-5\nCchars=0 //0-6\nLastH=0 //0-4\nLastC=0 //0-5\n[Numbers]\nHV=0 //Horizontal&Vertical 0&1 respectivly'
+    iniBackupOLD = '''[Theme]
+//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
+setTheme=1 //Themes are selected in the program by index numbers
+    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff] //1
+    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff] //2
+    customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons
+    customTheme2=[#333333,#333333,#333333,#333333,#333333,#333333,#333333,#333333] //Test all colors using theme
+    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons
+[Translation]
+TableView = 0 //0-1 Visible by default
+EnglishView = 1 //0-1 Visible by default
+[Pronunciation]
+Hpron=0 //0-5
+Cchars=0 //0-6
+LastH=0 //0-4
+LastC=0 //0-5
+[Numbers]
+HV=0 //Horizontal&Vertical 0&1 respectivly
+'''
+    iniBackup = '''[Theme]
+//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
+setTheme=1
+    Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1
+    Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2
+customTheme1=[#5f1352,#ffffff,#ffffff,#ffffff,#ffffff,#2de2aa,] 
+    TestTheme=[#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7,#b800a7]
+    customTheme=[] //Main, Text, Accent, Accent Text, ActiveAccent, ActiveAccentText, Textbox, Icons, Button/Menu, Contrasting Button/Menu Text
+[Translation]
+TableView = 0 //0-1 Visible by default
+EnglishView = 1 //0-1 Visible by default
+[Pronunciation]
+Hpron=0 //0-5
+Cchars=0 //0-6
+LastH=0 //0-4
+LastC=0 //0-5
+[Numbers]
+HV=0 //Horizontal&Vertical 0&1 respectivly'''
     exists=1
     eraseProtect=0
     status='Clear'
