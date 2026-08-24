@@ -208,6 +208,35 @@ def retrieveTheme(Theme,checkValidity=0): #returns the currently selected theme 
         print("Using Theme",str(Theme)+":",themeLine)
         return themeLine
 
+def retrieveThemeList(): #returns a list of all theme names
+    with open("settings.ini", "r") as file:
+        rawData = file.read()
+    rawDataS = rawData.splitlines()
+    lines = iter(rawDataS) # lines is an iterator instead of a plain list, so the position in the lines is saved between the loops
+    foundsection = False
+    themes = []
+    for line in lines:
+        m = re.fullmatch(sectionregex, line)
+        if m is not None:
+            if m['section'] == 'Theme':
+                foundsection = True
+                break
+    if foundsection:
+        # found a matching section
+        # lines starts at the first line in section now
+        # search for a matching attribute
+        foundattribute = False
+        for line in lines:
+            m = re.fullmatch(lineregex, line)
+            if m is not None:
+                # found it
+                m2 = re.match('\\[(#[0-9a-fA-F]{6},){9}#[0-9a-fA-F]{6}\\]', m['value'])
+                if m2 is not None:
+                    themes.append(m['attribute'])
+            if re.fullmatch('\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*', line) is not None: # oops we're in the next section
+                break
+    return themes
+
 '''singer = readIni('Numerical','testParamater')
 print(singer)
 writeIni('Numerical','testParamater','1')

@@ -356,8 +356,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     if Owin is None:
         return False # nope
 
-    def setTheme():
-        ThemeName = TextBox.get("1.0",END).strip()
+    def setTheme(ThemeName):
         if ThemeName == '':
             return False # put a real theme next time
         if GO.retrieveTheme(ThemeName, 1):
@@ -399,10 +398,10 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Title1 = Label(Setting1,text="Dark, Light, & Custom Themes",font=('arial',16),**textstyle) 
     Desc1 = Label(Setting1,text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),**textstyle) 
     toggleSwitch1 = Frame(Setting1,highlightbackground=Theme[1],highlightthickness=3)
-    TextBox = Text(toggleSwitch1,bg=Theme[6],font=("Arial",16),width=1,height=1)#Activebackground=Theme[2]
-    TextBox.bind("<Return>",lambda event: setTheme())
-    RSButton1 = Button(toggleSwitch1,relief=RAISED,bg=Theme[2],activebackground=Theme[2],text='Submit',command=lambda: setTheme())
-    
+    ThemeVar = StringVar()
+    Themedropbutton = OptionMenu(toggleSwitch1, ThemeVar, *GO.retrieveThemeList(), command = setTheme)
+    Themedropbutton.config(**buttonstyle)
+    ThemeVar.set(ThemeName)
 
     Setting5 = Frame(content_frame,background=Theme[0])
     Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),**textstyle) 
@@ -438,8 +437,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     ###Option 1
     Title1.grid(column=0,row=0)
     Desc1.grid(column=0,row=1,columnspan=2)
-    TextBox.grid(column=0,row=0,sticky='nesw')
-    RSButton1.grid(column=1,row=0)
+    Themedropbutton.grid(column=2,row=0)
     toggleSwitch1.grid(column=3 ,row=0)
 
     ###Option 5
