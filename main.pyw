@@ -420,7 +420,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
 
     Setting2 = Frame(content_frame,background=Theme[0])
     Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),**textstyle) 
-    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),**textstyle) 
+    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or vertically\nby default on opening.",font=('arial',10),**textstyle) 
     toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
     LSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **offoptions)
     RSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **onoptions)
