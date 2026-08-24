@@ -117,20 +117,31 @@ def WindowRegistration(type='X'):
 def createWin(type, title):
     #Window Register Management
     if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
-        return(None) #killbind
+        return None, None #killbind
     if type == 'M': # main window
         win = Tk()
     else:
         win = Toplevel(Mwin) #Make window
     WinCode = AddWindowToRegister(win,type) #Ask to register with the Register, Save Date as unique code.
     if WinCode == False: #If denied
-        return(None) #explode
+        return None, None #explode
     if type != 'M':
         win.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(win,WinCode,type)) #Use saved code to remove from register
     win.title(title)
     win.configure(background=Theme[2])
     #End Window management
-    return win
+    
+    border_frame = Frame(win,background=Theme[2],borderwidth="4px")
+    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
+    if type not in ['C', 'M']: # credits window does not include a sidebar # don't know why
+        SidebarMenu(win,border_frame) #Create Menu Sidebar
+    border_frame.pack()
+    if type not in ['C', 'M']:
+        content_frame.grid(row=0,column=1)
+    else:
+        content_frame.pack()
+
+    return win, content_frame
 
 class HoverButton(Button): #Used for the sidebar menu buttons
     def __init__(self, master, **kw):
@@ -223,7 +234,7 @@ def toggleable(initialstate = None, values = (True, False)): # add persistent st
     return toggleable # if proper arguments were given
 
 def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
-    Twin = createWin('T', 'Avalian Font Translation')
+    Twin,content_frame = createWin('T', 'Avalian Font Translation')
     if Twin is None:
         return False # nope
 
@@ -255,12 +266,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         Ftext = chunkText(Ntext, maxsize)
 
         Scratch.config(text=Ftext)
-        English.config(text=Ftext)
-    
-    border_frame = Frame(Twin,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
-    
-    SidebarMenu(Twin,border_frame) #Create Menu Sidebar    
+        English.config(text=Ftext)   
 
     #scrollbar = Scrollbar(content_frame, orient="vertical", command=content_frame.yview)
     #https://www.tutorialspoint.com/implementing-a-scrollbar-using-grid-manager-on-a-tkinter-window
@@ -286,9 +292,6 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
 
     #drawing
 
-    border_frame.pack()
-    content_frame.grid(row=0,column=1)
-
     English.grid(column=0,row=2,columnspan=8)
     Scratch.grid(column=0,row=3,columnspan=8)
     swichFrame.grid(column=7,row=2)
@@ -308,12 +311,10 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Twin.mainloop()
     
 def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
-    Cwin = createWin('C', 'Avalian Translation Credits')
+    Cwin,content_frame = createWin('C', 'Avalian Translation Credits')
     if Cwin is None:
         return False # nope
 
-    border_frame = Frame(Cwin,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     Preamble = Label(content_frame,text="I hope some birbs can find some fun or use in this.\nYou can contact me regarding this software via\n\
 Telegram @RenauliSnow.\n\nA deep thanks goes to everyone in this community for\n\
 perpetuating this amazing species. For their specific\n\
@@ -337,8 +338,6 @@ For presenting me the joys of this community:\n \
     #Scratch = Label(content_frame,text="test",font=('avali scratch',30), background="white", borderwidth="10px", foreground="#fc850f")
     #English = Label(content_frame,text="test",font=('arial',20),bg='black') #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     
-    border_frame.pack()
-    content_frame.pack()
     Credit.grid(column=0,row=0)
     Preamble.grid(column=0,row=1)
     Credits.grid(column=0,row=2)
@@ -353,7 +352,7 @@ For presenting me the joys of this community:\n \
     Cwin.mainloop()
 
 def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
-    Owin = createWin('O', 'Avalian Translation Options')
+    Owin,content_frame = createWin('O', 'Avalian Translation Options')
     if Owin is None:
         return False # nope
 
@@ -390,10 +389,6 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
         TextBox.insert("1.0", str(O1)) 
     
     #Creating Objects:
-    border_frame = Frame(Owin,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
-    
-    SidebarMenu(Owin,border_frame) #Wow this worked in its first application immediately with no bug fixing whatsoeverthisisdefinitlyatrap.
  
     Title = Label(content_frame,text="Options",font=('arial',20),**textstyle) 
 
@@ -438,8 +433,6 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     RSButton4 = Button(toggleSwitch4,command=lambda: button(3,1), **onoptions)
     
     #Gridding Objects # hit that griddy
-    border_frame.pack()
-    content_frame.grid(column=1,row=0)
     Title.grid(column=0,row=0)
     #Preamble.grid(column=0,row=0)
     ###Option 1
@@ -496,12 +489,9 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Owin.mainloop()
 
 def createNumbersWin():
-    Nwin = createWin('N', 'Avalian Number Translation')
+    Nwin,content_frame = createWin('N', 'Avalian Number Translation')
     if Nwin is None:
         return False # nope
-    
-    border_frame = Frame(Nwin,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     
     panel = Canvas(content_frame, bg=Theme[0])
 
@@ -686,9 +676,6 @@ def createNumbersWin():
         else:
             b12EnglishDisp.config(background=Theme[0])
             b12EnglishDispButton.config(text='Hide')
-    
-    #Create Menu Sidebar    
-    SidebarMenu(Nwin,border_frame)
 
     util_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
     random_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
@@ -731,10 +718,6 @@ def createNumbersWin():
     setBase10Display(False)
     setBase12Display(False)
 
-    
-    border_frame.pack()
-    content_frame.grid(column=1,row=0)
-
     Title.grid(column=1,row=0,columnspan=3)
     util_frame.grid(column=1,row=1,columnspan=3,rowspan=3,sticky='nesw')
     HVButton.grid(column=1,row=0)
@@ -763,7 +746,7 @@ def createNumbersWin():
     Nwin.mainloop()
 
 def createPronunciationWin():
-    Pwin = createWin('P', 'Avalian Pronunciation')
+    Pwin,content_frame = createWin('P', 'Avalian Pronunciation')
     if Pwin is None:
         return False # nope
 
@@ -777,11 +760,6 @@ def createPronunciationWin():
         maxsize = 70
         English.config(text=chunkText(Ntext, maxsize))
         EnglishO.config(text=chunkText(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()), maxsize))
-
-    border_frame = Frame(Pwin,borderwidth="4px",background=Theme[2])#background="#fc850f"
-    content_frame = Frame(border_frame,borderwidth= "12px",background=Theme[0])
-    
-    SidebarMenu(Pwin,border_frame)
 
     ###Labels
     PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
@@ -865,8 +843,6 @@ def createPronunciationWin():
     Ndropbutton.grid(column=1,row = 2,columnspan=2)
     ClampingLabel.grid(column=3,row=2)
     ClampingCharsButton.grid(column=4,row=2,columnspan=2)
-    border_frame.pack()
-    content_frame.grid(column=1,row=0)
     English.grid(column=0,row=5,columnspan=8)
     EnglishO.grid(column=0,row=6,columnspan=8)
     #switch.grid(column=8,row=5)
@@ -883,12 +859,10 @@ def createPronunciationWin():
 def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
     global MenuImgs
     global Mwin
-    Mwin = createWin('M', 'Avalian Translation Software (RbCaVi Fork)')
+    Mwin,content_frame = createWin('M', 'Avalian Translation Software (RbCaVi Fork)')
     if Mwin is None:
         return False # nope
 
-    border_frame = Frame(Mwin,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     Title = Label(content_frame,font=('Helvetica 30 italic'),text="Avalian Translation Software",background=Theme[0],foreground=Theme[3])
     Preface = Label(content_frame,font=('Helvetica 18 italic'),text="By: Renauli Snow",background=Theme[0],foreground=Theme[3]) #Aw du Bub du day. Bah.. Blep.
     mainbuttonstyle = {'background':Theme[2], 'foreground':Theme[1], 'activebackground':Theme[4], 'activeforeground':Theme[5]}
@@ -898,8 +872,6 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,**mainbuttonstyle)
     Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,**mainbuttonstyle)
     ##db349c
-    border_frame.pack()
-    content_frame.pack()
     Title.grid(column=2,columnspan=3,row=0,padx=2,pady=2)
     Preface.grid(column=0,columnspan=5,row=1,padx=3,pady=2)
     Option0.grid(column=2,row=2,columnspan=2,padx=2,pady=2)
