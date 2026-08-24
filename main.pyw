@@ -512,6 +512,7 @@ def createNumbersWin():
         else: #Horizontal 
             panel.config(width=800, height=100)
             panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
+        writeNumber(2, 2, lastManifest, vert)
 
     digitimages = {
         im: ImageTk.PhotoImage(Image.open('Images/numChars/' + im + '.png'))
@@ -526,8 +527,10 @@ def createNumbersWin():
     def writeImg(x,y,image): #put image on canvas
         panel.create_image(x, y, image=image,anchor="nw")
 
-
+    lastManifest = []
     def writeNumber(x,y,manifest,vert): #write full number to canvas
+        nonlocal lastManifest
+        lastManifest = manifest
         #add vertical option
         panel.delete('all') # delete all previous images to avoid memory leak
         centerlineH = 92 #maxHeight of tallest img in set
@@ -761,14 +764,21 @@ def createPronunciationWin():
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
         changeText(cInput.get("1.0", "end-1c"))
+    lasttext = ''
+    def updateWord():
+        changeText(lasttext)
     def changeText(Ntext):
+        nonlocal lasttext
+        lasttext = Ntext
         maxsize = 70
         English.config(text=chunkText(Ntext, maxsize))
         EnglishO.config(text=chunkText(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()), maxsize))
     def setHpron(Hpron):
         GO.writeIni('Pronunciation', 'LastH', str(HpronOptions.index(Hpron)))
+        updateWord()
     def setClampingChars(ClampingChars):
         GO.writeIni('Pronunciation', 'LastC', str(ClampingCharsOptions.index(ClampingChars)))
+        updateWord()
 
     ###Labels
     PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
@@ -825,7 +835,7 @@ def createPronunciationWin():
     Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),**buttonstyle)
     Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),**buttonstyle)
     def enterHandler(event):
-        updateNumber()
+        setUserWord()
         return "break"
     cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
     cInput.bind("<Return>",enterHandler)
