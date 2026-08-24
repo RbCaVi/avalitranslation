@@ -20,7 +20,8 @@ try:
 except:
     GO.errorMsg('avali-scratch.ttf missing','The file "avali-scratch.ttf" is missing, please replace avali-scratch.ttf or reinstall program.')
     GO.exitPrgrm()
-GO.verifyiniIntegrity() #check on ini file
+#GO.verifyiniIntegrity() #check on ini file
+GO.repairIni() # fix the ini file if it is broken
 #Theme Loading
 ThemeName = GO.readIni("Theme","setTheme") #Get theme from ini
 #print('Theme: ',ThemeName)
@@ -36,9 +37,11 @@ if not GO.retrieveTheme(ThemeName,1): #Validate
         GO.errorMsg('Error: Defaulting Theme','Defaulting to hardcoded theme, ini file themes are corrupt (see previous errors)')
         #print('2LL:',Theme)
         Theme = ['#f0f0f0','#000000','#fc850f','#000000','#ff3419','#fffafa','#d3d3d3','#ffffff','#f0f0f0','#000000']
+        GO.writeIni("Theme","setTheme",'Light')
+        GO.writeIni("Theme","Light",'['+','.join(Theme)+']')
 
         #print('3LL:',Theme)
-        GO.resetini() #Trigger .ini Reset
+        #GO.resetini() #Trigger .ini Reset
 else: 
     #print("Start Else statement")
     Theme = GO.retrieveTheme(ThemeName) #Run theme through seperate function to populate global theme list

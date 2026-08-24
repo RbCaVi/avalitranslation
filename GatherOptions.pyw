@@ -109,6 +109,10 @@ def readIni(Rsection,Ratribute): #read the ini file and return value
     # idk
 def readIniChecked(Rsection,Ratribute,Max,Default=0): # read an ini value as an int, if it is outside 0-Max inclusive, then writeIni to reset to Default # returns the value as an int
     Rvalue = readIni(Rsection, Ratribute)
+    if Rvalue is None:
+        writeIni(Rsection, Ratribute, Default)
+        print('readIniChecked('+Rsection+','+Ratribute+')='+str(Default)+' ['+Ratribute+' was not found]')
+        return Default
     try:
         Rvalue = int(Rvalue)
     except ValueError:
@@ -121,19 +125,25 @@ def readIniChecked(Rsection,Ratribute,Max,Default=0): # read an ini value as an 
         return Default
     print('readIniChecked('+Rsection+','+Ratribute+')='+str(Rvalue)+' in 0-'+str(Max))
     return Rvalue
-def readIniBool(Rsection,Ratribute): # read a boolean stored as a 0 or 1 in the ini file
-    Rvalue = bool(readIniChecked(Rsection, Ratribute, 1))
+def readIniBool(Rsection,Ratribute,Default = False): # read a boolean stored as a 0 or 1 in the ini file
+    Rvalue = bool(readIniChecked(Rsection, Ratribute, 1, Default))
     print('readIniBool('+Rsection+','+Ratribute+')='+str(Rvalue))
     return Rvalue
 def exitPrgrm():
     sys.exit()
+
+# are these necessary?
+# the program can recover from a completely empty settings.ini file
+# maybe it's preferable to have a default
+# maybe a button in options
+"""
 def resetini():
     debug = 0 #If set to 1 then it bypasses this func when its called.
     if debug == 1:
         print('DEBUG MODE ON resetini() line 134')
         return 'debug'
     iniBackup = '''[Theme]
-//Dont be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
+//Don't be deterred by the amount of colors you need to choose, I just wanted to ensure full customizability. Most should be quite similar to another
 setTheme=Light
     Light=[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //1
     Dark=[#1f1f1f,#ffffff,#fc850f,#ffffff,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000] //2
@@ -149,9 +159,10 @@ Cchars=0 //0-6
 LastH=0 //0-4
 LastC=0 //0-5
 [Numbers]
-HV=0 //Horizontal&Vertical 0&1 respectivly'''
-    eraseProtect=0
-    status='Clear'
+HV=0 //Horizontal&Vertical 0&1 respectivly
+[Windows]
+Unmanaged=0
+'''
     try:
         os.rename("settings.ini","settingsOLD.ini") # try to rename the settings file
     except FileNotFoundError:
@@ -159,7 +170,7 @@ HV=0 //Horizontal&Vertical 0&1 respectivly'''
         infoMsg('settings.ini Created', '"settings.ini" file did not exist. A new one was created automatically.') # notify the user of this development
     except:
         # something else went wrong # probably settingsOLD.ini already existed
-        errorMsg('Errpr', e + 'Please empty settingsOLD.ini of wanted data before deleting.') #store error for reporting
+        errorMsg('Error', e + 'Please empty settingsOLD.ini of wanted data before deleting.') #store error for reporting
         return # do not write the file
     with open("settings.ini", "w") as file: #if successful in renaming or settings.ini did not exist, create a new settings.ini file
         file.write(iniBackup) #and populate it
@@ -192,8 +203,33 @@ def verifyiniIntegrity():
         #Checks go here any descrepancy will be identified and stored in status, then shown in error message
     if status != 'Correct':
         resetini()
-        errorMsg('Error opening "settings.ini"',status)
-verifyiniIntegrity()
+        #errorMsg('Error opening "settings.ini"',status)
+
+#verifyiniIntegrity()
+"""
+
+def repairIni():
+    if not os.path.exists('settings.ini'):
+        with open('settings.ini', 'w') as f: # create an empty settings.ini
+            pass
+    themes = retrieveThemeList()
+    themename = readIni('Theme', 'setTheme')
+    if themename is None or themename not in themes:
+        if 'Light' in themes:
+            writeIni('Theme', 'setTheme', 'Light')
+        elif len(themes) == 0:
+            writeIni('Theme', 'setTheme', 'Light')
+            writeIni('Theme', 'Light', '[#f0f0f0,#000000,#fc850f,#000000,#ff3419,#fffafa,#d3d3d3,#ffffff,#f0f0f0,#000000]')
+        else:
+            writeIni('Theme', 'setTheme', themes[0])
+    readIniBool('Translation', 'TableView')
+    readIniBool('Translation', 'EnglishView', Default = True)
+    readIniChecked('Pronunciation', 'Hpronchars', 5)
+    readIniChecked('Pronunciation', 'Cchars', 6)
+    readIniChecked('Pronunciation', 'LastH', 4)
+    readIniChecked('Pronunciation', 'LastC', 5)
+    readIniBool('Numbers', 'HV')
+    readIniBool('Windows', 'Unmanaged')
 
 def validateHexCode(index, hexcode):
     hexdigits = '0123456789abcdefABCDEF'
