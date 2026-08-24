@@ -388,10 +388,10 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
         GO.writeIni('Numbers', 'HV', vert)
 
     def setClampingChars(CCStr):
-        GO.writeIni('Pronunciation', 'Cchars', str(CCOptions.index(CCStr)))
+        GO.writeIni('Pronunciation', 'Cchars', CCOptions.index(CCStr))
 
     def setNpron(HPStr):
-        GO.writeIni('Pronunciation', 'Hpronchars', str(HPOptions.index(HPStr)))
+        GO.writeIni('Pronunciation', 'Hpronchars', HPOptions.index(HPStr))
 
     @toggleable
     def setWindowsUnmanaged(wu):
@@ -831,10 +831,10 @@ def createPronunciationWin():
         English.config(text=chunkText(Ntext, maxsize))
         EnglishO.config(text=chunkText(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()), maxsize))
     def setHpron(Hpron):
-        GO.writeIni('Pronunciation', 'LastH', str(HpronOptions.index(Hpron)))
+        GO.writeIni('Pronunciation', 'LastH', HpronOptions.index(Hpron))
         updateWord()
     def setClampingChars(ClampingChars):
-        GO.writeIni('Pronunciation', 'LastC', str(ClampingCharsOptions.index(ClampingChars)))
+        GO.writeIni('Pronunciation', 'LastC', ClampingCharsOptions.index(ClampingChars))
         updateWord()
 
     ###Labels
