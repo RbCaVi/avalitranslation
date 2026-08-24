@@ -70,7 +70,15 @@ def RemoveWindowFromRegister(win,date,type): #Remove a specific window from the 
     GO.errorMsg('Error: Failed to remove closed window from Register','Don\'t worry nothing bad. If you have trouble opening a window please restart the application.')
     return(False)
 
+
+WindowsUnmanaged = GO.readIni("Windows","Unmanaged") #read the options
+if WindowsUnmanaged in ['0', '1']:
+    WindowsUnmanaged = bool(int(WindowsUnmanaged))
+else:
+    WindowsUnmanaged = False
 def CheckWindowRegister(type='X'): #Check if a type of window is allowed to be created in the Register
+    if WindowsUnmanaged:
+        return(True)
     typeCount = len(windowregister[type])
     maxTypeCount = {
         'P': 1,
@@ -384,6 +392,19 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     def setNpron(HPStr):
         GO.writeIni('Pronunciation', 'Hpronchars', str(HPOptions.index(HPStr)))
 
+    @toggleable(values = ['0', '1'])
+    def setWindowsUnmanaged(wu):
+        global WindowsUnmanaged
+        if wu == '0':
+            LSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+            WindowsUnmanaged = False
+        else:
+            LSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+            RSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            WindowsUnmanaged = True
+        GO.writeIni('Windows', 'Unmanaged', wu)
+
     def button(setting,state): #accepts button commands and textboxes for options
         print("runing",'-cOW->b line 369')
     def setbuttons(p): #sets all buttons acording to settings in settings.ini
@@ -441,17 +462,30 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),**textstyle) 
     Desc5 = Label(Setting5,text="Sets if new windows are managed (only one of each type\nopen at a time) or unmanaged (Open as many as you\nwould like at once).",font=('arial',10),**textstyle) 
     toggleSwitch5 = Frame(Setting5,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton5 = Button(toggleSwitch5,command=lambda: button(4,0), **offoptions)
-    RSButton5 = Button(toggleSwitch5,command=lambda: button(4,1), **onoptions)
+    LSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **offoptions)
+    RSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **onoptions)
 
     ThemeVar.set(ThemeName)
-    setDirection(GO.readIni('Numbers', 'HV'))
+    V = GO.readIni('Numbers', 'HV')
+    if V not in ['0', '1']:
+        V = '0'
+    setDirection(V)
     CC = GO.readIni('Pronunciation', 'Cchars')
     if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
-        ClampingCharsVar.set(CCOptions[int(CC)])
+        cci = int(CC)
+    else:
+        cci = 0
+    ClampingCharsVar.set(CCOptions[cci])
     HP = GO.readIni('Pronunciation', 'Hpronchars')
     if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry
-        NpronVar.set(HPOptions[int(HP)])
+        hpi = int(HP)
+    else:
+        hpi = 0
+    NpronVar.set(HPOptions[hpi])
+    WU = GO.readIni('Windows', 'Unmanaged')
+    if WU not in ['0', '1']:
+        WU = '0'
+    setWindowsUnmanaged(WU)
     
     #Gridding Objects # hit that griddy
     Title.grid(column=0,row=0)
@@ -493,10 +527,6 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Setting5.grid(column=0,row=3)
     Setting3.grid(column=0,row=4)
     Setting4.grid(column=0,row=5)
-
-    NotComplete2 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
-
-    NotComplete2.grid(column=0,row=3)
 
     Owin.mainloop()
 
