@@ -256,6 +256,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         else:
             English.config(fg=Theme[1])
             switch1.config(relief=RAISED)
+        GO.writeIni('Translation', 'EnglishView', EcoverStatus)
     @toggleable
     def setCoverTable(TcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
         if TcoverStatus:
@@ -264,6 +265,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         else:
             refimg.config(bg=Theme[0])
             switch2.config(relief=RAISED)
+        GO.writeIni('Translation', 'TableView', TcoverStatus)
     def setRandWord(category):
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
@@ -290,12 +292,15 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),**buttonstyle)
     Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),**buttonstyle)
     cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
-    cInput.bind("<Return>",lambda event: setUserWord())
+    def enterHandler():
+        setUserWord()
+        return 'break'
+    cInput.bind("<Return>",lambda event: enterHandler())
     refimg = Label(content_frame,image=ReferenceImg,width=895,height=61,background=Theme[2])
     #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all")))
 
-    setCoverEnglish(True)
-    setCoverTable(True)
+    setCoverEnglish(GO.readIniBool('Translation', 'EnglishView'))
+    setCoverTable(GO.readIniBool('Translation', 'TableView'))
 
     #drawing
 
@@ -399,6 +404,26 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
             LSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
             RSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Windows', 'Unmanaged', wu)
+
+    @toggleable
+    def setECover(ecover):
+        if ecover:
+            LSButton6.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+            RSButton6.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+        else:
+            LSButton6.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton6.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+        GO.writeIni('Translation', 'EnglishView', ecover)
+
+    @toggleable
+    def setTCover(tcover):
+        if tcover:
+            LSButton7.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+            RSButton7.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+        else:
+            LSButton7.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton7.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+        GO.writeIni('Translation', 'TableView', tcover)
     
     #Creating Objects:
  
@@ -448,11 +473,27 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     LSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **offoptions)
     RSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **onoptions)
 
+    Setting6 = Frame(content_frame,background=Theme[0])
+    Title6 = Label(Setting6,text="Hide English Display     ",font=('arial',16),**textstyle) 
+    Desc6 = Label(Setting6,text="Sets if the original English text is hidden\nby default on opening.",font=('arial',10),**textstyle) 
+    toggleSwitch6 = Frame(Setting6,highlightbackground=Theme[1],highlightthickness=3)
+    LSButton6 = Button(toggleSwitch6,command=lambda: setECover.toggle(), **offoptions)
+    RSButton6 = Button(toggleSwitch6,command=lambda: setECover.toggle(), **onoptions)
+
+    Setting7 = Frame(content_frame,background=Theme[0])
+    Title7 = Label(Setting7,text="Hide Translation Table     ",font=('arial',16),**textstyle) 
+    Desc7 = Label(Setting7,text="Sets if the translation table is hidden\nby default on opening.",font=('arial',10),**textstyle) 
+    toggleSwitch7 = Frame(Setting7,highlightbackground=Theme[1],highlightthickness=3)
+    LSButton7 = Button(toggleSwitch7,command=lambda: setTCover.toggle(), **offoptions)
+    RSButton7 = Button(toggleSwitch7,command=lambda: setTCover.toggle(), **onoptions)
+
     ThemeVar.set(ThemeName)
     setDirection(GO.readIniBool('Numbers', 'HV'))
     ClampingCharsVar.set(CCOptions[GO.readIniChecked('Pronunciation', 'Cchars', 6)])
     NpronVar.set(HPOptions[GO.readIniChecked('Pronunciation', 'Hpronchars', 5)])
     setWindowsUnmanaged(WindowsUnmanaged)
+    setECover(GO.readIniBool('Translation', 'EnglishView'))
+    setTCover(GO.readIniBool('Translation', 'TableView'))
     
     #Gridding Objects # hit that griddy
     Title.grid(column=0,row=0)
@@ -489,11 +530,27 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Nprondropbutton.grid(column=0,row=0)
     toggleSwitch4.grid(column=3 ,row=0)
 
+    ###Option 6
+    Title6.grid(column=0,row=0)
+    Desc6.grid(column=0,row=1,columnspan=2)
+    LSButton6.grid(column=0,row=0)
+    RSButton6.grid(column=1,row=0)
+    toggleSwitch6.grid(column=3 ,row=0)
+
+    ###Option 7
+    Title7.grid(column=0,row=0)
+    Desc7.grid(column=0,row=1,columnspan=2)
+    LSButton7.grid(column=0,row=0)
+    RSButton7.grid(column=1,row=0)
+    toggleSwitch7.grid(column=3 ,row=0)
+
     Setting1.grid(column=0,row=1)
     Setting2.grid(column=0,row=2)
     Setting5.grid(column=0,row=3)
     Setting3.grid(column=0,row=4)
     Setting4.grid(column=0,row=5)
+    Setting6.grid(column=0,row=6)
+    Setting7.grid(column=0,row=7)
 
     Owin.mainloop()
 
