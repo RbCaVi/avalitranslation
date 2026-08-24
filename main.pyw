@@ -47,6 +47,9 @@ else:
 buttonstyle = {'bg': Theme[8],'fg': Theme[9]}
 textstyle = {'bg': Theme[0],'fg': Theme[1]}
 
+HpronOptions = ["ha (ha)","Short pause (-)","Short pause (')","Short Pause ( )","Short Pause (,)"] 
+ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brackets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
+
 windowregister = {type:{} for type in 'MPOCNT'} # type -> id (date) -> window
 
 def AddWindowToRegister(win,type): #Add a new window to the Register, Has adorable abreviation "AWTR"
@@ -363,20 +366,26 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
             GO.writeIni("Theme","setTheme",ThemeName)
             GO.infoMsg('Success','Your theme has been updated, please restart the application!')
         else: 
-            GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.')
+            GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.') # there is no way
+
+    @toggleable(values = ['0', '1'])
+    def setDirection(vert):
+        if vert == '0':
+            LSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+        else:
+            LSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
+            RSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+        GO.writeIni('Numbers', 'HV', vert)
+
+    def setClampingChars(CCStr):
+        GO.writeIni('Pronunciation', 'Cchars', str(CCOptions.index(CCStr)))
+
+    def setNpron(HPStr):
+        GO.writeIni('Pronunciation', 'Hpronchars', str(HPOptions.index(HPStr)))
 
     def button(setting,state): #accepts button commands and textboxes for options
         print("runing",'-cOW->b line 369')
-        if setting == 1:
-            #if LSButton2.cget('relief') == FLAT:
-            if state == 1:
-                #print("Right")
-                LSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=NORMAL)
-                RSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=DISABLED)#or FLAT
-            else:
-                #print("Left")
-                LSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=DISABLED)#or FLAT
-                RSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=NORMAL)
     def setbuttons(p): #sets all buttons acording to settings in settings.ini
         O1 = GO.readIni("Theme","setTheme")
         O2 = GO.readIni("Theme","setTheme")
@@ -393,6 +402,9 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
 
     offoptions = {'relief':FLAT,'bg':Theme[6],'activebackground':Theme[6],'text':'   '}
     onoptions = {'relief':RAISED,'bg':Theme[2],'activebackground':Theme[2],'text':'   '}
+
+    CCOptions = ['Last Used'] + ClampingCharsOptions
+    HPOptions = ['Last Used'] + HpronOptions
     
     Setting1 = Frame(content_frame,background=Theme[0])
     Title1 = Label(Setting1,text="Dark, Light, & Custom Themes",font=('arial',16),**textstyle) 
@@ -401,7 +413,29 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     ThemeVar = StringVar()
     Themedropbutton = OptionMenu(toggleSwitch1, ThemeVar, *GO.retrieveThemeList(), command = setTheme)
     Themedropbutton.config(**buttonstyle)
-    ThemeVar.set(ThemeName)
+
+    Setting2 = Frame(content_frame,background=Theme[0])
+    Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),**textstyle) 
+    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),**textstyle) 
+    toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
+    LSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **offoptions)
+    RSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **onoptions)
+    
+    Setting3 = Frame(content_frame,background=Theme[0])
+    Title3 = Label(Setting3,text="Pronunciation Clamping Chars. ",font=('arial',16),**textstyle) 
+    Desc3 = Label(Setting3,text="Sets your default selction for the Pronunciation\nclamping characters. i.e. [] or ()",font=('arial',10),**textstyle) 
+    toggleSwitch3 = Frame(Setting3,highlightbackground=Theme[1],highlightthickness=3)
+    ClampingCharsVar = StringVar()
+    ClampingCharsdropbutton = OptionMenu(toggleSwitch3, ClampingCharsVar, *CCOptions, command = setClampingChars)
+    ClampingCharsdropbutton.config(**buttonstyle)
+    
+    Setting4 = Frame(content_frame,background=Theme[0])
+    Title4 = Label(Setting4,text="N Pronuciation Replacement Chars.",font=('arial',16),**textstyle) 
+    Desc4 = Label(Setting4,text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),**textstyle) 
+    toggleSwitch4 = Frame(Setting4,highlightbackground=Theme[1],highlightthickness=3)
+    NpronVar = StringVar()
+    Nprondropbutton = OptionMenu(toggleSwitch4, NpronVar, *HPOptions, command = setNpron)
+    Nprondropbutton.config(**buttonstyle)
 
     Setting5 = Frame(content_frame,background=Theme[0])
     Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),**textstyle) 
@@ -410,26 +444,14 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     LSButton5 = Button(toggleSwitch5,command=lambda: button(4,0), **offoptions)
     RSButton5 = Button(toggleSwitch5,command=lambda: button(4,1), **onoptions)
 
-    Setting2 = Frame(content_frame,background=Theme[0])
-    Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),**textstyle) 
-    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or verticaly\nby default on opening.",font=('arial',10),**textstyle) 
-    toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton2 = Button(toggleSwitch2,command=lambda: button(1,0), **offoptions)
-    RSButton2 = Button(toggleSwitch2,command=lambda: button(1,1), **onoptions)
-    
-    Setting3 = Frame(content_frame,background=Theme[0])
-    Title3 = Label(Setting3,text="Pronunciation Clamping Chars. ",font=('arial',16),**textstyle) 
-    Desc3 = Label(Setting3,text="Sets your default selction for the Pronuciation\nclamping characters. i.e. [] or ()",font=('arial',10),**textstyle) 
-    toggleSwitch3 = Frame(Setting3,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton3 = Button(toggleSwitch3,command=lambda: button(2,0), **offoptions)
-    RSButton3 = Button(toggleSwitch3,command=lambda: button(2,1), **onoptions)
-    
-    Setting4 = Frame(content_frame,background=Theme[0])
-    Title4 = Label(Setting4,text="N Pronuciation Replacement Chars.",font=('arial',16),**textstyle) 
-    Desc4 = Label(Setting4,text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),**textstyle) 
-    toggleSwitch4 = Frame(Setting4,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton4 = Button(toggleSwitch4,command=lambda: button(3,0), **offoptions)
-    RSButton4 = Button(toggleSwitch4,command=lambda: button(3,1), **onoptions)
+    ThemeVar.set(ThemeName)
+    setDirection(GO.readIni('Numbers', 'HV'))
+    CC = GO.readIni('Pronunciation', 'Cchars')
+    if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
+        ClampingCharsVar.set(CCOptions[int(CC)])
+    HP = GO.readIni('Pronunciation', 'Hpronchars')
+    if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry
+        NpronVar.set(HPOptions[int(HP)])
     
     #Gridding Objects # hit that griddy
     Title.grid(column=0,row=0)
@@ -437,7 +459,7 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     ###Option 1
     Title1.grid(column=0,row=0)
     Desc1.grid(column=0,row=1,columnspan=2)
-    Themedropbutton.grid(column=2,row=0)
+    Themedropbutton.grid(column=0,row=0)
     toggleSwitch1.grid(column=3 ,row=0)
 
     ###Option 5
@@ -457,15 +479,13 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     ###Option 3
     Title3.grid(column=0,row=0)
     Desc3.grid(column=0,row=1,columnspan=2)
-    LSButton3.grid(column=0,row=0)
-    RSButton3.grid(column=1,row=0)
+    ClampingCharsdropbutton.grid(column=0,row=0)
     toggleSwitch3.grid(column=3 ,row=0)
 
     ###Option 4
     Title4.grid(column=0,row=0)
     Desc4.grid(column=0,row=1,columnspan=2)
-    LSButton4.grid(column=0,row=0)
-    RSButton4.grid(column=1,row=0)
+    Nprondropbutton.grid(column=0,row=0)
     toggleSwitch4.grid(column=3 ,row=0)
 
     Setting1.grid(column=0,row=1)
@@ -474,15 +494,9 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Setting3.grid(column=0,row=4)
     Setting4.grid(column=0,row=5)
 
-    NotComplete1 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
     NotComplete2 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
-    NotComplete3 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
-    NotComplete4 = Label(content_frame,text="Coming Soon",font=('arial',25),**textstyle) 
 
-    NotComplete1.grid(column=0,row=2)
     NotComplete2.grid(column=0,row=3)
-    NotComplete3.grid(column=0,row=4)
-    NotComplete4.grid(column=0,row=5)
 
     Owin.mainloop()
 
@@ -776,13 +790,11 @@ def createPronunciationWin():
     RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),**textstyle)
     ##Dropdowns
     #HPron
-    HpronOptions = ["ha (ha)","Short pause (-)","Short pause (')","Short Pause ( )","Short Pause (,)"] 
     Hdropclicked = StringVar()
     Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions)
     Ndropbutton.config(**buttonstyle) 
     #Ndropbutton.config(bg=Theme[0])
     #ClampingChars
-    ClampingCharsOptions = ['"{-}" (Curvy Brackets)','"[-]" (Brackets)','"|-|" (Lines)','"\\-" (Backslash)','" - " (Spaces)','"-" (None)']
     ClampingCharsSelected = StringVar()
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
     ClampingCharsButton.config(**buttonstyle) 

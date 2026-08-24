@@ -23,6 +23,7 @@ sectionregex = '\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*'
 lineregex = '(?P<initial>\\s*(?P<attribute>\\w+)\\s*=\\s*)(?P<value>.*?)(?P<final>\\s*(//.*)?)'
 
 def writeIni(Rsection,Ratribute,Rvalue):
+    print('writeIni('+Rsection+','+Ratribute+','+Rvalue+')')
     with open("settings.ini", "r") as file:
         rawData = file.read()
     rawDataS = rawData.splitlines()
