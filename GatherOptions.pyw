@@ -24,10 +24,13 @@ lineregex = '(?P<initial>\\s*(?P<attribute>\\w+)\\s*=\\s*)(?P<value>.*?)(?P<fina
 
 def writeIni(Rsection,Ratribute,Rvalue):
     if isinstance(Rvalue, bool):
+        print('writeIniBool('+Rsection+','+Ratribute+','+str(Rvalue)+')')
         Rvalue = str(int(Rvalue))
-    if isinstance(Rvalue, int):
+    elif isinstance(Rvalue, int):
+        print('writeIniInt('+Rsection+','+Ratribute+','+str(Rvalue)+')')
         Rvalue = str(Rvalue)
-    print('writeIni('+Rsection+','+Ratribute+','+Rvalue+')')
+    else:
+        print('writeIni('+Rsection+','+Ratribute+','+Rvalue+')')
     with open("settings.ini", "r") as file:
         rawData = file.read()
     rawDataS = rawData.splitlines()
@@ -110,13 +113,18 @@ def readIniChecked(Rsection,Ratribute,Max,Default=0): # read an ini value as an 
         Rvalue = int(Rvalue)
     except ValueError:
         writeIni(Rsection, Ratribute, Default)
+        print('readIniChecked('+Rsection+','+Ratribute+')='+str(Default)+' ['+Rvalue+' not a valid integer]')
         return Default
     if Rvalue < 0 or Rvalue > Max:
         writeIni(Rsection, Ratribute, Default)
+        print('readIniChecked('+Rsection+','+Ratribute+')='+str(Default)+' ['+str(Rvalue)+' not in 0-'+str(Max)+']')
         return Default
+    print('readIniChecked('+Rsection+','+Ratribute+')='+str(Rvalue)+' in 0-'+str(Max))
     return Rvalue
 def readIniBool(Rsection,Ratribute): # read a boolean stored as a 0 or 1 in the ini file
-    return bool(readIniChecked(Rsection, Ratribute, 1))
+    Rvalue = bool(readIniChecked(Rsection, Ratribute, 1))
+    print('readIniBool('+Rsection+','+Ratribute+')='+str(Rvalue))
+    return Rvalue
 def exitPrgrm():
     sys.exit()
 def resetini():
