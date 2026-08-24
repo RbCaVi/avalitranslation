@@ -772,6 +772,10 @@ def createPronunciationWin():
         maxsize = 70
         English.config(text=chunkText(Ntext, maxsize))
         EnglishO.config(text=chunkText(AP.pronounciationDisp(Ntext,Hdropclicked.get(),ClampingCharsSelected.get()), maxsize))
+    def setHpron(Hpron):
+        GO.writeIni('Pronunciation', 'LastH', str(HpronOptions.index(Hpron)))
+    def setClampingChars(ClampingChars):
+        GO.writeIni('Pronunciation', 'LastC', str(ClampingCharsOptions.index(ClampingChars)))
 
     ###Labels
     PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
@@ -791,12 +795,12 @@ def createPronunciationWin():
     ##Dropdowns
     #HPron
     Hdropclicked = StringVar()
-    Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions)
+    Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions, command=setHpron)
     Ndropbutton.config(**buttonstyle) 
     #Ndropbutton.config(bg=Theme[0])
     #ClampingChars
     ClampingCharsSelected = StringVar()
-    ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions)
+    ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars)
     ClampingCharsButton.config(**buttonstyle) 
     #Load settings
     CC = GO.readIni("Pronunciation","Cchars") #read the options

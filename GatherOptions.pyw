@@ -92,6 +92,7 @@ def readIni(Rsection,Ratribute): #read the ini file and return value and line
             m = re.fullmatch(lineregex, line)
             if m is not None and m['attribute'] == Ratribute:
                 # found it
+                print('readIni('+Rsection+','+Ratribute+')='+m['value'])
                 return m['value']
                 break
             if re.fullmatch('\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*', line) is not None: # oops we're in the next section
