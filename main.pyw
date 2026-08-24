@@ -28,7 +28,7 @@ if not GO.retrieveTheme(ThemeName,1): #Validate
     #print('not true Validation')
     if GO.retrieveTheme('Light',1):
         Theme = GO.retrieveTheme('Light') #Run theme through seperate function to populate global theme list
-        GO.errorMsg("Error: Selected Theme Corupted","Selected Theme (Theme starting with: "+Theme+") is corrupt (see previous errors). Launching program with default theme (Light) and setting to default in .ini file.") 
+        GO.errorMsg("Error: Selected Theme Corrupted","Selected Theme ("+Theme+") is corrupt (see previous errors). Launching program with default theme (Light) and setting to default in .ini file.") 
         #print('1LL:',Theme)
         GO.writeIni("Theme","setTheme",'Light')#set back to default value
     else:
