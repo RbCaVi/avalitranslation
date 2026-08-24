@@ -71,11 +71,7 @@ def RemoveWindowFromRegister(win,date,type): #Remove a specific window from the 
     return(False)
 
 
-WindowsUnmanaged = GO.readIni("Windows","Unmanaged") #read the options
-if WindowsUnmanaged in ['0', '1']:
-    WindowsUnmanaged = bool(int(WindowsUnmanaged))
-else:
-    WindowsUnmanaged = False
+WindowsUnmanaged = GO.readIniBool("Windows","Unmanaged") #read the options
 def CheckWindowRegister(type='X'): #Check if a type of window is allowed to be created in the Register
     if WindowsUnmanaged:
         return(True)
@@ -376,14 +372,14 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
         else: 
             GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.') # there is no way
 
-    @toggleable(values = ['0', '1'])
+    @toggleable
     def setDirection(vert):
-        if vert == '0':
-            LSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-        else:
+        if vert:
             LSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
             RSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+        else:
+            LSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Numbers', 'HV', vert)
 
     def setClampingChars(CCStr):
@@ -392,30 +388,17 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     def setNpron(HPStr):
         GO.writeIni('Pronunciation', 'Hpronchars', str(HPOptions.index(HPStr)))
 
-    @toggleable(values = ['0', '1'])
+    @toggleable
     def setWindowsUnmanaged(wu):
         global WindowsUnmanaged
-        if wu == '0':
-            LSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-            WindowsUnmanaged = False
-        else:
+        WindowsUnmanaged = wu
+        if wu:
             LSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
             RSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            WindowsUnmanaged = True
+        else:
+            LSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
+            RSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Windows', 'Unmanaged', wu)
-
-    def button(setting,state): #accepts button commands and textboxes for options
-        print("runing",'-cOW->b line 369')
-    def setbuttons(p): #sets all buttons acording to settings in settings.ini
-        O1 = GO.readIni("Theme","setTheme")
-        O2 = GO.readIni("Theme","setTheme")
-        O3 = GO.readIni("Pronunciation","Hpron")
-        O4 = GO.readIni("Pronunciation","Cchars")
-        
-        
-        TextBox.insert("1.0", "This is some text to insert") 
-        TextBox.insert("1.0", str(O1)) 
     
     #Creating Objects:
  
@@ -466,26 +449,10 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     RSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **onoptions)
 
     ThemeVar.set(ThemeName)
-    V = GO.readIni('Numbers', 'HV')
-    if V not in ['0', '1']:
-        V = '0'
-    setDirection(V)
-    CC = GO.readIni('Pronunciation', 'Cchars')
-    if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
-        cci = int(CC)
-    else:
-        cci = 0
-    ClampingCharsVar.set(CCOptions[cci])
-    HP = GO.readIni('Pronunciation', 'Hpronchars')
-    if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry
-        hpi = int(HP)
-    else:
-        hpi = 0
-    NpronVar.set(HPOptions[hpi])
-    WU = GO.readIni('Windows', 'Unmanaged')
-    if WU not in ['0', '1']:
-        WU = '0'
-    setWindowsUnmanaged(WU)
+    setDirection(GO.readIniBool('Numbers', 'HV'))
+    ClampingCharsVar.set(CCOptions[GO.readIniChecked('Pronunciation', 'Cchars', 6)])
+    NpronVar.set(HPOptions[GO.readIniChecked('Pronunciation', 'Hpronchars', 5)])
+    setWindowsUnmanaged(WindowsUnmanaged)
     
     #Gridding Objects # hit that griddy
     Title.grid(column=0,row=0)
@@ -545,13 +512,6 @@ def createNumbersWin():
         else: #Horizontal 
             panel.config(width=800, height=100)
             panel.grid(column=0,row=5,columnspan=5,rowspan=1) #Wide mode
-    
-    #Load settings
-    HV = GO.readIni("Numbers","HV") #read the options
-    if HV in ['0', '1']:
-        setDirection(bool(int(HV)))
-    else:
-        setDirection(False)
 
     digitimages = {
         im: ImageTk.PhotoImage(Image.open('Images/numChars/' + im + '.png'))
@@ -755,6 +715,9 @@ def createNumbersWin():
     HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:setDirection.toggle(),**buttonstyle)#Horizontal Vertical numbering toggle
     HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",**textstyle) 
     ###
+    
+    #Load settings
+    setDirection(GO.readIniBool("Numbers","HV")) #read the options
 
     setSign(0)
     setBase10Display(False)
@@ -833,33 +796,21 @@ def createPronunciationWin():
     ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars)
     ClampingCharsButton.config(**buttonstyle) 
     #Load settings
-    CC = GO.readIni("Pronunciation","Cchars") #read the options
-    if CC in ['0', '1', '2', '3', '4', '5', '6']: #if valid entry
-        if CC == '0': #Last used 
-            #print('Read CC = 0')
-            LCC = GO.readIni("Pronunciation","LastC") #read the options
-            if LCC in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
-                clampingcharsindex = int(LCC)
-        else: #Default set, set it.
-            #print('Read CC =',str(CC-1))
-            clampingcharsindex = int(CC)-1
-    else: # invalid value
-        #print('Program Default')
-        clampingcharsindex = 1 # the second option - short pause (-)
+    CC = GO.readIniChecked("Pronunciation","Cchars",6,2) #read the options # 2 is the second option - short pause (-) # because 0 is use last set
+    if CC == 0:
+        #print('Read CC = 0')
+        clampingcharsindex = GO.readIniChecked("Pronunciation","LastC",5,1) #read the options # 1 is the second option - short pause (-)
+    else: #Default set, set it.
+        #print('Read CC =',str(CC-1))
+        clampingcharsindex = CC-1
     ClampingCharsSelected.set(ClampingCharsOptions[clampingcharsindex])
-    HP = GO.readIni("Pronunciation","Hpronchars") #read the options
-    if HP in ['0', '1', '2', '3', '4', '5']: #if valid entry set the Clamping characters dropdown menu to set option otherwise use the program default
-        if HP == '0': #
-            #print('Read HP = 0')
-            LHP = GO.readIni("Pronunciation","LastH") #read the options
-            if LHP in ['0', '1', '2', '3', '4']: # if valid
-                hpronindex = int(LHP)
-        else: #
-            #print('Read HP =',str(HP-1))
-            hpronindex = int(HP)-1
-    else: # invalid value
-        #print('HP = Program Default')
-        hpronindex = 1 # the second option - [] brackets
+    HP = GO.readIniChecked("Pronunciation","Hpronchars",5,2) #read the options # 2 is the second option - [] brackets # because 0 is use last set
+    if HP == 0: #
+        #print('Read HP = 0')
+        hpronindex = GO.readIniChecked("Pronunciation","LastH",4,1) #read the options # 1 is the second option - [] brackets
+    else: #
+        #print('Read HP =',str(HP-1))
+        hpronindex = HP-1
     Hdropclicked.set(HpronOptions[hpronindex])
     #End Load settings
 
