@@ -23,6 +23,10 @@ sectionregex = '\\s*\\[\\s*(?P<section>\\w+)\\s*\\]\\s*'
 lineregex = '(?P<initial>\\s*(?P<attribute>\\w+)\\s*=\\s*)(?P<value>.*?)(?P<final>\\s*(//.*)?)'
 
 def writeIni(Rsection,Ratribute,Rvalue):
+    if isinstance(Rvalue, bool):
+        Rvalue = str(int(Rvalue))
+    if isinstance(Rvalue, int):
+        Rvalue = str(Rvalue)
     print('writeIni('+Rsection+','+Ratribute+','+Rvalue+')')
     with open("settings.ini", "r") as file:
         rawData = file.read()
@@ -71,7 +75,7 @@ def writeIni(Rsection,Ratribute,Rvalue):
     with open("settings.ini", "w") as file:
         file.write('\n'.join(rawDataS))
 
-def readIni(Rsection,Ratribute): #read the ini file and return value and line
+def readIni(Rsection,Ratribute): #read the ini file and return value
     with open("settings.ini", "r") as file:
         rawData = file.read()
     rawDataS = rawData.splitlines()
@@ -100,6 +104,19 @@ def readIni(Rsection,Ratribute): #read the ini file and return value and line
     # nothing was found - i could copy the code from writeIni()
     # but maybe just show a message and set it to a default value?
     # idk
+def readIniChecked(Rsection,Ratribute,Max,Default=0): # read an ini value as an int, if it is outside 0-Max inclusive, then writeIni to reset to Default # returns the value as an int
+    Rvalue = readIni(Rsection, Ratribute)
+    try:
+        Rvalue = int(Rvalue)
+    except ValueError:
+        writeIni(Rsection, Ratribute, Default)
+        return Default
+    if Rvalue < 0 or Rvalue > Max:
+        writeIni(Rsection, Ratribute, Default)
+        return Default
+    return Rvalue
+def readIniBool(Rsection,Ratribute): # read a boolean stored as a 0 or 1 in the ini file
+    return bool(readIniChecked(Rsection, Ratribute, 1))
 def exitPrgrm():
     sys.exit()
 def resetini():
