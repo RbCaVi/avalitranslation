@@ -15,6 +15,7 @@ import random
 import imageTinter as iT
 import time
 import functools
+from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder
 try:
     pyglet.font.add_file('avali-scratch.ttf')
 except:
@@ -124,6 +125,33 @@ def WindowRegistration(type='X'):
     if type == 'X':
         print('Undocumented window type.')
 
+class WindowInnerWithMenuBuilder(TkBuilder):
+    childrenargs = ['inner']
+
+    def __init__(self, geometry = Pack(), key = None, inner = None, inner_key = None):
+        super().__init__(geometry = geometry, key = key, inner = inner, inner_key = inner_key)
+
+    def constructor(self, root, table):
+        childrenroots = {}
+        thisroot = FrameBuilder(background=Theme[2],borderwidth="4px",children=[
+            SidebarBuilder(geometry=Grid(row=0,column=0)),
+            FrameBuilder(background=Theme[0],borderwidth= "12px",key='inner',geometry=Grid(row=0,column=1)),
+        ],geometry=self.geometry).build(root, childrenroots)
+        return thisroot, childrenroots
+
+class WindowInnerWithoutMenuBuilder(TkBuilder):
+    childrenargs = ['inner']
+    
+    def __init__(self, geometry = Pack(), key = None, inner = None, inner_key = None):
+        super().__init__(geometry = geometry, key = key, inner = inner, inner_key = inner_key)
+
+    def constructor(self, root, table):
+        childrenroots = {}
+        thisroot = FrameBuilder(background=Theme[2],borderwidth="4px",children=[
+            FrameBuilder(background=Theme[0],borderwidth= "12px",key='inner',geometry=Pack()),
+        ],geometry=self.geometry).build(root, childrenroots)
+        return thisroot, childrenroots
+
 def createWin(type, title):
     #Window Register Management
     if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
@@ -140,11 +168,11 @@ def createWin(type, title):
     win.title(title)
     win.configure(background=Theme[2])
     #End Window management
-    
+
     border_frame = Frame(win,background=Theme[2],borderwidth="4px")
     content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
     if type not in ['C', 'M']: # credits window does not include a sidebar # don't know why
-        SidebarMenu(win,border_frame) #Create Menu Sidebar
+        SidebarBuilder(geometry=Grid(row=0,column=0)).build(border_frame, None) #Create Menu Sidebar
     border_frame.pack()
     if type not in ['C', 'M']:
         content_frame.grid(row=0,column=1)
@@ -152,6 +180,26 @@ def createWin(type, title):
         content_frame.pack()
 
     return win, content_frame
+
+def newWinAllowed(type):
+    return CheckWindowRegister(type)
+
+def createWin2(type, title):
+    #Window Register Management
+    if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
+        return None #killbind
+    if type == 'M': # main window
+        win = Tk()
+    else:
+        win = Toplevel(Mwin) #Make window
+    WinCode = AddWindowToRegister(win,type) #Ask to register with the Register, Save Date as unique code.
+    if type != 'M':
+        win.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(win,WinCode,type)) #Use saved code to remove from register
+    win.title(title)
+    win.configure(background=Theme[2])
+    #End Window management
+
+    return win
 
 class HoverButton(Button): #Used for the sidebar menu buttons
     def __init__(self, master, **kw):
@@ -166,12 +214,14 @@ class HoverButton(Button): #Used for the sidebar menu buttons
     def on_leave(self, e):
         self['background'] = self.defaultBackground
 
-class SidebarMenu(): #Class to create the menubar 
-    MenuImgs = [] 
-    def __init__(self,winObj,border_frame): #Creates a menubar in the specified window
-        #Create Menu Sidebar    
-        Sidebar = Frame(border_frame,background="#f0f0f0",borderwidth= "0")
-            ##IN
+class HoverButtonBuilder(TkBuilderLeaf):
+    element = HoverButton
+
+class SidebarBuilder(TkBuilderLeaf):
+    def __init__(self, geometry = None, key = None):
+        super().__init__(geometry = geometry, key = key)
+
+    def constructor(self, root, table):
         options = lambda type, index: {
             'image':SidebarMenu.MenuImgs[index],
             'command':lambda: WindowRegistration(type),
@@ -180,7 +230,23 @@ class SidebarMenu(): #Class to create the menubar
             'activebackground':Theme[4],
             'height':60,
             'width':0,
+            'geometry':Grid(column = 0, row = index, sticky = 'nesw')
         }
+        return FrameBuilder(background="#f0f0f0",borderwidth="0",children=[
+            HoverButtonBuilder(text="Main Menu",**options(type = 'M', index = 0)),
+            HoverButtonBuilder(text="Font Trans.",**options(type = 'T', index = 1)),
+            HoverButtonBuilder(text="Number Trans.",**options(type = 'N', index = 2)),
+            HoverButtonBuilder(text="Pronunciation",**options(type = 'P', index = 3)),
+            HoverButtonBuilder(text="Options",**options(type = 'O', index = 4)),
+            HoverButtonBuilder(text="Credits",**options(type = 'C', index = 5)),
+        ]).build(root, table), {}
+
+class SidebarMenu(): #Class to create the menubar 
+    MenuImgs = [] 
+    def __init__(self,winObj,border_frame): #Creates a menubar in the specified window
+        #Create Menu Sidebar    
+        Sidebar = Frame(border_frame,background="#f0f0f0",borderwidth= "0")
+            ##IN
         MB0 = HoverButton(Sidebar,text="Main Menu",**options(type = 'M', index = 0)) #em W=0 H=2
         MB1 = HoverButton(Sidebar,text="Font Trans.",**options(type = 'T', index = 1))
         MB2 = HoverButton(Sidebar,text="Number Trans.",**options(type = 'N', index = 2))
@@ -326,44 +392,53 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     Twin.mainloop()
     
 def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
-    Cwin,content_frame = createWin('C', 'Avalian Translation Credits')
+    if not newWinAllowed('C'):
+        return False # eplode
+
+    Cinner = WindowInnerWithoutMenuBuilder(inner=[
+        LabelBuilder(
+            text="Programed by Renauli Snow (Ralsdoge) for the community.\n"
+                 "Version 1 in development from 11/23/2024 to 7/13/2025.",
+            font=('arial',16),**textstyle,geometry=Grid(column=0,row=0)
+        ),
+        LabelBuilder(
+            text="I hope some birbs can find some fun or use in this.\n"
+                 "You can contact me regarding this software via\n"
+                 "Telegram @RenauliSnow.\n\n"
+                 "A deep thanks goes to everyone in this community for\n"
+                 "perpetuating this amazing species. For their specific\n"
+                 "contributions to this project thank you to the following:\n",
+            justify='left',font=('arial',16),**textstyle,geometry=Grid(column=0,row=1)
+        ),
+        LabelBuilder(
+            text=" • Cutesune (RyuujinZero) for creating the Avali Species\n"
+                 " • Avali A Comprehensive Guide: Todd Avali\n"
+                 " • Scratch Font: Icebelly and Someguynameddavid\n"
+                 " • Avali Number System: Ceital Tesai\n"
+                 " • Avali HD Icon: tikitree2\n\n"
+                 "For presenting me the joys of this community:\n"
+                 " • FelisRandomis\n"
+                 " • RitualNeo\n"
+                 " • Randomking1423\n"
+                 " • And many, many others. ",
+            font=('arial',16),justify='left',**textstyle,geometry=Grid(column=0,row=2)
+        ),
+        LabelBuilder(
+            text="\nThis project is licensed under the GNU General Public License v3 (GPLv3).",
+            font=('arial',14),**textstyle,geometry=Grid(column=0,row=3)
+        ),
+        LabelBuilder(
+            text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",
+            font=('arial',14),**textstyle,geometry=Grid(column=0,row=4)
+        ),
+    ])
+
+    Cwin = createWin2('C', 'Avalian Translation Credits')
     if Cwin is None:
         return False # nope
 
-    Preamble = Label(content_frame,text="I hope some birbs can find some fun or use in this.\nYou can contact me regarding this software via\n\
-Telegram @RenauliSnow.\n\nA deep thanks goes to everyone in this community for\n\
-perpetuating this amazing species. For their specific\n\
-contributions to this project thank you to the following:\n",justify='left',font=('arial',16),**textstyle) 
-    #insert line break
-    Credit = Label(content_frame,text="Programed by Renauli Snow (Ralsdoge) for the community.\nVersion 1 in development from 11/23/2024 to 7/13/2025.",font=('arial',16),**textstyle)
-    Credits = Label(content_frame,text=" • Cutesune (RyuujinZero) for creating the Avali Species\n \
-• Avali A Comprehensive Guide: Todd Avali\n \
-• Scratch Font: Icebelly and Someguynameddavid\n \
-• Avali Number System: Ceital Tesai\n \
-• Avali HD Icon: tikitree2\n\n\
-For presenting me the joys of this community:\n \
-• FelisRandomis\n \
-• RitualNeo\n \
-• Randomking1423\n \
-• And many, many others. \
-",font=('arial',16),justify='left',**textstyle) 
-    License = Label(content_frame,text="\nThis project is licensed under the GNU General Public License v3 (GPLv3).",font=('arial',14),**textstyle)
-    Credit2 = Label(content_frame,text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",font=('arial',14),**textstyle)
-    
-    #Scratch = Label(content_frame,text="test",font=('avali scratch',30), background="white", borderwidth="10px", foreground="#fc850f")
-    #English = Label(content_frame,text="test",font=('arial',20),bg='black') #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    
-    Credit.grid(column=0,row=0)
-    Preamble.grid(column=0,row=1)
-    Credits.grid(column=0,row=2)
-    License.grid(column=0,row=3)
-    Credit2.grid(column=0,row=4)
-    '''Credit1.grid(column=0,row=3)
-    Credit2.grid(column=3,row=4)
-    Credit3.grid(column=0,row=5)
-    Credit3.grid(column=0,row=6)
-    Credit4.grid(column=0,row=7)'''
-    #.grid(column=0,row=4)
+    Cinner.build(Cwin, None)
+
     Cwin.mainloop()
 
 def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,

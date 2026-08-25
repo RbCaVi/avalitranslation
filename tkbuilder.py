@@ -10,6 +10,13 @@ class Grid(Geometry):
 	def manage(self, element):
 		element.grid(**self.kwargs)
 
+class Pack(Geometry):
+	def __init__(self, **kwargs):
+		self.kwargs = kwargs
+
+	def manage(self, element):
+		element.pack(**self.kwargs)
+
 def default(value, default):
 	if value is None:
 		return default
@@ -19,8 +26,6 @@ class TkBuilder:
 	def __init__(self, *args, geometry = None, key = None, **kwargs):
 		self.args = args
 		self.kwargs = kwargs
-		if geometry is None:
-			raise ValueError("Geometry manager must be supplied")
 		self.geometry = geometry
 		self.key = key
 		self.children = {}
@@ -30,8 +35,9 @@ class TkBuilder:
 			self.children_keys[carg] = kwargs.pop(carg + '_key', None)
 
 	def build(self, root, table):
-		thisroot,childrenroots = self.constructor(root, *self.args, **self.kwargs)
-		self.geometry.manage(thisroot)
+		thisroot,childrenroots = self.constructor(root, table, *self.args, **self.kwargs)
+		if self.geometry is not None:
+			self.geometry.manage(thisroot)
 		children_tables = {}
 		if table is not None:
 			if self.key is not None:
@@ -52,18 +58,18 @@ class TkBuilder:
 					child(childrenroots[carg], children_tables[carg])
 				else:
 					child.build(childrenroots[carg], children_tables[carg])
-		return table
+		return thisroot
 
 class TkBuilderLeaf(TkBuilder):
 	childrenargs = []
 
-	def constructor(self, root, *args, **kwargs):
+	def constructor(self, root, table, *args, **kwargs):
 		return self.element(root, *args, **kwargs), {}
 
 class TkBuilderNode(TkBuilder):
 	childrenargs = ['children']
 
-	def constructor(self, root, *args, **kwargs):
+	def constructor(self, root, table, *args, **kwargs):
 		e = self.element(root, *args, **kwargs)
 		return e, {'children': e}
 
