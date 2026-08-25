@@ -1,0 +1,77 @@
+import tkinter as tk
+
+class Geometry:
+	pass
+
+class Grid(Geometry):
+	def __init__(self, **kwargs):
+		self.kwargs = kwargs
+
+	def manage(self, element):
+		element.grid(**self.kwargs)
+
+def default(value, default):
+	if value is None:
+		return default
+	return value
+
+class TkBuilder:
+	def __init__(self, *args, geometry = None, key = None, **kwargs):
+		self.args = args
+		self.kwargs = kwargs
+		if geometry is None:
+			raise ValueError("Geometry manager must be supplied")
+		self.geometry = geometry
+		self.key = key
+		self.children = {}
+		self.children_keys = {}
+		for carg in self.childrenargs:
+			self.children[carg] = kwargs.pop(carg, [])
+			self.children_keys[carg] = kwargs.pop(carg + '_key', None)
+
+	def build(self, root, table):
+		thisroot,childrenroots = self.constructor(root, *self.args, **self.kwargs)
+		self.geometry.manage(thisroot)
+		children_tables = {}
+		if table is not None:
+			if self.key is not None:
+				table[self.key] = thisroot
+			for carg in self.childrenargs:
+				if self.children_keys[carg] is not None:
+					if self.children_keys[carg] not in table:
+						table[self.children_keys[carg]] = {}
+					children_tables[carg] = table[self.children_keys[carg]]
+				else:
+					children_tables[carg] = table
+		else:
+			for carg in self.childrenargs:
+				children_tables[carg] = None
+		for carg in self.childrenargs:
+			for child in self.children[carg]:
+				if callable(child):
+					child(childrenroots[carg], children_tables[carg])
+				else:
+					child.build(childrenroots[carg], children_tables[carg])
+		return table
+
+class TkBuilderLeaf(TkBuilder):
+	childrenargs = []
+
+	def constructor(self, root, *args, **kwargs):
+		return self.element(root, *args, **kwargs), {}
+
+class TkBuilderNode(TkBuilder):
+	childrenargs = ['children']
+
+	def constructor(self, root, *args, **kwargs):
+		e = self.element(root, *args, **kwargs)
+		return e, {'children': e}
+
+class LabelBuilder(TkBuilderLeaf):
+	element = tk.Label
+
+class ButtonBuilder(TkBuilderLeaf):
+	element = tk.Button
+
+class FrameBuilder(TkBuilderNode):
+	element = tk.Frame
