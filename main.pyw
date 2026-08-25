@@ -243,7 +243,9 @@ def toggleable(initialstate = None, values = (True, False)): # add persistent st
 
     return toggleable # if proper arguments were given
 
-def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
+def createFontTranslationWin():
+    # This function contains all of the tkinter widgets and functions necessary to be defined before them
+    # in order to create the font translation window. Relevant support files: iT,GRC,random.md
     Twin,content_frame = createWin('T', 'Avalian Font Translation')
     if Twin is None:
         return False # nope
@@ -252,7 +254,10 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     TcoverStatus = True
     ReferenceImg = ImageTk.PhotoImage(iT.performTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
     @toggleable
-    def setCoverEnglish(EcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without direct translation. Does this by switching the background of the English text display to the same color as its foreground color.
+    def setCoverEnglish(EcoverStatus):
+        # Switches the visibility of the central elements of this page to allow
+        # for practice of translation with or without direct translation.
+        # Does this by switching the background of the English text display to the same color as its foreground color.
         if EcoverStatus:
             English.config(fg=Theme[0])
             switch1.config(relief=SUNKEN)
@@ -261,7 +266,10 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
             switch1.config(relief=RAISED)
         #GO.writeIni('Translation', 'EnglishView', EcoverStatus)
     @toggleable
-    def setCoverTable(TcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
+    def setCoverTable(TcoverStatus):
+        # Switches the visibility of the central elements of this page to allow
+        # for practice of translation with or without the key.
+        # Does this by switching the background of the transparent image key to the same color as its foreground color.
         if TcoverStatus:
             refimg.config(bg=Theme[2])
             switch2.config(relief=SUNKEN)
@@ -273,7 +281,18 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
         changeText(cInput.get("1.0", "end-1c"))
-    def changeText(Ntext): #handles changing the English and scratch text displays from the user input buttons. In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg) from GatherRandomCharacters.py with the index of the button as the argument the result of this function is saved to Ntext. Otherwise if the index is 22 or Custom Input the function grabs the text in the custom input text box and saves it to Ntext. Next Ntext is tested if it is > 40 characters. If it is the text is chunked to fit as well as possible into that space by each word. This is done by seeking forward until the maxsize (40) is reached and then searching for the next space and inserting a newline character. This method prevents code from breaking if the user inputs a word greater than 40 chars. Finaly this edited string is sent to update English and Scratch labels.  
+    def changeText(Ntext):
+        # handles changing the English and scratch text displays from the user input buttons.
+        # In all cases except the custom input button being pressed the function calls ChallengeRandSample(arg)
+        # from GatherRandomCharacters.py with the index of the button as the argument. The result of this function is saved to Ntext.
+        # Otherwise if the index is 22 or Custom Input the function grabs the text
+        # in the custom input text box and saves it to Ntext.
+        # Next Ntext is tested if it is > 40 characters. If it is, the text is chunked
+        # to fit as well as possible into that space by each word.
+        # This is done by seeking forward until the maxsize (40) is reached
+        # and then searching for the next space and inserting a newline character.
+        # This method prevents code from breaking if the user inputs a word greater than 40 chars.
+        # Finaly this edited string is sent to update English and Scratch labels.
         maxsize = 40
         Ftext = chunkText(Ntext, maxsize)
 
@@ -325,7 +344,9 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
     #cover.grid(column=0,row=0)
     Twin.mainloop()
     
-def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
+def createCreditsWin():
+    # This function contains all of the tkinter widgets and functions necessary to be defined before them
+    # in order to create the credits window. Relevant support files: None
     Cwin,content_frame = createWin('C', 'Avalian Translation Credits')
     if Cwin is None:
         return False # nope
@@ -366,7 +387,9 @@ For presenting me the joys of this community:\n \
     #.grid(column=0,row=4)
     Cwin.mainloop()
 
-def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
+def createOptionsWin():
+    # This function contains all of the tkinter widgets and functions necessary to be defined before them
+    # in order to create the font translation window. Relevant support files: settings.ini
     Owin,content_frame = createWin('O', 'Avalian Translation Options')
     if Owin is None:
         return False # nope
@@ -921,7 +944,9 @@ def createPronunciationWin():
     #cover.grid(column=0,row=0)
     Pwin.mainloop()
 
-def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
+def createMainMenuWin():
+    # This function contains all of the tkinter widgets and functions necessary to be defined before them
+    # in order to create the main menu window. Relevant support files: settings.ini
     global MenuImgs
     global Mwin
     Mwin,content_frame = createWin('M', 'Avalian Translation Software (RbCaVi Fork)')
