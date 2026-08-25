@@ -15,7 +15,7 @@ import random
 import imageTinter as iT
 import time
 import functools
-from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder
+from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder, ButtonBuilder, TextBuilder
 try:
     pyglet.font.add_file('avali-scratch.ttf')
 except:
@@ -313,12 +313,10 @@ def toggleable(initialstate = None, values = (True, False)): # add persistent st
     return toggleable # if proper arguments were given
 
 def createFontTranslationWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: iT,GRC,random.md
-    Twin,content_frame = createWin('T', 'Avalian Font Translation')
+    Twin = createWin2('T', 'Avalian Font Translation')
     if Twin is None:
         return False # nope
 
-    EcoverStatus = True
-    TcoverStatus = True
     ReferenceImg = ImageTk.PhotoImage(iT.performTint("Images/CharRefPlaceholderTransAdjCropResize61.png",str(Theme[2])))
     @toggleable
     def setCoverEnglish(EcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without direct translation. Does this by switching the background of the English text display to the same color as its foreground color.
@@ -347,58 +345,76 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         Ftext = chunkText(Ntext, maxsize)
 
         Scratch.config(text=Ftext)
-        English.config(text=Ftext)   
+        English.config(text=Ftext)  
 
     #scrollbar = Scrollbar(content_frame, orient="vertical", command=content_frame.yview)
-    #https://www.tutorialspoint.com/implementing-a-scrollbar-using-grid-manager-on-a-tkinter-window
-    Scratch = Label(content_frame,text='',font=('avali scratch',30), background="white", borderwidth="10px", foreground=Theme[2])
-    English = Label(content_frame,text='',font=('arial',20),bg=Theme[0],fg=Theme[0]) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    buttonFrame = Frame(content_frame,background=Theme[0])
-    swichFrame = Frame(content_frame)
-    switch1 = Button(swichFrame,text="Hide English",command=lambda: setCoverEnglish.toggle(),relief=SUNKEN,**buttonstyle)
-    switch2 = Button(swichFrame,text="Hide Table",command=lambda: setCoverTable.toggle(),relief=SUNKEN,**buttonstyle)
-    Option0 = Button(buttonFrame,text="4 letter word",command=lambda: setRandWord(0),**buttonstyle)
-    Option1 = Button(buttonFrame,text="6 letter Word",command=lambda: setRandWord(1),**buttonstyle)
-    Option2 = Button(buttonFrame,text="Sentence",command=lambda: setRandWord(2),**buttonstyle)
-    Option3 = Button(buttonFrame,text="Paragraph",command=lambda: setRandWord(3),**buttonstyle)
-    Option4 = Button(buttonFrame,text="Number",command=lambda: setRandWord(4),**buttonstyle)
-    Option22 = Button(buttonFrame,text="Custom Input",command=lambda: setUserWord(),**buttonstyle)
-    cInput = Text(content_frame, height = 3, width = 71,background=Theme[6])
-    def enterHandler():
-        setUserWord()
-        return 'break'
-    cInput.bind("<Return>",lambda event: enterHandler())
-    refimg = Label(content_frame,image=ReferenceImg,width=895,height=61,background=Theme[2])
-    #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all")))
+    #https://www.tutorialspoint.com/implementing-a-scrollbar-using-grid-manager-on-a-tkinter-window 
+
+    BpaddingX = 20
+    elements = {}
+    WindowInnerWithMenuBuilder(inner=[
+        TextBuilder( # entry textbox
+            height = 3, width = 71,background=Theme[6],
+            key='Input',geometry=Grid(column=0,row=1, columnspan=8)
+        ),
+        LabelBuilder( # english display
+            text='',font=('arial',20), #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+            bg=Theme[0],fg=Theme[0],
+            key='English',geometry=Grid(column=0,row=2,columnspan=8)
+        ),
+        LabelBuilder( # scratch display
+            text='',font=('avali scratch',30),
+            background="white",foreground=Theme[2],borderwidth="10px",
+            key='Scratch',geometry=Grid(column=0,row=3,columnspan=8)
+        ),
+        FrameBuilder(
+            children=[
+                ButtonBuilder(text="Hide English",command=lambda: setCoverEnglish.toggle(),relief=SUNKEN,**buttonstyle,key='switch1',geometry=Grid(column=0,row=0)),
+                ButtonBuilder(text="Hide Table",command=lambda: setCoverTable.toggle(),relief=SUNKEN,**buttonstyle,key='switch2',geometry=Grid(column=0,row=1)),
+            ],geometry=Grid(column=7,row=2)
+        ),
+        FrameBuilder(
+            background=Theme[0],children=[
+                ButtonBuilder(text="Custom Input",command=lambda: setUserWord(),**buttonstyle,geometry=Grid(column=0,row=0,padx=BpaddingX)),
+                ButtonBuilder(text="4 letter word",command=lambda: setRandWord(0),**buttonstyle,geometry=Grid(column=1,row=0,padx=BpaddingX)),
+                ButtonBuilder(text="6 letter Word",command=lambda: setRandWord(1),**buttonstyle,geometry=Grid(column=2,row=0,padx=BpaddingX)),
+                ButtonBuilder(text="Sentence",command=lambda: setRandWord(2),**buttonstyle,geometry=Grid(column=3,row=0,padx=BpaddingX)),
+                ButtonBuilder(text="Paragraph",command=lambda: setRandWord(3),**buttonstyle,geometry=Grid(column=4,row=0,padx=BpaddingX)),
+                ButtonBuilder(text="Number",command=lambda: setRandWord(4),**buttonstyle,geometry=Grid(column=5,row=0,padx=BpaddingX)),
+            ],geometry=Grid(column=0,row=0,columnspan=8)
+        ),
+        LabelBuilder(
+            image=ReferenceImg,
+            width=895,height=61,
+            background=Theme[2],
+            key='Reference',geometry=Grid(column=0,row=4,columnspan=8),
+        ),
+    ]).build(Twin, elements)
+
+    cInput = elements['Input']
+    English = elements['English']
+    Scratch = elements['Scratch']
+    refimg = elements['Reference']
+    switch1 = elements['switch1']
+    switch2 = elements['switch2']
 
     setCoverEnglish(GO.readIniBool('Translation', 'EnglishView'))
     setCoverTable(GO.readIniBool('Translation', 'TableView'))
 
-    #drawing
+    def enterHandler():
+        setUserWord()
+        return 'break'
+    cInput.bind("<Return>",lambda event: enterHandler())
+    #content_frame.bind("<Configure>", lambda e: content_frame.configure(scrollregion=content_frame.bbox("all"))) # i assume this is for the scrollbar?
 
-    English.grid(column=0,row=2,columnspan=8)
-    Scratch.grid(column=0,row=3,columnspan=8)
-    swichFrame.grid(column=7,row=2)
-    buttonFrame.grid(column=0,row=0,columnspan=8)
-    BpaddingX = 20
-    switch1.grid(column=0,row=0) #,pady=5))
-    switch2.grid(column=0,row=1)
-    Option0.grid(column=1,row=0,padx=BpaddingX)
-    Option1.grid(column=2,row=0,padx=BpaddingX)
-    Option2.grid(column=3,row=0,padx=BpaddingX)
-    Option3.grid(column=4,row=0,padx=BpaddingX)
-    Option4.grid(column=5,row=0,padx=BpaddingX)
-    Option22.grid(column=0,row=0,padx=BpaddingX)
-    cInput.grid(column=0,row=1, columnspan=8)
-    refimg.grid(column=0,row=4,columnspan=8)
-    #cover.grid(column=0,row=0)
     Twin.mainloop()
     
 def createCreditsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the credits window. Relevent support files: None
-    if not newWinAllowed('C'):
-        return False # eplode
+    Cwin = createWin2('C', 'Avalian Translation Credits')
+    if Cwin is None:
+        return False # nope
 
-    Cinner = WindowInnerWithoutMenuBuilder(inner=[
+    WindowInnerWithoutMenuBuilder(inner=[
         LabelBuilder(
             text="Programed by Renauli Snow (Ralsdoge) for the community.\n"
                  "Version 1 in development from 11/23/2024 to 7/13/2025.",
@@ -434,13 +450,7 @@ def createCreditsWin(): #This function contains all of the tkinter widgets and f
             text="Forked by RbCaVi on 8/20/2026. Changes: improved numbers window, fixed some spelling errors.",
             font=('arial',14),**textstyle,geometry=Grid(column=0,row=4)
         ),
-    ])
-
-    Cwin = createWin2('C', 'Avalian Translation Credits')
-    if Cwin is None:
-        return False # nope
-
-    Cinner.build(Cwin, None)
+    ]).build(Cwin, None)
 
     Cwin.mainloop()
 

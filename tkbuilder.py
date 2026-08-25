@@ -79,5 +79,8 @@ class LabelBuilder(TkBuilderLeaf):
 class ButtonBuilder(TkBuilderLeaf):
 	element = tk.Button
 
+class TextBuilder(TkBuilderLeaf):
+	element = tk.Text
+
 class FrameBuilder(TkBuilderNode):
 	element = tk.Frame
