@@ -259,7 +259,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         else:
             English.config(fg=Theme[1])
             switch1.config(relief=RAISED)
-        GO.writeIni('Translation', 'EnglishView', EcoverStatus)
+        #GO.writeIni('Translation', 'EnglishView', EcoverStatus)
     @toggleable
     def setCoverTable(TcoverStatus): # Switches the visibility of the central elements of this page to allow for practice of translation with or without the key. Does this by switching the background of the transparent image key to the same color as its foreground color.
         if TcoverStatus:
@@ -268,7 +268,7 @@ def createFontTranslationWin(): #This function contains all of the tkinter widge
         else:
             refimg.config(bg=Theme[0])
             switch2.config(relief=RAISED)
-        GO.writeIni('Translation', 'TableView', TcoverStatus)
+        #GO.writeIni('Translation', 'TableView', TcoverStatus)
     def setRandWord(category):
         changeText(GRC.ChallengeRandSample(category))
     def setUserWord():
