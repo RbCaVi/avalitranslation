@@ -296,7 +296,10 @@ def toggleable(initialstate = None, values = (True, False)): # add persistent st
             newf(initialstate) # set the state to it
 
         def toggle(): # cycle through the values
-            idx = values.index(newf.state) # find the index the state is currently at
+            try:
+                idx = values.index(newf.state) # find the index the state is currently at
+            except AttributeError:
+                raise RuntimeError(f.__name__ + ' was toggled before being initialized with a value')
             newf(values[(idx + 1) % len(values)]) # choose the next index # remember */% bind tighter than +-
         newf.toggle = toggle
 
