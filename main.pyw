@@ -5,7 +5,7 @@
 # this code is licensed under the gpl3
 
 import pyglet
-from tkinter import *
+from tkinter import Button, Label, Frame, Tk, Toplevel, FLAT, DISABLED, RAISED, NORMAL, StringVar, OptionMenu, SUNKEN, Text, Canvas, Scale, END
 from PIL import ImageTk, Image
 import GatherOptions as GO
 import GatherRandChars as GRC 
