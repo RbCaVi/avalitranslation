@@ -930,79 +930,27 @@ def createPronunciationWin():
         return "break"
     cInput.bind("<Return>",enterHandler)
     
-    '''
-    PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
-    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), **textstyle)
-    UPronounceChars = Label(content_frame,text=SpecialCharsStr,font=('arial',16),**textstyle)
-    RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),**textstyle)
-    NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),**textstyle)
-    #HPron
-    Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions, command=setHpron)
-    Ndropbutton.config(**buttonstyle) 
-    #Ndropbutton.config(bg=Theme[0])
-    ClampingLabel = Label(content_frame,text="Clamping Characters:",font=('arial',14),**textstyle)
-    ##Dropdowns
-    #ClampingChars
-    ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars)
-    ClampingCharsButton.config(**buttonstyle) 
-    
-    ##
-    English = Label(content_frame,text='',font=('arial',10),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    EnglishO = Label(content_frame,text='',font=('arial',20),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
-    #switch = Button(content_frame,text="minimize")#,command=lambda: )
-    Option0 = Button(content_frame,text="4Word",command=lambda: setRandWord(0),**buttonstyle)
-    Option1 = Button(content_frame,text="6Word",command=lambda: setRandWord(1),**buttonstyle)
-    Option2 = Button(content_frame,text="sent.",command=lambda: setRandWord(2),**buttonstyle)
-    Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),**buttonstyle)
-    Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),**buttonstyle)
-    Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),**buttonstyle)
-    cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
-    ##Griding
-    PronunciationTableHead.grid(column=0,row=0,columnspan=6)
-    PronunciationDesc.grid(column=0,row = 1,columnspan=6)
-    UPronounceChars.grid(column=6,row = 0,rowspan=3,sticky='e')
-    RPronounceChars.grid(column=7,row = 0,rowspan=3,columnspan=2)
-    NpronLabel.grid(column=0,row = 2)
-    Ndropbutton.grid(column=1,row = 2,columnspan=2)
-    ClampingLabel.grid(column=3,row=2)
-    ClampingCharsButton.grid(column=4,row=2,columnspan=2)
-    English.grid(column=0,row=5,columnspan=8)
-    EnglishO.grid(column=0,row=6,columnspan=8)
-    #switch.grid(column=8,row=5)
-    Option0.grid(column=1,row=4,sticky='nesw')
-    Option1.grid(column=2,row=4,sticky='nesw')
-    Option2.grid(column=3,row=4,sticky='nesw')
-    Option3.grid(column=4,row=4,sticky='nesw')
-    Option4.grid(column=5,row=4,sticky='nesw')
-    Option22.grid(column=0,row=4,sticky='nesw')
-    cInput.grid(column=0,row=3, columnspan=6,sticky='nesw')
-    #cover.grid(column=0,row=0)
-    '''
     Pwin.mainloop()
 
 def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
     global MenuImgs
     global Mwin
-    Mwin,content_frame = createWin('M', 'Avalian Translation Software (RbCaVi Fork)')
+    Mwin = createWin2('M', 'Avalian Translation Software (RbCaVi Fork)')
     if Mwin is None:
         return False # nope
 
-    Title = Label(content_frame,font=('Helvetica 30 italic'),text="Avalian Translation Software",background=Theme[0],foreground=Theme[3])
-    Preface = Label(content_frame,font=('Helvetica 18 italic'),text="By: Renauli Snow",background=Theme[0],foreground=Theme[3]) #Aw du Bub du day. Bah.. Blep.
     mainbuttonstyle = {'background':Theme[2], 'foreground':Theme[1], 'activebackground':Theme[4], 'activeforeground':Theme[5]}
-    Option0 = Button(content_frame,font=('Helvetica 18 italic'),text="  Credits  ",command=createCreditsWin,**mainbuttonstyle)
-    Option1 = Button(content_frame,font=('Helvetica 18 italic'),text="  Options  ",command=createOptionsWin,**mainbuttonstyle)
-    Option2 = Button(content_frame,font=('Helvetica 18 normal'),text="Font Translation",command=createFontTranslationWin,**mainbuttonstyle)
-    Option3 = Button(content_frame,font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,**mainbuttonstyle)
-    Option4 = Button(content_frame,font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,**mainbuttonstyle)
+    WindowInnerWithoutMenuBuilder(inner=[
+        LabelBuilder(font=('Helvetica 30 italic'),text="Avalian Translation Software",background=Theme[0],foreground=Theme[3],geometry=Grid(column=2,columnspan=3,row=0,padx=2,pady=2)),
+        LabelBuilder(font=('Helvetica 18 italic'),text="By: Renauli Snow",background=Theme[0],foreground=Theme[3],geometry=Grid(column=0,columnspan=5,row=1,padx=3,pady=2)), #Aw du Bub du day. Bah.. Blep.
+        ButtonBuilder(font=('Helvetica 18 italic'),text="  Credits  ",command=createCreditsWin,**mainbuttonstyle,geometry=Grid(column=2,row=2,columnspan=2,padx=2,pady=2)),
+        ButtonBuilder(font=('Helvetica 18 italic'),text="  Options  ",command=createOptionsWin,**mainbuttonstyle,geometry=Grid(column=3,row=2,columnspan=2,padx=2,pady=2)),
+        ButtonBuilder(font=('Helvetica 18 normal'),text="Font Translation",command=createFontTranslationWin,**mainbuttonstyle,geometry=Grid(column=2,row=3,padx=2,pady=2)),
+        ButtonBuilder(font=('Helvetica 18 normal'),text="Avalian Numbers",command=createNumbersWin,**mainbuttonstyle,geometry=Grid(column=3,row=3,padx=2,pady=2)),
+        ButtonBuilder(font=('Helvetica 18 normal'),text="Pronunciation",command=createPronunciationWin,**mainbuttonstyle,geometry=Grid(column=4,row=3,padx=2,pady=2)),
+    ]).build(Mwin, None)
+
     ##db349c
-    Title.grid(column=2,columnspan=3,row=0,padx=2,pady=2)
-    Preface.grid(column=0,columnspan=5,row=1,padx=3,pady=2)
-    Option0.grid(column=2,row=2,columnspan=2,padx=2,pady=2)
-    Option1.grid(column=3,row=2,columnspan=2,padx=2,pady=2)
-    Option2.grid(column=2,row=3,padx=2,pady=2)
-    Option3.grid(column=3,row=3,padx=2,pady=2)
-    Option4.grid(column=4,row=3,padx=2,pady=2)
     SidebarMenu.start(Mwin)
     Mwin.mainloop()
 
