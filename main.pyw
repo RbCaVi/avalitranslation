@@ -845,7 +845,7 @@ def createNumbersWin():
     Nwin.mainloop()
 
 def createPronunciationWin():
-    Pwin,content_frame = createWin('P', 'Avalian Pronunciation')
+    Pwin = createWin2('P', 'Avalian Pronunciation')
     if Pwin is None:
         return False # nope
 
@@ -872,30 +872,41 @@ def createPronunciationWin():
         updateWord()
 
     ###Labels
-    PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
-    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), **textstyle)
     SpecialCharsStr = ''
     SpecialReplaceStr = ''
     for c in AP.specialpronchars:
         SpecialCharsStr += '  '+c.upper()+' =\n'
     for r in AP.replacements:
         SpecialReplaceStr += r+'\n'
-    ##Objects
     
-    NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),**textstyle)
-    ClampingLabel = Label(content_frame,text="Clamping Characters:",font=('arial',14),**textstyle)
-    UPronounceChars = Label(content_frame,text=SpecialCharsStr,font=('arial',16),**textstyle)
-    RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),**textstyle)
-    ##Dropdowns
-    #HPron
+    ##Objects
     Hdropclicked = StringVar()
-    Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions, command=setHpron)
-    Ndropbutton.config(**buttonstyle) 
-    #Ndropbutton.config(bg=Theme[0])
-    #ClampingChars
     ClampingCharsSelected = StringVar()
-    ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars)
-    ClampingCharsButton.config(**buttonstyle) 
+
+    elements = {}
+    WindowInnerWithMenuBuilder(inner=[
+        LabelBuilder(text='Unpronounceable Characters',font=('arial',20), **textstyle,geometry=Grid(column=0,row=0,columnspan=6)),
+        LabelBuilder(text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), **textstyle,geometry=Grid(column=0,row = 1,columnspan=6)),
+        LabelBuilder(text=SpecialCharsStr,font=('arial',16),**textstyle,geometry=Grid(column=6,row = 0,rowspan=3,sticky='e')),
+        LabelBuilder(text=SpecialReplaceStr,font=('arial',16),**textstyle,geometry=Grid(column=7,row = 0,rowspan=3,columnspan=2)),
+        LabelBuilder(text="N Pronunciation:",font=('arial',14),**textstyle,geometry=Grid(column=0,row = 2)),
+        OptionMenuBuilder(Hdropclicked, *HpronOptions, command=setHpron,geometry=Grid(column=1,row = 2,columnspan=2)),
+        LabelBuilder(text="Clamping Characters:",font=('arial',14),**textstyle,geometry=Grid(column=3,row=2)),
+        OptionMenuBuilder(ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars,geometry=Grid(column=4,row=2,columnspan=2)),
+        LabelBuilder(text='',font=('arial',10),**textstyle,key='English',geometry=Grid(column=0,row=5,columnspan=8)), #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+        LabelBuilder(text='',font=('arial',20),**textstyle,key='EnglishO',geometry=Grid(column=0,row=6,columnspan=8)), #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
+        ButtonBuilder(text="4Word",command=lambda: setRandWord(0),**buttonstyle,geometry=Grid(column=1,row=4,sticky='nesw')),
+        ButtonBuilder(text="6Word",command=lambda: setRandWord(1),**buttonstyle,geometry=Grid(column=2,row=4,sticky='nesw')),
+        ButtonBuilder(text="sent.",command=lambda: setRandWord(2),**buttonstyle,geometry=Grid(column=3,row=4,sticky='nesw')),
+        ButtonBuilder(text="para.",command=lambda: setRandWord(3),**buttonstyle,geometry=Grid(column=4,row=4,sticky='nesw')),
+        ButtonBuilder(text="numb.",command=lambda: setRandWord(4),**buttonstyle,geometry=Grid(column=5,row=4,sticky='nesw')),
+        ButtonBuilder(text="Custom",command=lambda: setUserWord(),**buttonstyle,geometry=Grid(column=0,row=4,sticky='nesw')),
+        TextBuilder( height = 1, width = 80,bg=Theme[6],key='cInput',geometry=Grid(column=0,row=3, columnspan=6,sticky='nesw')),
+    ]).build(Pwin, elements)
+    English=elements['English']
+    EnglishO=elements['EnglishO']
+    cInput=elements['cInput']
+
     #Load settings
     CC = GO.readIniChecked("Pronunciation","Cchars",6,2) #read the options # 2 is the second option - short pause (-) # because 0 is use last set
     if CC == 0:
@@ -914,7 +925,27 @@ def createPronunciationWin():
         hpronindex = HP-1
     Hdropclicked.set(HpronOptions[hpronindex])
     #End Load settings
-
+    def enterHandler(event):
+        setUserWord()
+        return "break"
+    cInput.bind("<Return>",enterHandler)
+    
+    '''
+    PronunciationTableHead = Label(content_frame,text='Unpronounceable Characters',font=('arial',20), **textstyle)
+    PronunciationDesc = Label(content_frame,text='Try speaking like an Avali. Avali are thought to be unable to pronounce the\nfollowing characters due to the lack of a nasal cavity. (Todd\'s Avali Lore Guide)',font=('arial',14), **textstyle)
+    UPronounceChars = Label(content_frame,text=SpecialCharsStr,font=('arial',16),**textstyle)
+    RPronounceChars = Label(content_frame,text=SpecialReplaceStr,font=('arial',16),**textstyle)
+    NpronLabel = Label(content_frame,text="N Pronunciation:",font=('arial',14),**textstyle)
+    #HPron
+    Ndropbutton = OptionMenu( content_frame, Hdropclicked, *HpronOptions, command=setHpron)
+    Ndropbutton.config(**buttonstyle) 
+    #Ndropbutton.config(bg=Theme[0])
+    ClampingLabel = Label(content_frame,text="Clamping Characters:",font=('arial',14),**textstyle)
+    ##Dropdowns
+    #ClampingChars
+    ClampingCharsButton = OptionMenu(content_frame, ClampingCharsSelected, *ClampingCharsOptions, command=setClampingChars)
+    ClampingCharsButton.config(**buttonstyle) 
+    
     ##
     English = Label(content_frame,text='',font=('arial',10),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
     EnglishO = Label(content_frame,text='',font=('arial',20),**textstyle) #25 pt lines up with scratch, 20 fits nicely and is about the same size. 
@@ -925,11 +956,7 @@ def createPronunciationWin():
     Option3 = Button(content_frame,text="para.",command=lambda: setRandWord(3),**buttonstyle)
     Option4 = Button(content_frame,text="numb.",command=lambda: setRandWord(4),**buttonstyle)
     Option22 = Button(content_frame,text="Custom",command=lambda: setUserWord(),**buttonstyle)
-    def enterHandler(event):
-        setUserWord()
-        return "break"
     cInput = Text(content_frame, height = 1, width = 80,bg=Theme[6])
-    cInput.bind("<Return>",enterHandler)
     ##Griding
     PronunciationTableHead.grid(column=0,row=0,columnspan=6)
     PronunciationDesc.grid(column=0,row = 1,columnspan=6)
@@ -950,6 +977,7 @@ def createPronunciationWin():
     Option22.grid(column=0,row=4,sticky='nesw')
     cInput.grid(column=0,row=3, columnspan=6,sticky='nesw')
     #cover.grid(column=0,row=0)
+    '''
     Pwin.mainloop()
 
 def createMainMenuWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the main menu window. Relevent support files: settings.ini
