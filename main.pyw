@@ -15,7 +15,7 @@ import random
 import imageTinter as iT
 import time
 import functools
-from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder, ButtonBuilder, TextBuilder, OptionMenuBuilder
+from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder, ButtonBuilder, TextBuilder, OptionMenuBuilder, ScaleBuilder, CanvasBuilder
 try:
     pyglet.font.add_file('avali-scratch.ttf')
 except:
@@ -604,11 +604,9 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     Owin.mainloop()
 
 def createNumbersWin():
-    Nwin,content_frame = createWin('N', 'Avalian Number Translation')
+    Nwin = createWin2('N', 'Avalian Number Translation')
     if Nwin is None:
         return False # nope
-    
-    panel = Canvas(content_frame, bg=Theme[0])
 
     @toggleable
     def setDirection(vert):
@@ -787,42 +785,53 @@ def createNumbersWin():
         else:
             b12EnglishDisp.config(background=Theme[0])
             b12EnglishDispButton.config(text='Hide')
-
-    util_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
-    random_frame = Frame(content_frame, background=Theme[0],borderwidth= '12px')
-    ###Title + Support
-    Title = Label(content_frame,text='Avalian Base 12 System',font=('arial',18),**textstyle)
     
-    ###Random Interface
-    RandLabel = Label(random_frame,text='Random Num. Gen.',font=('arial',14),**textstyle)
-    MaxSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",**textstyle) #Slider 
-    MinSize = Scale(random_frame, from_=0, to=1000,orient = "horizontal",**textstyle) #Slider
-    DecimalLength = Scale(random_frame, from_=0, to=10,orient = "horizontal",**textstyle) #Slider
-    DecimalLengthLabel = Label(random_frame,text="Decimal Length",font=('arial',10),**textstyle)
-    DecimalLengthWarning = Label(random_frame,text="(Not added yet, confused\non how it'd work)",font=('arial',10),**textstyle)
-    MaxSizeLabel = Label(random_frame,text='Max Size',font=('arial',10),**textstyle)
-    MinSizeLabel = Label(random_frame,text='Min Size',font=('arial',10),**textstyle)
-    MaxSize.set(125)
-    MinSize.set(20)
-    DecimalLength.set(1)
-    NegativeState = Button(random_frame,text='Positive',command=lambda:setSign.toggle(),**buttonstyle) #whether to generate negative numbers or not
-    randomNumGo = Button(random_frame,text='Submit',command=lambda:randomizeNumber(),**buttonstyle) #submit random num
+    elements={}
+    WindowInnerWithMenuBuilder(inner=[
+        CanvasBuilder(bg=Theme[0],key='panel'),
+        LabelBuilder(text='Avalian Base 12 System',font=('arial',18),**textstyle,geometry=Grid(column=1,row=0,columnspan=3)), #Title + Support
+        FrameBuilder(background=Theme[0],borderwidth= '12px',children=[#Random Interface
+            LabelBuilder(text='Random Num. Gen.',font=('arial',14),**textstyle,geometry=Grid(column=0,row=0,columnspan=3)),
+            ScaleBuilder(from_=0, to=1000,value=125,orient = "horizontal",**textstyle,key='MaxSize',geometry=Grid(column=1,row=2,columnspan=2)), #Slider 
+            ScaleBuilder(from_=0, to=1000,value=20,orient = "horizontal",**textstyle,key='MinSize',geometry=Grid(column=1,row=4,columnspan=2)), #Slider
+            ScaleBuilder(from_=0, to=10,value=1,orient = "horizontal",**textstyle,key='DecimalLength',geometry=Grid(column=1,row=6,columnspan=2)), #Slider
+            LabelBuilder(text="Decimal Length",font=('arial',10),**textstyle,geometry=Grid(column=0,row=5,columnspan=2)),
+            LabelBuilder(text="(Not added yet, confused\non how it'd work)",font=('arial',10),**textstyle,geometry=Grid(column=0,row=6,columnspan=2)),
+            LabelBuilder(text='Max Size',font=('arial',10),**textstyle,geometry=Grid(column=0,row=1,columnspan=2)),
+            LabelBuilder(text='Min Size',font=('arial',10),**textstyle,geometry=Grid(column=0,row=3,columnspan=2)),
+            ButtonBuilder(text='Positive',command=lambda:setSign.toggle(),**buttonstyle,key='NegativeState',geometry=Grid(column=0,row=7,columnspan=2)), #whether to generate negative numbers or not
+            ButtonBuilder(text='Submit',command=lambda:randomizeNumber(),**buttonstyle,geometry=Grid(column=2,row=7)), #submit random num
+        ],geometry=Grid(column=4,row=0,columnspan=2,rowspan=3,sticky='wns')),
+        FrameBuilder(background=Theme[0],borderwidth= '12px',children=[ #Options
+            ButtonBuilder(text='Horizontal/Vertical',command=lambda:setDirection.toggle(),**buttonstyle,key='HVButton',geometry=Grid(column=1,row=0)),#Horizontal Vertical numbering toggle
+            LabelBuilder(text="Swich between formal vertical structure and casual horizontal display.",**textstyle,geometry=Grid(column=0,row=1,columnspan=3,)), 
+            TextBuilder(width=30,height=1,bg=Theme[6],key='userInput',geometry=Grid(column=0,row=2,columnspan=2,sticky='e')), #User in Textbox
+            ButtonBuilder(text='Submit',command=lambda:updateNumber(),**buttonstyle,geometry=Grid(column=2,row=2,columnspan=1)), #submit user input from Userinput (Valideate)
+            LabelBuilder(text='Base-10:',font=('arial',10),**textstyle,geometry=Grid(column=0,row=4)),
+            LabelBuilder(text='Base-12:',font=('arial',10),**textstyle,geometry=Grid(column=0,row=5)),
+            LabelBuilder(text=0,font=('arial',12), **textstyle,key='b10EnglishDisp',geometry=Grid(column=1,row=4,columnspan=2)), #Base10 number display in english
+            LabelBuilder(text=0,font=('arial',12), **textstyle,key='b12EnglishDisp',geometry=Grid(column=1,row=5,columnspan=2)), #Base12 number display in english
+            ButtonBuilder(text='Hide',command=lambda:setBase10Display.toggle(),**buttonstyle,key='b10EnglishDispButton',geometry=Grid(column=2,row=4,columnspan=1)), 
+            ButtonBuilder(text='Hide',command=lambda:setBase12Display.toggle(),**buttonstyle,key='b12EnglishDispButton',geometry=Grid(column=2,row=5,columnspan=1)), 
+        ],geometry=Grid(column=1,row=1,columnspan=3,rowspan=3,sticky='nesw')),
+    ]).build(Nwin, elements)
+
+    panel=elements['panel']
+    NegativeState=elements['NegativeState']
+    MinSize=elements['MinSize']
+    MaxSize=elements['MaxSize']
+    DecimalLength=elements['DecimalLength']
+    HVButton=elements['HVButton']
+    userInput=elements['userInput']
+    b10EnglishDisp=elements['b10EnglishDisp']
+    b12EnglishDisp=elements['b12EnglishDisp']
+    b10EnglishDispButton=elements['b10EnglishDispButton']
+    b12EnglishDispButton=elements['b12EnglishDispButton']
+
     def enterHandler(event):
         updateNumber()
         return "break"
-    ###Options###
-    userInput = Text(util_frame,width=30,height=1,bg=Theme[6]) #User in Textbox
     userInput.bind("<Return>",enterHandler)
-
-    userInGo = Button(util_frame,text='Submit',command=lambda:updateNumber(),**buttonstyle) #submit user input from Userinput (Valideate)
-    base10Label = Label(util_frame,text='Base-10:',font=('arial',10),**textstyle)
-    base12Label = Label(util_frame,text='Base-12:',font=('arial',10),**textstyle)
-    b12EnglishDisp = Label(util_frame,text=0,font=('arial',12), **textstyle) #Base12 number display in english
-    b10EnglishDisp = Label(util_frame,text=0,font=('arial',12), **textstyle) #Base10 number display in english
-    b10EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase10Display.toggle(),**buttonstyle) 
-    b12EnglishDispButton = Button(util_frame,text='Hide',command=lambda:setBase12Display.toggle(),**buttonstyle) 
-    HVButton = Button(util_frame,text='Horizontal/Vertical',command=lambda:setDirection.toggle(),**buttonstyle)#Horizontal Vertical numbering toggle
-    HVdescription = Label(util_frame,text="Swich between formal vertical structure and casual horizontal display.",**textstyle) 
     ###
     
     #Load settings
@@ -832,30 +841,6 @@ def createNumbersWin():
     setBase10Display(False)
     setBase12Display(False)
 
-    Title.grid(column=1,row=0,columnspan=3)
-    util_frame.grid(column=1,row=1,columnspan=3,rowspan=3,sticky='nesw')
-    HVButton.grid(column=1,row=0)
-    HVdescription.grid(column=0,row=1,columnspan=3,)
-    userInput.grid(column=0,row=2,columnspan=2,sticky='e')
-    userInGo.grid(column=2,row=2,columnspan=1)
-    base10Label.grid(column=0,row=4)
-    base12Label.grid(column=0,row=5)
-    b10EnglishDisp.grid(column=1,row=4,columnspan=2)
-    b12EnglishDisp.grid(column=1,row=5,columnspan=2)
-    b10EnglishDispButton.grid(column=2,row=4,columnspan=1)
-    b12EnglishDispButton.grid(column=2,row=5,columnspan=1)
-    #Random
-    random_frame.grid(column=4,row=0,columnspan=2,rowspan=3,sticky='wns')
-    RandLabel.grid(column=0,row=0,columnspan=3)
-    MaxSize.grid(column=1,row=2,columnspan=2)
-    MinSize.grid(column=1,row=4,columnspan=2)
-    DecimalLength.grid(column=1,row=6,columnspan=2)
-    MaxSizeLabel.grid(column=0,row=1,columnspan=2)
-    MinSizeLabel.grid(column=0,row=3,columnspan=2)
-    DecimalLengthLabel.grid(column=0,row=5,columnspan=2)
-    DecimalLengthWarning.grid(column=0,row=6,columnspan=2)
-    NegativeState.grid(column=0,row=7,columnspan=2)
-    randomNumGo.grid(column=2,row=7)
     
     Nwin.mainloop()
 

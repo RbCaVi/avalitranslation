@@ -82,12 +82,22 @@ class ButtonBuilder(TkBuilderLeaf):
 class TextBuilder(TkBuilderLeaf):
 	element = tk.Text
 
+class CanvasBuilder(TkBuilderLeaf):
+	element = tk.Canvas
+
 class FrameBuilder(TkBuilderNode):
 	element = tk.Frame
 
-class OptionMenuBuilder(TkBuilderNode):
+class OptionMenuBuilder(TkBuilderLeaf):
 	@staticmethod
 	def element(root, *args, command, **kwargs):
 		menu = tk.OptionMenu(root, *args, command = command)
 		menu.config(**kwargs)
 		return menu
+
+class ScaleBuilder(TkBuilderLeaf):
+	@staticmethod
+	def element(root, *args, value, **kwargs):
+		scale = tk.Scale(root, *args, **kwargs)
+		scale.set(value)
+		return scale
