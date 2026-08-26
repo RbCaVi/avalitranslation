@@ -84,3 +84,10 @@ class TextBuilder(TkBuilderLeaf):
 
 class FrameBuilder(TkBuilderNode):
 	element = tk.Frame
+
+class OptionMenuBuilder(TkBuilderNode):
+	@staticmethod
+	def element(root, *args, command, **kwargs):
+		menu = tk.OptionMenu(root, *args, command = command)
+		menu.config(**kwargs)
+		return menu

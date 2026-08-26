@@ -15,7 +15,7 @@ import random
 import imageTinter as iT
 import time
 import functools
-from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder, ButtonBuilder, TextBuilder
+from tkbuilder import TkBuilderLeaf, Grid, FrameBuilder, TkBuilder, Pack, LabelBuilder, ButtonBuilder, TextBuilder, OptionMenuBuilder
 try:
     pyglet.font.add_file('avali-scratch.ttf')
 except:
@@ -437,7 +437,7 @@ def createCreditsWin(): #This function contains all of the tkinter widgets and f
     Cwin.mainloop()
 
 def createOptionsWin(): #This function contains all of the tkinter widgets and functions necessary to be defined before them in order to create the font translation window. Relevent support files: settings.ini,
-    Owin,content_frame = createWin('O', 'Avalian Translation Options')
+    Owin = createWin2('O', 'Avalian Translation Options')
     if Owin is None:
         return False # nope
 
@@ -450,14 +450,30 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
         else: 
             GO.infoMsg('Failure','Your theme has NOT been updated, your input is outside of the range of possible selctions for themes.') # there is no way
 
-    @toggleable
+    offoptions = {'relief':FLAT,'bg':Theme[6],'activebackground':Theme[6],'state':NORMAL}
+    onoptions = {'relief':RAISED,'bg':Theme[2],'activebackground':Theme[2],'state':DISABLED}
+    def togglebuilder(setfunc, geometry):
+        def build(root, table):
+            @toggleable
+            def setfunc2(state):
+                if state:
+                    LSButton.config(**offoptions)
+                    RSButton.config(**onoptions)
+                else:
+                    LSButton.config(**onoptions)
+                    RSButton.config(**offoptions)
+                setfunc(state)
+            toggleSwitch = Frame(root,highlightbackground=Theme[1],highlightthickness=3)
+            LSButton = Button(toggleSwitch,text='   ',command=lambda: setfunc2.toggle())
+            RSButton = Button(toggleSwitch,text='   ',command=lambda: setfunc2.toggle())
+            LSButton.grid(column=0,row=0)
+            RSButton.grid(column=1,row=0)
+            geometry.manage(toggleSwitch)
+            setfunc.toggleset = setfunc2
+            return toggleSwitch
+        return build
+
     def setDirection(vert):
-        if vert:
-            LSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-            RSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-        else:
-            LSButton2.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton2.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Numbers', 'HV', vert)
 
     def setClampingChars(CCStr):
@@ -466,164 +482,124 @@ def createOptionsWin(): #This function contains all of the tkinter widgets and f
     def setNpron(HPStr):
         GO.writeIni('Pronunciation', 'Hpronchars', HPOptions.index(HPStr))
 
-    @toggleable
     def setWindowsUnmanaged(wu):
         global WindowsUnmanaged
         WindowsUnmanaged = wu
-        if wu:
-            LSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-            RSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-        else:
-            LSButton5.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton5.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Windows', 'Unmanaged', wu)
 
-    @toggleable
     def setECover(ecover):
-        if ecover:
-            LSButton6.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-            RSButton6.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-        else:
-            LSButton6.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton6.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Translation', 'EnglishView', ecover)
 
-    @toggleable
     def setTCover(tcover):
-        if tcover:
-            LSButton7.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
-            RSButton7.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-        else:
-            LSButton7.config(relief=RAISED,bg=Theme[2],activebackground=Theme[2],state=DISABLED)
-            RSButton7.config(relief=FLAT,bg='lightgrey',activebackground='lightgrey',state=NORMAL)#or FLAT
         GO.writeIni('Translation', 'TableView', tcover)
     
     #Creating Objects:
- 
-    Title = Label(content_frame,text="Options",font=('arial',20),**textstyle) 
 
     offoptions = {'relief':FLAT,'bg':Theme[6],'activebackground':Theme[6],'text':'   '}
     onoptions = {'relief':RAISED,'bg':Theme[2],'activebackground':Theme[2],'text':'   '}
 
     CCOptions = ['Last Used'] + ClampingCharsOptions
     HPOptions = ['Last Used'] + HpronOptions
-    
-    Setting1 = Frame(content_frame,background=Theme[0])
-    Title1 = Label(Setting1,text="Dark, Light, & Custom Themes",font=('arial',16),**textstyle) 
-    Desc1 = Label(Setting1,text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),**textstyle) 
-    toggleSwitch1 = Frame(Setting1,highlightbackground=Theme[1],highlightthickness=3)
+
     ThemeVar = StringVar()
-    Themedropbutton = OptionMenu(toggleSwitch1, ThemeVar, *GO.retrieveThemeList(), command = setTheme)
-    Themedropbutton.config(**buttonstyle)
-
-    Setting2 = Frame(content_frame,background=Theme[0])
-    Title2 = Label(Setting2,text="Number Canvas Orientation     ",font=('arial',16),**textstyle) 
-    Desc2 = Label(Setting2,text="Sets if Number Canvas is set horizontally or vertically\nby default on opening.",font=('arial',10),**textstyle) 
-    toggleSwitch2 = Frame(Setting2,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **offoptions)
-    RSButton2 = Button(toggleSwitch2,command=lambda: setDirection.toggle(), **onoptions)
-    
-    Setting3 = Frame(content_frame,background=Theme[0])
-    Title3 = Label(Setting3,text="Pronunciation Clamping Chars. ",font=('arial',16),**textstyle) 
-    Desc3 = Label(Setting3,text="Sets your default selction for the Pronunciation\nclamping characters. i.e. [] or ()",font=('arial',10),**textstyle) 
-    toggleSwitch3 = Frame(Setting3,highlightbackground=Theme[1],highlightthickness=3)
-    ClampingCharsVar = StringVar()
-    ClampingCharsdropbutton = OptionMenu(toggleSwitch3, ClampingCharsVar, *CCOptions, command = setClampingChars)
-    ClampingCharsdropbutton.config(**buttonstyle)
-    
-    Setting4 = Frame(content_frame,background=Theme[0])
-    Title4 = Label(Setting4,text="N Pronuciation Replacement Chars.",font=('arial',16),**textstyle) 
-    Desc4 = Label(Setting4,text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),**textstyle) 
-    toggleSwitch4 = Frame(Setting4,highlightbackground=Theme[1],highlightthickness=3)
     NpronVar = StringVar()
-    Nprondropbutton = OptionMenu(toggleSwitch4, NpronVar, *HPOptions, command = setNpron)
-    Nprondropbutton.config(**buttonstyle)
+    ClampingCharsVar = StringVar()
 
-    Setting5 = Frame(content_frame,background=Theme[0])
-    Title5 = Label(Setting5,text="New Window Open Option        ",font=('arial',16),**textstyle) 
-    Desc5 = Label(Setting5,text="Sets if new windows are managed (only one of each type\nopen at a time) or unmanaged (Open as many as you\nwould like at once).",font=('arial',10),**textstyle) 
-    toggleSwitch5 = Frame(Setting5,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **offoptions)
-    RSButton5 = Button(toggleSwitch5,command=lambda: setWindowsUnmanaged.toggle(), **onoptions)
 
-    Setting6 = Frame(content_frame,background=Theme[0])
-    Title6 = Label(Setting6,text="Hide English Display     ",font=('arial',16),**textstyle) 
-    Desc6 = Label(Setting6,text="Sets if the original English text is hidden\nby default on opening.",font=('arial',10),**textstyle) 
-    toggleSwitch6 = Frame(Setting6,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton6 = Button(toggleSwitch6,command=lambda: setECover.toggle(), **offoptions)
-    RSButton6 = Button(toggleSwitch6,command=lambda: setECover.toggle(), **onoptions)
-
-    Setting7 = Frame(content_frame,background=Theme[0])
-    Title7 = Label(Setting7,text="Hide Translation Table     ",font=('arial',16),**textstyle) 
-    Desc7 = Label(Setting7,text="Sets if the translation table is hidden\nby default on opening.",font=('arial',10),**textstyle) 
-    toggleSwitch7 = Frame(Setting7,highlightbackground=Theme[1],highlightthickness=3)
-    LSButton7 = Button(toggleSwitch7,command=lambda: setTCover.toggle(), **offoptions)
-    RSButton7 = Button(toggleSwitch7,command=lambda: setTCover.toggle(), **onoptions)
+    WindowInnerWithMenuBuilder(inner=[
+        LabelBuilder(text="Options",font=('arial',20),**textstyle,geometry=Grid(column=0,row=0)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="Dark, Light, & Custom Themes",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Change the theme of the app. Enter 1 for Light and 2\nfor Dark. Make your own custom themes in 'settings.ini'.",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            FrameBuilder(highlightbackground=Theme[1],highlightthickness=3,children=[
+                OptionMenuBuilder(ThemeVar, *GO.retrieveThemeList(), command = setTheme, **buttonstyle, geometry=Grid(column=0,row=0)),
+            ],geometry=Grid(column=3 ,row=0)),
+        ],geometry=Grid(column=0,row=1)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="Number Canvas Orientation     ",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Sets if Number Canvas is set horizontally or vertically\nby default on opening.",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            togglebuilder(setDirection, geometry = Grid(column=3,row=0)),
+        ],geometry=Grid(column=0,row=2)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="New Window Open Option        ",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Sets if new windows are managed (only one of each type\nopen at a time) or unmanaged (Open as many as you\nwould like at once).",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            togglebuilder(setWindowsUnmanaged, geometry = Grid(column=3,row=0)),
+        ],geometry=Grid(column=0,row=3)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="Pronunciation Clamping Chars. ",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Sets your default selction for the Pronunciation\nclamping characters. i.e. [] or ()",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            FrameBuilder(highlightbackground=Theme[1],highlightthickness=3,children=[
+                OptionMenuBuilder(ClampingCharsVar, *CCOptions, command = setClampingChars, **buttonstyle, geometry=Grid(column=0,row=0)),
+            ],geometry=Grid(column=3 ,row=0)),
+        ],geometry=Grid(column=0,row=4)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="N Pronuciation Replacement Chars.",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text='Sets your default selction for the Pronuciation\nof the letter "n". i.e. a short pause or "hthk".',font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            FrameBuilder(highlightbackground=Theme[1],highlightthickness=3,children=[
+                OptionMenuBuilder(NpronVar, *HPOptions, command = setNpron, **buttonstyle, geometry=Grid(column=0,row=0)),
+            ],geometry=Grid(column=3 ,row=0)),
+        ],geometry=Grid(column=0,row=5)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="Hide English Display     ",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Sets if the original English text is hidden\nby default on opening.",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            togglebuilder(setECover, geometry = Grid(column=3,row=0)),
+        ],geometry=Grid(column=0,row=6)),
+        FrameBuilder(background=Theme[0],children=[
+            LabelBuilder(
+                text="Hide Translation Table     ",font=('arial',16),**textstyle,
+                geometry=Grid(column=0,row=0)
+            ),
+            LabelBuilder(
+                text="Sets if the translation table is hidden\nby default on opening.",font=('arial',10),**textstyle,
+                geometry=Grid(column=0,row=1,columnspan=2)
+            ),
+            togglebuilder(setTCover, geometry = Grid(column=3,row=0)),
+        ],geometry=Grid(column=0,row=7)),
+    ]).build(Owin, None)
 
     ThemeVar.set(ThemeName)
-    setDirection(GO.readIniBool('Numbers', 'HV'))
+    setDirection.toggleset(GO.readIniBool('Numbers', 'HV'))
     ClampingCharsVar.set(CCOptions[GO.readIniChecked('Pronunciation', 'Cchars', 6)])
     NpronVar.set(HPOptions[GO.readIniChecked('Pronunciation', 'Hpronchars', 5)])
-    setWindowsUnmanaged(WindowsUnmanaged)
-    setECover(GO.readIniBool('Translation', 'EnglishView'))
-    setTCover(GO.readIniBool('Translation', 'TableView'))
-    
-    #Gridding Objects # hit that griddy
-    Title.grid(column=0,row=0)
-    #Preamble.grid(column=0,row=0)
-    ###Option 1
-    Title1.grid(column=0,row=0)
-    Desc1.grid(column=0,row=1,columnspan=2)
-    Themedropbutton.grid(column=0,row=0)
-    toggleSwitch1.grid(column=3 ,row=0)
-
-    ###Option 5
-    Title5.grid(column=0,row=0)
-    Desc5.grid(column=0,row=1,columnspan=2)
-    LSButton5.grid(column=0,row=0)
-    RSButton5.grid(column=1,row=0)
-    toggleSwitch5.grid(column=3 ,row=0)
-
-    ###Option 2
-    Title2.grid(column=0,row=0)
-    Desc2.grid(column=0,row=1,columnspan=2)
-    LSButton2.grid(column=0,row=0)
-    RSButton2.grid(column=1,row=0)
-    toggleSwitch2.grid(column=3 ,row=0)
-    
-    ###Option 3
-    Title3.grid(column=0,row=0)
-    Desc3.grid(column=0,row=1,columnspan=2)
-    ClampingCharsdropbutton.grid(column=0,row=0)
-    toggleSwitch3.grid(column=3 ,row=0)
-
-    ###Option 4
-    Title4.grid(column=0,row=0)
-    Desc4.grid(column=0,row=1,columnspan=2)
-    Nprondropbutton.grid(column=0,row=0)
-    toggleSwitch4.grid(column=3 ,row=0)
-
-    ###Option 6
-    Title6.grid(column=0,row=0)
-    Desc6.grid(column=0,row=1,columnspan=2)
-    LSButton6.grid(column=0,row=0)
-    RSButton6.grid(column=1,row=0)
-    toggleSwitch6.grid(column=3 ,row=0)
-
-    ###Option 7
-    Title7.grid(column=0,row=0)
-    Desc7.grid(column=0,row=1,columnspan=2)
-    LSButton7.grid(column=0,row=0)
-    RSButton7.grid(column=1,row=0)
-    toggleSwitch7.grid(column=3 ,row=0)
-
-    Setting1.grid(column=0,row=1)
-    Setting2.grid(column=0,row=2)
-    Setting5.grid(column=0,row=3)
-    Setting3.grid(column=0,row=4)
-    Setting4.grid(column=0,row=5)
-    Setting6.grid(column=0,row=6)
-    Setting7.grid(column=0,row=7)
+    setWindowsUnmanaged.toggleset(WindowsUnmanaged)
+    setECover.toggleset(GO.readIniBool('Translation', 'EnglishView'))
+    setTCover.toggleset(GO.readIniBool('Translation', 'TableView'))
 
     Owin.mainloop()
 
