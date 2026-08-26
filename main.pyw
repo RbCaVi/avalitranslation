@@ -243,24 +243,6 @@ class SidebarBuilder(TkBuilderLeaf):
 
 class SidebarMenu(): #Class to create the menubar 
     MenuImgs = [] 
-    def __init__(self,winObj,border_frame): #Creates a menubar in the specified window
-        #Create Menu Sidebar    
-        Sidebar = Frame(border_frame,background="#f0f0f0",borderwidth= "0")
-            ##IN
-        MB0 = HoverButton(Sidebar,text="Main Menu",**options(type = 'M', index = 0)) #em W=0 H=2
-        MB1 = HoverButton(Sidebar,text="Font Trans.",**options(type = 'T', index = 1))
-        MB2 = HoverButton(Sidebar,text="Number Trans.",**options(type = 'N', index = 2))
-        MB3 = HoverButton(Sidebar,text="Pronunciation",**options(type = 'P', index = 3))
-        MB4 = HoverButton(Sidebar,text="Options",**options(type = 'O', index = 4))
-        MB5 = HoverButton(Sidebar,text="Credits",**options(type = 'C', index = 5))
-        #SideBorder = Canvas(background=Theme[3]) #Maybe not
-        MB0.grid(column=0,row=1,sticky='nesw')
-        MB1.grid(column=0,row=2,sticky='nesw')
-        MB2.grid(column=0,row=3,sticky='nesw')
-        MB3.grid(column=0,row=4,sticky='nesw')
-        MB4.grid(column=0,row=5,sticky='nesw')
-        MB5.grid(column=0,row=6,sticky='nesw')
-        Sidebar.grid(column=0,row=0)
     def start(win): #Runs at end of Mwin startup, initializes all menu imgs under menu window.
         #print('Loading images ','-cSM line 108')
         SidebarMenu.MenuImgs = [
