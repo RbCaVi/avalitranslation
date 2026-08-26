@@ -395,8 +395,6 @@ def createOptionsWin():
         return False # nope
 
     def setTheme(ThemeName):
-        if ThemeName == '':
-            return False # put a real theme next time
         if GO.retrieveTheme(ThemeName, 1):
             GO.writeIni("Theme","setTheme",ThemeName)
             GO.infoMsg('Success','Your theme has been updated, please restart the application!')
