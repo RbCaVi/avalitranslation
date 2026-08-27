@@ -218,8 +218,6 @@ def initMenuImgs(): #Runs at end of Mwin startup, initializes all menu imgs unde
         for icon in
         ['Menu', 'Translation', 'Numbers', 'Pronunciation', 'Settings', 'Credits']
     ]
-class SidebarMenu():
-    def start(win)
 
 def chunkText(text, maxsize): # splits every line at the first space after maxsize characters # used in font translation and pronounciation
     chunked = ""
