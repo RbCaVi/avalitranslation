@@ -152,38 +152,6 @@ class WindowInnerWithoutMenuBuilder(TkBuilder):
         ],geometry=self.geometry).build(root, childrenroots)
         return thisroot, childrenroots
 
-def createWin(type, title):
-    #Window Register Management
-    if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
-        return None, None #killbind
-    if type == 'M': # main window
-        win = Tk()
-    else:
-        win = Toplevel(Mwin) #Make window
-    WinCode = AddWindowToRegister(win,type) #Ask to register with the Register, Save Date as unique code.
-    if WinCode == False: #If denied
-        return None, None #explode
-    if type != 'M':
-        win.protocol("WM_DELETE_WINDOW", lambda: RemoveWindowFromRegister(win,WinCode,type)) #Use saved code to remove from register
-    win.title(title)
-    win.configure(background=Theme[2])
-    #End Window management
-
-    border_frame = Frame(win,background=Theme[2],borderwidth="4px")
-    content_frame = Frame(border_frame, background=Theme[0],borderwidth= "12px")
-    if type not in ['C', 'M']: # credits window does not include a sidebar # don't know why
-        SidebarBuilder(geometry=Grid(row=0,column=0)).build(border_frame, None) #Create Menu Sidebar
-    border_frame.pack()
-    if type not in ['C', 'M']:
-        content_frame.grid(row=0,column=1)
-    else:
-        content_frame.pack()
-
-    return win, content_frame
-
-def newWinAllowed(type):
-    return CheckWindowRegister(type)
-
 def createWin2(type, title):
     #Window Register Management
     if CheckWindowRegister(type) == False: #Clear creating the window with the register, True means its allowed
