@@ -191,7 +191,7 @@ class SidebarBuilder(TkBuilderLeaf): #Class to create the menubar
 
     def constructor(self, root, table):
         options = lambda type, index: {
-            'image':SidebarMenu.MenuImgs[index],
+            'image':MenuImgs[index],
             'command':lambda: WindowRegistration(type),
             'relief':FLAT,
             'foreground':Theme[5],'background':Theme[2],
