@@ -98,9 +98,9 @@ def WindowToTop(type='X'): #Move a type of window to the top
     #if not CheckWindowRegister(type): #I can't tell you why this works #You find it was never necessary to begin with # one collar, two sleeves
     for win in windowregister[type].values():
         #Find stupid window object s
-            win.lift() #does the same thing but I am told to use the other.. perhaps different across systems
-            #win.attributes("-topmost",True)
-            #win.attributes("-topmost",False)
+        win.lift() #does the same thing but I am told to use the other.. perhaps different across systems
+        #win.attributes("-topmost",True)
+        #win.attributes("-topmost",False)
                     
     #else:
     #    print('AHHHh')
@@ -185,7 +185,7 @@ class HoverButton(Button): #Used for the sidebar menu buttons
 class HoverButtonBuilder(TkBuilderLeaf):
     element = HoverButton
 
-class SidebarBuilder(TkBuilderLeaf):
+class SidebarBuilder(TkBuilderLeaf): #Class to create the menubar 
     def __init__(self, geometry = None, key = None):
         super().__init__(geometry = geometry, key = key)
 
@@ -209,15 +209,17 @@ class SidebarBuilder(TkBuilderLeaf):
             HoverButtonBuilder(text="Credits",**options(type = 'C', index = 5)),
         ]).build(root, table), {}
 
-class SidebarMenu(): #Class to create the menubar 
-    MenuImgs = [] 
-    def start(win): #Runs at end of Mwin startup, initializes all menu imgs under menu window.
-        #print('Loading images ','-cSM line 108')
-        SidebarMenu.MenuImgs = [
-            ImageTk.PhotoImage(iT.performTint('Images/sidebar/' + icon + '.png',Theme[7]))
-            for icon in
-            ['Menu', 'Translation', 'Numbers', 'Pronunciation', 'Settings', 'Credits']
-        ]
+MenuImgs = []
+def initMenuImgs(): #Runs at end of Mwin startup, initializes all menu imgs under menu window.
+    global MenuImgs
+    #print('Loading images ','-cSM line 108')
+    MenuImgs = [
+        ImageTk.PhotoImage(iT.performTint('Images/sidebar/' + icon + '.png',Theme[7]))
+        for icon in
+        ['Menu', 'Translation', 'Numbers', 'Pronunciation', 'Settings', 'Credits']
+    ]
+class SidebarMenu():
+    def start(win)
 
 def chunkText(text, maxsize): # splits every line at the first space after maxsize characters # used in font translation and pronounciation
     chunked = ""
@@ -727,12 +729,12 @@ def createNumbersWin():
     @toggleable(values = (0, 1, 2))
     def setSign(neg):
         #Random Number Negative chance
-        if neg == 0:
-            NegativeState.config(text='Positive')
-        elif neg == 1:
-            NegativeState.config(text='Negative')
-        elif neg == 2:
-            NegativeState.config(text='Neg & Pos')
+        textsettings = {
+            0: 'Positive',
+            1: 'Negative',
+            2: 'Neg & Pos',
+        }
+        NegativeState.config(text=textsettings[neg])
     
     @toggleable
     def setBase10Display(b10Cover):
@@ -767,7 +769,7 @@ def createNumbersWin():
             LabelBuilder(text="(Not added yet, confused\non how it'd work)",font=('arial',10),**textstyle,geometry=Grid(column=0,row=6,columnspan=2)),
             LabelBuilder(text='Max Size',font=('arial',10),**textstyle,geometry=Grid(column=0,row=1,columnspan=2)),
             LabelBuilder(text='Min Size',font=('arial',10),**textstyle,geometry=Grid(column=0,row=3,columnspan=2)),
-            ButtonBuilder(text='Positive',command=lambda:setSign.toggle(),**buttonstyle,key='NegativeState',geometry=Grid(column=0,row=7,columnspan=2)), #whether to generate negative numbers or not
+            ButtonBuilder(command=lambda:setSign.toggle(),**buttonstyle,key='NegativeState',geometry=Grid(column=0,row=7,columnspan=2)), #whether to generate negative numbers or not # text is set by setSign()
             ButtonBuilder(text='Submit',command=lambda:randomizeNumber(),**buttonstyle,geometry=Grid(column=2,row=7)), #submit random num
         ],geometry=Grid(column=4,row=0,columnspan=2,rowspan=3,sticky='wns')),
         FrameBuilder(background=Theme[0],borderwidth= '12px',children=[ #Options
@@ -777,10 +779,10 @@ def createNumbersWin():
             ButtonBuilder(text='Submit',command=lambda:updateNumber(),**buttonstyle,geometry=Grid(column=2,row=2,columnspan=1)), #submit user input from Userinput (Valideate)
             LabelBuilder(text='Base-10:',font=('arial',10),**textstyle,geometry=Grid(column=0,row=4)),
             LabelBuilder(text='Base-12:',font=('arial',10),**textstyle,geometry=Grid(column=0,row=5)),
-            LabelBuilder(text=0,font=('arial',12), **textstyle,key='b10EnglishDisp',geometry=Grid(column=1,row=4,columnspan=2)), #Base10 number display in english
-            LabelBuilder(text=0,font=('arial',12), **textstyle,key='b12EnglishDisp',geometry=Grid(column=1,row=5,columnspan=2)), #Base12 number display in english
-            ButtonBuilder(text='Hide',command=lambda:setBase10Display.toggle(),**buttonstyle,key='b10EnglishDispButton',geometry=Grid(column=2,row=4,columnspan=1)), 
-            ButtonBuilder(text='Hide',command=lambda:setBase12Display.toggle(),**buttonstyle,key='b12EnglishDispButton',geometry=Grid(column=2,row=5,columnspan=1)), 
+            LabelBuilder(text='0',font=('arial',12), **textstyle,key='b10EnglishDisp',geometry=Grid(column=1,row=4,columnspan=2)), #Base10 number display in english
+            LabelBuilder(text='0',font=('arial',12), **textstyle,key='b12EnglishDisp',geometry=Grid(column=1,row=5,columnspan=2)), #Base12 number display in english
+            ButtonBuilder(command=lambda:setBase10Display.toggle(),**buttonstyle,key='b10EnglishDispButton',geometry=Grid(column=2,row=4,columnspan=1)), # text is set by setBase10Display
+            ButtonBuilder(command=lambda:setBase12Display.toggle(),**buttonstyle,key='b12EnglishDispButton',geometry=Grid(column=2,row=5,columnspan=1)), # text is set by setBase12Display
         ],geometry=Grid(column=1,row=1,columnspan=3,rowspan=3,sticky='nesw')),
     ]).build(Nwin, elements)
 
@@ -883,7 +885,7 @@ def createPronunciationWin():
     else: #Default set, set it.
         #print('Read CC =',str(CC-1))
         clampingcharsindex = CC-1
-    ClampingCharsSelected.set(ClampingCharsOptions[clampingcharsindex])
+    setClampingChars(ClampingCharsOptions[clampingcharsindex])
     HP = GO.readIniChecked("Pronunciation","Hpronchars",5,2) #read the options # 2 is the second option - [] brackets # because 0 is use last set
     if HP == 0: #
         #print('Read HP = 0')
@@ -891,7 +893,7 @@ def createPronunciationWin():
     else: #
         #print('Read HP =',str(HP-1))
         hpronindex = HP-1
-    Hdropclicked.set(HpronOptions[hpronindex])
+    setHpron(HpronOptions[hpronindex])
     #End Load settings
     def enterHandler(event):
         setUserWord()
@@ -919,7 +921,7 @@ def createMainMenuWin(): #This function contains all of the tkinter widgets and 
     ]).build(Mwin, None)
 
     ##db349c
-    SidebarMenu.start(Mwin)
+    initMenuImgs()
     Mwin.mainloop()
 
 createMainMenuWin() #Anything after this will not execute
