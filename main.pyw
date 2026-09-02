@@ -662,9 +662,9 @@ def createNumbersWin():
     
     def newNumber(b10Num):
         b10EnglishDisp.config(text=b10Num)
-        negative = b10Num < 0
+        negative = b10Num[0] == '-'
         if negative:
-            b10Num = -b10Num
+            b10Num = b10Num[1:]
         b12num = AN.base12numberConvert(b10Num)
         b12numstr = ''.join(str(AN.toAB(d)) for d in b12num)
         if negative:
@@ -677,13 +677,13 @@ def createNumbersWin():
         writeNumber(2,2,manifest,setDirection.state)
     
     def updateNumber():
-        userIn = userInput.get("1.0",END)
+        userIn = userInput.get("1.0",END).strip()
         print('user input:', userIn)
         try:
             try:
-                userIn = int(userIn)
+                int(userIn)
             except ValueError: # not an integer, maybe a float?
-                userIn = round(float(userIn), 6)
+                float(userIn)
                 # error here propagates to the outer try block
                 # because the number is not valid
             #print(type(userIn))
@@ -729,7 +729,7 @@ def createNumbersWin():
                     #print(randomNum,'negative:',randomNum)
             else:
                 pass
-            newNumber(randomNum)
+            newNumber(str(randomNum))
         else:
             pass
     

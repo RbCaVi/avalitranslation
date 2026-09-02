@@ -13,7 +13,7 @@ def itob12(n): # convert an integer to a list of base 12 digits
 
 def inc12(ds): # increment a list of base 12 digits # modifies ds
     # basically walk backwards from the end
-    # if the digit is 11, change to 0 and iterate again
+    # if the digit is 11, increment to 0 and iterate again (carry)
     # if the "digit" is '.', skip
     # otherwise increment the digit and return
     i = len(ds) - 1
@@ -23,26 +23,33 @@ def inc12(ds): # increment a list of base 12 digits # modifies ds
         i -= 1
     ds[i] += 1
 
+# ok let's try somethng else
+# precision math
+# pass a string
+# convert the integer part as normal
+# use integer math instead of float math for the decimal part
+# multiply by 12
+# divmod by a power of 10
+
 def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  Working on support for decimal. v2! To support A B extra characters since I never did that originaly??
     print('base10:',num)
-    iNum,dNum = divmod(num, 1)
-    result = itob12(iNum)
-    if type(num) == float:
-        result.append(".")
-        # idk uhhh like multiply by 12 and divmod
-        # what about trailing zeros?
-        # maybe limit digits
-        # and strip trailing zeros
-        # or hit an arbitrary precision math with repeating digit fractions
-        # for example, 0.2 [10] = 0.(2497...) [12]
-        for i in range(5): # 5 digits should be enough right ?
-            dNum *= 12
-            digit,dNum = divmod(dNum, 1)
-            result.append(int(digit))
-        if dNum >= 0.5: # round up # inc12 modifies result
-            inc12(result)
-        while result[-1] == 0 and result[-2] != '.': # remove trailing zeros # except for the last one for like 1.0 type beat
-            result.pop()
+    if '.' in num: # decimal
+        iNum,dNum = num.split('.')
+        result = itob12(int(iNum))
+        result.append('.')
+        if len(dNum) != 0:
+            # take the length of dNum as the power
+            top = 10 ** len(dNum)
+            d10 = int(dNum)
+            for i in range(5):
+                print(top, d10, repr(dNum))
+                d10 *= 12
+                digit,d10 = divmod(d10, top)
+                result.append(int(digit))
+            if d10 * 2 >= top: # round up
+                inc12(result)
+    else: # no decimal (integer)
+        result = itob12(int(num))
 
     print('base12:',result)
     return(result)
