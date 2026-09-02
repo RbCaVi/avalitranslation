@@ -11,11 +11,12 @@ def itob12(n): # convert an integer to a list of base 12 digits
     digits.reverse()
     return digits
 
-def inc12(ds): # increment a list of base 12 digits # modifies ds
+def inc12(ds): # increment a list of base 12 digits
     # basically walk backwards from the end
     # if the digit is 11, increment to 0 and iterate again (carry)
     # if the "digit" is '.', skip
     # otherwise increment the digit and return
+    ds = [*ds] # copy ds
     i = len(ds) - 1
     while ds[i] == 11 or ds[i] == '.':
         if ds[i] == 11:
@@ -47,7 +48,7 @@ def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  W
                 digit,d10 = divmod(d10, top)
                 result.append(int(digit))
             if d10 * 2 >= top: # round up
-                inc12(result)
+                result = inc12(result)
     else: # no decimal (integer)
         result = itob12(int(num))
 
@@ -118,13 +119,41 @@ def superB12num(num):
 #[5, 6, 2, 3, 4, 9]
 #[12x5,12x6,12x2]'''
 
+def uncarry12(b12): # zeros borrow 12 from the digit to their left
+    # walk backwards from the end again
+    # if the digit is 0, change to 12 and decrement the digit to the left (unless this is the first digit)
+    # if the digit is -1 (from a decrement), change to 11 and decrement the digit to the left
+    # split decimal part and handle separately (?)
+    # i'm assuming this applies to all digits, not just the last two
+
+    b12 = [*b12] # copy b12
+
+    while b12[0] == 0: # remove leading zeros if they were given for some reason
+        b12.pop(0)
+
+    if '.' in b12:
+        end = b12.index('.')
+    else:
+        end = len(b12)
+
+    for i in reversed(range(1, end)): # the 1 can be changed to max(1, end - 2) for the old behavior
+        if b12[i] == 0 or b12[i] == -1:
+            b12[i] += 12
+            b12[i - 1] -= 1
+
+    if b12[0] == 0: # remove the possible leading zero from uncarrying a first digit of 1
+        b12.pop(0)
+
+    return b12
+
 def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     #if less than 144
         #match with numbers until total is 0
         #at any time if total is =< 12 then add the final image as number image.
     #else
         #match base to
-    print('------',b12,'------')
+    print('------',b12,'-->',uncarry12(b12),'------')
+    b12 = uncarry12(b12)
     if '.' in b12: # twelvimal (dodecimal) point
         print(b12, 'has a decimal :)')
         i = b12.index('.')
@@ -135,24 +164,23 @@ def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     result = []
     if negative:
         result.append('Negative')
-    if len(b12) == 3 and b12[0] == 1: # special casing 144-156 # reduce the first two digits into one
-        if b12[1] == 0: # 144-155
-            b12[:2] = [12]
-        elif b12[1] == 1 and b12[2] == 0: # 156
-            b12[:2] = [13]
-    if len(b12) == 2 and b12[-1] == 0: # multiples of 12 up to 156
-        b12[0] -= 1
-        b12[1] = 12
-        if b12[0] == 0:
-            b12 = [b12[1]]
     for d in b12[:-1]: # all but the last
         result.append(superB12num(d))
     result.append(subB12num(b12[-1]))
     print('d12 is', d12)
     if d12 is not None:
         result.append('Decimal')
-        for d in d12:
-            result.append(subB12num(d)) # i don't know how twelvimal display works
+        # i don't know how twelvimal display works
+        # apparently the same way??? weird
+        # what about repeating twelvimals like 0.1111... (1 / 11)
+        # we use a bar
+        # idk i could round or ... for now
+        # or a bar
+        # or brackets like 1 / 5 = 0.[2497]
+        # but that has to be returned from base12numberConvert()
+        for d in d12[:-1]:
+            result.append(subB12num(d))
+        result.append(subB12num(d12[-1]))
     print(result)
     return result
 
