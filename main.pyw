@@ -656,9 +656,9 @@ def createNumbersWin():
                         sep = digitimages['DecimalVert']
                     else:
                         sep = digitimages['InbetweenVert']
-                    sepw = sep.width()
-                    writeImg(x + w / 2 - sepw,y + h / 2,sep) # i actually have no idea how to place it
-                y += h + 10 # shift for the next digit
+                    sepw,seph = sep.width(), sep.height()
+                    writeImg(x + w / 2 - sepw / 2,y + h - seph / 2,sep) # i actually have no idea how to place it
+                y += h + 30 # shift for the next digit
     
     def newNumber(b10Num):
         b10EnglishDisp.config(text=b10Num)
