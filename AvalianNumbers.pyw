@@ -1,6 +1,8 @@
 #This file's purpose is to provide support to the numbers tab in the application. It handles image fetching and base conversion.
 
 def itob12(n): # convert an integer to a list of base 12 digits
+    if n == '':
+        return []
     n = int(n)
     if n == 0:
         return [0]
@@ -23,6 +25,7 @@ def inc12(ds): # increment a list of base 12 digits
             ds[i] = 0
         i -= 1
     ds[i] += 1
+    return ds
 
 # ok let's try somethng else
 # precision math
@@ -36,21 +39,23 @@ def base12numberConvert(num): #Converts base 10 numbers into base 12 numbers.  W
     print('base10:',num)
     if '.' in num: # decimal
         iNum,dNum = num.split('.')
-        result = itob12(int(iNum))
+        result = itob12(iNum)
         result.append('.')
         if len(dNum) != 0:
             # take the length of dNum as the power
             top = 10 ** len(dNum)
             d10 = int(dNum)
-            for i in range(5):
-                print(top, d10, repr(dNum))
+            for i in range(12):
+                print(top, d10)
                 d10 *= 12
                 digit,d10 = divmod(d10, top)
                 result.append(int(digit))
             if d10 * 2 >= top: # round up
                 result = inc12(result)
+            while result[-1] == 0: # remove trailing zeros
+                result.pop()
     else: # no decimal (integer)
-        result = itob12(int(num))
+        result = itob12(num)
 
     print('base12:',result)
     return(result)
@@ -126,6 +131,9 @@ def uncarry12(b12): # zeros borrow 12 from the digit to their left
     # split decimal part and handle separately (?)
     # i'm assuming this applies to all digits, not just the last two
 
+    if b12 == [0]:
+        return b12
+
     b12 = [*b12] # copy b12
 
     while b12[0] == 0: # remove leading zeros if they were given for some reason
@@ -164,9 +172,10 @@ def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
     result = []
     if negative:
         result.append('Negative')
-    for d in b12[:-1]: # all but the last
-        result.append(superB12num(d))
-    result.append(subB12num(b12[-1]))
+    if len(b12) > 0:
+        for d in b12[:-1]: # all but the last
+            result.append(superB12num(d))
+        result.append(subB12num(b12[-1]))
     print('d12 is', d12)
     if d12 is not None:
         result.append('Decimal')
@@ -178,9 +187,10 @@ def base12ImageRef(b12,negative): #reworkedImageRef finisged 5/28/2025
         # or a bar
         # or brackets like 1 / 5 = 0.[2497]
         # but that has to be returned from base12numberConvert()
-        for d in d12[:-1]:
-            result.append(subB12num(d))
-        result.append(subB12num(d12[-1]))
+        if len(d12) > 0:
+            for d in d12[:-1]:
+                result.append(subB12num(d))
+            result.append(subB12num(d12[-1]))
     print(result)
     return result
 
